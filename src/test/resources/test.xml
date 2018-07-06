@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SearchResults:searchresults
+	xsi:schemaLocation="http://www.zillow.com/static/xsd/SearchResults.xsd https://www.zillowstatic.com/vstatic/b20c067/static/xsd/SearchResults.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:SearchResults="http://www.zillow.com/static/xsd/SearchResults.xsd">
+	<request>
+		<address>13060 west 64th place</address>
+		<citystatezip>arvada co 80004</citystatezip>
+	</request>
+	<message><text>Request successfully processed</text><code>0</code></message>
+	<response>
+		<results>
+			<result><zpid>13719607</zpid><links><homedetails>https://www.zillow.com/homedetails/13060-W-64th-Pl-Arvada-CO-80004/13719607_zpid/</homedetails><graphsanddata>http://www.zillow.com/homedetails/13060-W-64th-Pl-Arvada-CO-80004/13719607_zpid/#charts-and-data</graphsanddata><mapthishome>http://www.zillow.com/homes/13719607_zpid/</mapthishome><comparables>http://www.zillow.com/homes/comps/13719607_zpid/</comparables></links><address><street>13060
+				W 64th Pl</street><zipcode>80004</zipcode><city>ARVADA</city><state>CO</state><latitude>39.814116</latitude><longitude>-105.145324</longitude></address><zestimate>
+				<amount currency="USD">390959</amount>
+				<last-updated>06/17/2018</last-updated><oneWeekChange
+				deprecated="true"></oneWeekChange><valueChange duration="30"
+				currency="USD">-1021</valueChange><valuationRange><low currency="USD">371411</low><high
+				currency="USD">410507</high></valuationRange><percentile>0</percentile></zestimate><localRealEstate><region
+				name="Ralston Esates East" id="761577" type="neighborhood"><links><overview>http://www.zillow.com/local-info/CO-Arvada/Ralston-Esates-East/r_761577/</overview><forSaleByOwner>http://www.zillow.com/ralston-esates-east-arvada-co/fsbo/</forSaleByOwner><forSale>http://www.zillow.com/ralston-esates-east-arvada-co/</forSale></links></region></localRealEstate></result>
+		</results>
+	</response>
+</SearchResults:searchresults><!-- H:030 T:79ms S:842 R:Sun Jun 17 16:41:34 
+	PDT 2018 B:5.0.54468.2-hotfix_2018-06-15.4753768~hotfix-platform-for-2018-06-15.9a77ab3 -->
