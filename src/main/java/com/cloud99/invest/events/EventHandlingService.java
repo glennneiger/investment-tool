@@ -3,7 +3,7 @@ package com.cloud99.invest.events;
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.VerificationToken;
 import com.cloud99.invest.domain.account.Account;
-import com.cloud99.invest.services.EmailServiceInterface;
+import com.cloud99.invest.services.EmailService;
 import com.cloud99.invest.services.UserService;
 
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ public class EventHandlingService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EventHandlingService.class);
 
 	@Autowired
-	private EmailServiceInterface emailService;
+	private EmailService emailService;
 
 	@Autowired
 	private UserService userService;
