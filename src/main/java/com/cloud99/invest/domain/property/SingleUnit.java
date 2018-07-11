@@ -1,24 +1,42 @@
 package com.cloud99.invest.domain.property;
 
-import com.cloud99.invest.domain.Address;
 import com.cloud99.invest.domain.MongoDocument;
-import com.cloud99.invest.domain.ParkingType;
+import com.cloud99.invest.domain.TimeUnit;
 
 import org.springframework.data.annotation.Id;
 
-public abstract class SingleUnit implements Property, MongoDocument<String> {
+import java.math.BigDecimal;
+
+public abstract class SingleUnit extends BaseProperty implements MongoDocument {
 
 	@Id
 	private String id;
-	private String name;
-	private ParkingType parkingType;
+
 	private Integer bedrooms;
-	private Integer bathrooms;
+	private Float bathrooms;
 	private Integer finishedSqFt;
 	private Integer basementSqFt;
 	private Integer lotSizeSqFt;
 	private Integer yearBuilt;
-	private Address address;
+
+	private BigDecimal grossRent;
+	private TimeUnit grossRentUnit;
+
+	public BigDecimal getGrossRent() {
+		return grossRent;
+	}
+
+	public void setGrossRent(BigDecimal grossRent) {
+		this.grossRent = grossRent;
+	}
+
+	public TimeUnit getGrossRentUnit() {
+		return grossRentUnit;
+	}
+
+	public void setGrossRentUnit(TimeUnit grossRentUnit) {
+		this.grossRentUnit = grossRentUnit;
+	}
 
 	public String getId() {
 		return id;
@@ -26,14 +44,6 @@ public abstract class SingleUnit implements Property, MongoDocument<String> {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public Integer getBasementSqFt() {
@@ -44,14 +54,6 @@ public abstract class SingleUnit implements Property, MongoDocument<String> {
 		this.basementSqFt = basementSqFt;
 	}
 
-	public ParkingType getParkingType() {
-		return parkingType;
-	}
-
-	public void setParkingType(ParkingType parkingType) {
-		this.parkingType = parkingType;
-	}
-
 	public Integer getBedrooms() {
 		return bedrooms;
 	}
@@ -60,11 +62,11 @@ public abstract class SingleUnit implements Property, MongoDocument<String> {
 		this.bedrooms = bedrooms;
 	}
 
-	public Integer getBathrooms() {
+	public Float getBathrooms() {
 		return bathrooms;
 	}
 
-	public void setBathrooms(Integer bathrooms) {
+	public void setBathrooms(Float bathrooms) {
 		this.bathrooms = bathrooms;
 	}
 
@@ -90,14 +92,6 @@ public abstract class SingleUnit implements Property, MongoDocument<String> {
 
 	public void setYearBuilt(Integer yearBuilt) {
 		this.yearBuilt = yearBuilt;
-	}
-
-	public Address getAddress() {
-		return address;
-	}
-
-	public void setAddress(Address address) {
-		this.address = address;
 	}
 
 }

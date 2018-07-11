@@ -6,10 +6,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public interface MongoDocument<ID> {
+public interface MongoDocument {
 
 	@Id
-	public ID getId();
+	public String getId();
 
 	default String toJsonString() {
 		try {

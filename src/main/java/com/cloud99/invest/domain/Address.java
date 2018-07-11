@@ -2,7 +2,7 @@ package com.cloud99.invest.domain;
 
 import org.springframework.data.annotation.Id;
 
-public class Address implements MongoDocument<String> {
+public class Address implements MongoDocument {
 
 	@Id
 	private String id;

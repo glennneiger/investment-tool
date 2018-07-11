@@ -46,7 +46,7 @@ public class MongoConfig extends AbstractMongoConfiguration {
     @Override
     public MongoClient mongoClient() {
 
-		MongoCredential credential = MongoCredential.createCredential(userName, getDatabaseName(), password.toCharArray());
+		MongoCredential credential = MongoCredential.createCredential(userName, "admin", password.toCharArray());
 		ServerAddress address = new ServerAddress(hostName, port);
 
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));

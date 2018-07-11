@@ -19,7 +19,7 @@ import java.util.Locale;
 
 @PasswordMatches
 @Document
-public class User extends Person implements MongoDocument<String> {
+public class User extends Person implements MongoDocument {
 
 	@Id
 	private String id;

@@ -8,14 +8,10 @@ import com.cloud99.invest.domain.TimeUnit;
 import org.joda.money.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 
 import java.math.BigDecimal;
 
 public class CashFlowTest extends MockitoTest {
-
-	@InjectMocks
-	private CashFlow cashFlow;
 
 	@BeforeEach
 	void setUp() throws Exception {

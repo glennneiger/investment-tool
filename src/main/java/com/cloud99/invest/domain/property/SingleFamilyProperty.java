@@ -1,16 +1,12 @@
 package com.cloud99.invest.domain.property;
 
-public class SingleFamilyProperty extends SingleUnit implements Property {
+import com.cloud99.invest.domain.MongoDocument;
 
-	private PropertyType propertyType = PropertyType.SINGLE_FAMILY;
+public class SingleFamilyProperty extends SingleUnit implements Property, MongoDocument {
 
 	@Override
 	public PropertyType getPropertyType() {
-		return propertyType;
+		return PropertyType.SINGLE_FAMILY;
 	}
 
-	@Override
-	public String toString() {
-		return toJsonString();
-	}
 }

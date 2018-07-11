@@ -20,12 +20,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.UUID;
 
 @Service
@@ -47,6 +47,12 @@ public class UserService implements UserDetailsService {
 	@Autowired
 	private VerificationTokenRepo tokenRepo;
 
+	public String loginUser(String userEmail, String password) {
+		User user = findUserByEmailAndValidate(userEmail);
+
+		return null;
+	}
+
 	@Transactional
 	public User registerUserAndAccount(User user, String accountName, String callbackUrl) {
 		LOGGER.debug("Starting to create new user and account: " + user);
@@ -54,10 +60,9 @@ public class UserService implements UserDetailsService {
 		if (emailExist(user.getEmail())) {
 			throw new ServiceException("user.email.exists");
 		}
-		// encrypt password
-		// TODO - NG - add this back in and find out why it's so damn slow
-		// String pwHash = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
-		// user.setPassword(pwHash);
+
+		String pwHash = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+		user.setPassword(pwHash);
 		user.setEnabled(false);
 
 		user.addUserRole(UserRole.FREE_USER);
@@ -142,7 +147,7 @@ public class UserService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-		User user = findUserByEmail(username);
+		User user = findUserByEmailAndValidate(username);
 		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), buildAuthorities(user.getUserRoles()));
 	}
 
@@ -152,6 +157,14 @@ public class UserService implements UserDetailsService {
 			return true;
 		}
 		return false;
+	}
+
+	public User findUserByEmailAndValidate(String email) {
+		User user = findUserByEmail(email);
+		if (user == null) {
+			throw new EntityNotFoundException("user.not.found");
+		}
+		return user;
 	}
 
 	public User findUserByEmail(String email) {

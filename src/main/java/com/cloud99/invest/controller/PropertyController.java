@@ -1,6 +1,5 @@
 package com.cloud99.invest.controller;
 
-import com.cloud99.invest.domain.Address;
 import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.services.PropertyService;
 
@@ -27,17 +26,17 @@ public class PropertyController {
 
 	@GetMapping("/")
 	@ResponseBody
-	public Address test(@RequestParam String name) throws Exception {
+	public Iterable<Property> getPropertiesByUser(@RequestParam String userEmail) throws Exception {
 
-		return null;
+		return propertyService.getPropertyByUser(userEmail);
 	}
 	
 	@PostMapping("/")
-	public Property createNewProperty(@Valid Property property, BindingResult result,
+	public Property createProperty(@Valid Property property, BindingResult result,
 			HttpServletRequest request,
 			Errors errors) {
 
-		return null;
+		return propertyService.createProperty(property);
 	
 	}
 }

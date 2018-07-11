@@ -21,6 +21,11 @@ public class SecurityController implements Controller {
 	@Autowired
 	private UserService userService;
 
+	@PostMapping(path = "/login", produces = JSON)
+	public String login(@RequestParam String userEmail, @RequestParam String password) {
+
+		return null;
+	}
 	@PostMapping(path = "/registration", produces = JSON, consumes = JSON)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.ACCEPTED)

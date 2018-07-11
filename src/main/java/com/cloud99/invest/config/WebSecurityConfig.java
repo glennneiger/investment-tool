@@ -35,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http
 		.csrf().disable()
 		.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
-		.and().authorizeRequests().antMatchers("/**", "/registration").permitAll()
+		.and().authorizeRequests().antMatchers("/registrationConfirmation", "/registration").permitAll()
 //		.and().authorizeRequests().antMatchers("/v1").authenticated()
 		.and().httpBasic().authenticationEntryPoint(authenticationEntryPoint);
 

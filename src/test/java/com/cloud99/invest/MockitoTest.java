@@ -10,14 +10,13 @@ import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 
 @ExtendWith(MockitoExtension.class)
-@RunWith(JUnitPlatform.class)
+// @RunWith(JUnitPlatform.class)
 public abstract class MockitoTest {
 
 	public static final CurrencyUnit CURRENCY = CurrencyUnit.USD;

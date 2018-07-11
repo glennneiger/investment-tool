@@ -10,12 +10,10 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class MultiFamily implements Property, MongoDocument<String> {
+public class MultiFamily extends BaseProperty implements MongoDocument {
 
 	@Id
 	private String id;
-	private String name;
-	private Address address;
 
 	@DBRef
 	@CascadeSave
@@ -42,18 +40,4 @@ public class MultiFamily implements Property, MongoDocument<String> {
 		return PropertyType.MULTI_FAMILY;
 	}
 
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public Address getAddress() {
-		return address;
-	}
-
-	@Override
-	public String toString() {
-		return toJsonString();
-	}
 }

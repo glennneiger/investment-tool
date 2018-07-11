@@ -1,14 +1,15 @@
-package com.cloud99.invest.domain;
+package com.cloud99.invest.domain.redis;
 
 import org.joda.time.DateTime;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.redis.core.RedisHash;
 
-public class VerificationToken implements MongoDocument {
+import java.io.Serializable;
 
-	@Id
-	private String id;
+@RedisHash("AuthToken")
+public class AuthToken implements Serializable {
+	private static final long serialVersionUID = -7784848154484721038L;
 
 	@Indexed
 	private String token;
@@ -16,28 +17,11 @@ public class VerificationToken implements MongoDocument {
 	private String userEmail;
 
 	private DateTime expiryDate;
-	private String accountId;
 	private int expiryTimeInHours = 24;
 
-	public VerificationToken() {
+	public AuthToken() {
 	}
 
-	public VerificationToken(String token, int expiryTimeInHours, String userEmail, String accountId) {
-		this.expiryTimeInHours = expiryTimeInHours;
-		expiryDate = calculateExpiryDate(expiryTimeInHours);
-		this.token = token;
-		this.userEmail = userEmail;
-		this.accountId = accountId;
-	}
-
-	@Override
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
 
 	@Transient
 	private DateTime calculateExpiryDate(int expiryTimeInHours) {
@@ -69,14 +53,6 @@ public class VerificationToken implements MongoDocument {
 		this.expiryDate = expiryDate;
 	}
 
-	public String getAccountId() {
-		return accountId;
-	}
-
-	public void setAccountId(String accountId) {
-		this.accountId = accountId;
-	}
-
 	public int getExpiryTimeInHours() {
 		return expiryTimeInHours;
 	}
@@ -85,8 +61,4 @@ public class VerificationToken implements MongoDocument {
 		this.expiryTimeInHours = expiryTimeInHours;
 	}
 
-	@Override
-	public String toString() {
-		return toJsonString();
-	}
 }

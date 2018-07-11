@@ -22,16 +22,14 @@ import com.cloud99.invest.util.Util;
 
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.junit.MockitoJUnitRunner;
 
 @ExtendWith(MockitoExtension.class)
-@RunWith(JUnitPlatform.class)
+//@RunWith(JUnitPlatform.class)
 public class ZillowMessageAdaptorTest extends MockitoTest {
 
 	@InjectMocks

@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 @PropertySource("classpath:application.properties")
-public class SendgridEmailService implements EmailService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(SendgridEmailService.class);
+public class SendGridEmailService implements EmailService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(SendGridEmailService.class);
 
 	@Autowired
 	private MessageSource messages;

@@ -17,8 +17,8 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.TimeZone;
 
-// TODO - NG - need to add  property for number of document or size that can be stored on our servers
-public class Account implements MongoDocument<String> {
+// TODO - NG - need to add a property or class for all of the account settings like # of allowed docs or number of docs that can be stored
+public class Account implements MongoDocument {
 
 	public static final String DEFAULT_TIMEZONE = "US/Mountain";
 
