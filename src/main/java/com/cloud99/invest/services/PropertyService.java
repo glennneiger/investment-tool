@@ -1,16 +1,18 @@
 package com.cloud99.invest.services;
 
+import com.cloud99.invest.domain.User;
+import com.cloud99.invest.domain.financial.PropertyFinances;
 import com.cloud99.invest.domain.property.Property;
-import com.cloud99.invest.domain.property.UserProperty;
 import com.cloud99.invest.repo.PropertyRepo;
-import com.cloud99.invest.repo.UserPropertyRepo;
-import com.cloud99.invest.services.exceptions.EntityNotFoundException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
+
+import java.util.Collection;
 import java.util.Iterator;
 
 @Service
@@ -18,49 +20,33 @@ public class PropertyService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PropertyService.class);
 
 	@Autowired
-	private UserPropertyRepo userPropertyRepo;
+	private UserService userService;
 
 	@Autowired
 	private PropertyRepo propertyRepo;
 	
-	
-	public <T extends Property> Property createProperty(T property) {
+	public <T extends Property> T createProperty(T property) {
 		LOGGER.trace("Starting to create a new property: " + property.toJsonString());
 
 		property = propertyRepo.save(property);
 
-		// TODO - NG - get the currently logged in user and assign to the property
-		// is there a UserProperty ref doc for this user?
-		UserProperty userPropery = userPropertyRepo.findByUserEmail("");
-
-		if (userPropery == null) {
-			userPropery = createUserProperty("", property);
-		}
-
-		userPropertyRepo.save(userPropery);
+		User user = userService.getCurrentSessionUser();
+		userService.addPropertyRefToUser(user, property.getId());
 
 		return property;
 	}
 
-	private UserProperty createUserProperty(String userEmail, Property property) {
-		UserProperty p = new UserProperty();
-		p.setUserEmail(userEmail);
-		p.addProperty(property);
-		return userPropertyRepo.save(p);
+
+	public Iterable<Property> getPropertyDetails(Collection<String> userPropertyRefs) {
+		LOGGER.trace("getProperty() : " + userPropertyRefs);
+
+		return propertyRepo.findAllById(convertIteratorToIterable(userPropertyRefs.iterator()));
+
 	}
 
-	public Iterable<Property> getPropertyByUser(String userEmail) {
-		LOGGER.trace("getPropertyByUser() : " + userEmail);
+	public void deleteProperty(Property property) {
 
-		UserProperty userProperty = userPropertyRepo.findByUserEmail(userEmail);
-
-		if (userProperty == null) {
-			throw new EntityNotFoundException("user.no.properties");
-		}
-
-		Iterable<Property> properties = propertyRepo.findAllById(convertIteratorToIterable(userProperty.getPropertyRefs().iterator()));
-
-		return properties;
+		propertyRepo.delete(property);
 	}
 
 	/**
@@ -69,4 +55,14 @@ public class PropertyService {
 	private <T> Iterable<T> convertIteratorToIterable(Iterator<T> iter) {
 		return () -> iter;
 	}
+
+	public void createFinancialPropertyData(PropertyFinances cashFlow) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public Property updateProperty(@Valid Property property) {
+		return propertyRepo.save(property);
+	}
+
 }

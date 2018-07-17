@@ -6,19 +6,21 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 
 @EnableAutoConfiguration
 @SpringBootApplication
 @PropertySource("classpath:application.properties")
-public class InvestmentToolApplication extends SpringBootServletInitializer {
+@ComponentScan(basePackages = "com.cloud99.invest")
+public class InvestmentAnalyzrApplication extends SpringBootServletInitializer {
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(InvestmentToolApplication.class);
+		return application.sources(InvestmentAnalyzrApplication.class);
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(InvestmentToolApplication.class, args);
+		SpringApplication.run(InvestmentAnalyzrApplication.class, args);
 	}
 }

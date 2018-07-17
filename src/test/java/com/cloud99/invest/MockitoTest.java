@@ -37,7 +37,7 @@ public abstract class MockitoTest {
 		return d;
 	}
 
-	public Expences buildExpences(int vacancyRate, double operatingExpence) {
+	public Expences buildExpences(Float vacancyRate, double operatingExpence) {
 	
 		Expences e = new Expences();
 		e.setOperatingExpences(buildItemizedCost(operatingExpence));

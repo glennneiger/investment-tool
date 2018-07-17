@@ -6,7 +6,6 @@ import com.cloud99.invest.domain.financial.FinancialAssumptions;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "property")
 public abstract class BaseProperty implements Property {
 
 	private String name;

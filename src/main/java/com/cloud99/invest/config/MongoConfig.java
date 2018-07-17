@@ -14,6 +14,7 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.CustomConversions;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
@@ -27,6 +28,7 @@ import java.util.List;
 @EnableMongoRepositories(basePackages = { "com.cloud99.invest.repo", "com.cloud99.invest.domain" })
 @Configuration
 @PropertySource("classpath:application.properties")
+@Order(15)
 public class MongoConfig extends AbstractMongoConfiguration {
 
 	@Value("${mongo.host}")
@@ -52,6 +54,9 @@ public class MongoConfig extends AbstractMongoConfiguration {
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 
 		MongoClientOptions.Builder opts = new MongoClientOptions.Builder();
+		opts.connectTimeout(10000);
+		opts.maxConnectionIdleTime(5);
+		opts.minConnectionsPerHost(5);
 		opts.maxConnectionIdleTime(10000);
 		opts.codecRegistry(pojoCodecRegistry);
 

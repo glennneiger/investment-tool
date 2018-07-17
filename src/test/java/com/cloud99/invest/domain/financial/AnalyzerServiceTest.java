@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.cloud99.invest.MockitoTest;
 import com.cloud99.invest.domain.TimeUnit;
+import com.cloud99.invest.services.AnalyzerService;
 
 import org.joda.money.Money;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +12,9 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-public class CashFlowTest extends MockitoTest {
+public class AnalyzerServiceTest extends MockitoTest {
+
+	private AnalyzerService service = new AnalyzerService();
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -25,7 +28,7 @@ public class CashFlowTest extends MockitoTest {
 		FinancingDetails details = buildFinancingDetails(purchasePrice, 0.20D, 4.5F);
 
 		// annual operating expenses: $8,100
-		Expences expences = buildExpences(0, 675);
+		Expences expences = buildExpences(0F, 675);
 
 		// annual income: $24,600
 		Income income = buildIncome(1500, 2050, 0);
@@ -34,8 +37,8 @@ public class CashFlowTest extends MockitoTest {
 		PurchaseDetails purchaseDetails = buildPurchaseDetails(purchasePrice, 350000D);
 		purchaseDetails.setFinancingDetails(details);
 
-		CashFlow cash = new CashFlow(expences, income, purchaseDetails);
-		Money noi = cash.calculateNetOperatingIncome(CURRENCY);
+		PropertyFinances cash = new PropertyFinances(expences, income, purchaseDetails, CURRENCY);
+		Money noi = service.calculateNetOperatingIncome(cash);
 		assertEquals(buildMoney(16500), noi);
 
 	}
@@ -48,7 +51,7 @@ public class CashFlowTest extends MockitoTest {
 		FinancingDetails details = buildFinancingDetails(purchasePrice, 0.20D, 4.5F);
 
 		// annual operating expenses: $8,100
-		Expences expences = buildExpences(0, 675);
+		Expences expences = buildExpences(0F, 675);
 
 		// annual income: $24,600
 		Income income = buildIncome(1500, 2050, 0);
@@ -56,8 +59,8 @@ public class CashFlowTest extends MockitoTest {
 		PurchaseDetails purchaseDetails = buildPurchaseDetails(purchasePrice, 350000D);
 		purchaseDetails.setFinancingDetails(details);
 
-		CashFlow cash = new CashFlow(expences, income, purchaseDetails);
-		assertEquals(new Float(.055), cash.calculateCapRate(CURRENCY));
+		PropertyFinances cash = new PropertyFinances(expences, income, purchaseDetails, CURRENCY);
+		assertEquals(new Float(.055), service.calculateCapRate(cash));
 
 	}
 

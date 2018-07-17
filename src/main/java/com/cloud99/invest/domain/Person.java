@@ -2,6 +2,7 @@ package com.cloud99.invest.domain;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.springframework.security.core.Authentication;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -14,7 +15,7 @@ public abstract class Person {
 
 	@Valid
 	@NotNull(message = "person.name.required")
-	private Name name;
+	private Name personName;
 
 	private Gender gender;
 
@@ -22,12 +23,16 @@ public abstract class Person {
 	private DateTime createDate;
 	private DateTime updateDate;
 
-	public Name getName() {
-		return name;
+	/**
+	 * This method cannot be named just "getName()" since that conflicts with the
+	 * {@link Authentication} interface used by our internal {@link User}
+	 */
+	public Name getPersonName() {
+		return personName;
 	}
 
 	public void setName(Name name) {
-		this.name = name;
+		this.personName = name;
 	}
 
 	public Gender getGender() {

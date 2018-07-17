@@ -1,7 +1,12 @@
 package com.cloud99.invest.domain.financial;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.joda.money.Money;
 
+/**
+ * Used for capturing detailed valuations for third-party integrations like
+ * zillow
+ */
 public class PropertyValuation {
 
 	private Money currentEstimate;
@@ -58,6 +63,11 @@ public class PropertyValuation {
 
 	public void setPercentileChange(Float percentileChange) {
 		this.percentileChange = percentileChange;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 
 }

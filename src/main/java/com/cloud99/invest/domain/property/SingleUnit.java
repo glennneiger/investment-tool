@@ -12,6 +12,7 @@ public abstract class SingleUnit extends BaseProperty implements MongoDocument {
 	@Id
 	private String id;
 
+	// TODO - NG - add validation annotations to this
 	private Integer bedrooms;
 	private Float bathrooms;
 	private Integer finishedSqFt;

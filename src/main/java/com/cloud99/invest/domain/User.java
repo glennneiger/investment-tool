@@ -4,10 +4,14 @@ import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.repo.extensions.CascadeSave;
 import com.cloud99.invest.validation.PasswordMatches;
 
+import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -15,11 +19,13 @@ import javax.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 @PasswordMatches
 @Document
-public class User extends Person implements MongoDocument {
+public class User extends Person implements MongoDocument, Authentication {
+	private static final long serialVersionUID = 1445414593887068772L;
 
 	@Id
 	private String id;
@@ -41,9 +47,46 @@ public class User extends Person implements MongoDocument {
 
 	private Locale locale;
 	private boolean enabled = false;
+	private boolean isAuthenticated;
+
+	private DateTime lastLoginDate;
 
 	@CascadeSave
 	private Collection<UserRole> userRoles = new ArrayList<>(0);
+
+	// mongo objectId references to all properties user has access to
+	@CascadeSave
+	private List<String> propertyRefs = new ArrayList<>(0);
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return buildAuthorities(this.getUserRoles());
+	}
+
+	private Collection<? extends GrantedAuthority> buildAuthorities(Collection<UserRole> applicationRoles) {
+
+		Collection<SimpleGrantedAuthority> auths = new ArrayList<>();
+		for (UserRole role : applicationRoles) {
+			auths.add(new SimpleGrantedAuthority(role.getAuthority()));
+		}
+		return auths;
+	}
+
+	public List<String> getPropertyRefs() {
+		return propertyRefs;
+	}
+
+	public void setPropertyRefs(List<String> propertyRefs) {
+		this.propertyRefs = propertyRefs;
+	}
+
+	public DateTime getLastLoginDate() {
+		return lastLoginDate;
+	}
+
+	public void setLastLoginDate(DateTime lastLoginDate) {
+		this.lastLoginDate = lastLoginDate;
+	}
 
 	public Locale getLocale() {
 		return locale;
@@ -109,7 +152,36 @@ public class User extends Person implements MongoDocument {
 
 	public void addUserRole(UserRole role) {
 		this.userRoles.add(role);
+	}
 
+	@Override
+	public String getName() {
+		return getEmail();
+	}
+
+	@Override
+	public Object getCredentials() {
+		return getAuthorities();
+	}
+
+	@Override
+	public Object getDetails() {
+		return this;
+	}
+
+	@Override
+	public Object getPrincipal() {
+		return this;
+	}
+
+	@Override
+	public boolean isAuthenticated() {
+		return isAuthenticated;
+	}
+
+	@Override
+	public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+		this.setAuthenticated(isAuthenticated);
 	}
 
 }

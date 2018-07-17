@@ -4,19 +4,25 @@ import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.VerificationToken;
 import com.cloud99.invest.domain.account.Account;
 import com.cloud99.invest.domain.account.UserRole;
+import com.cloud99.invest.domain.redis.AuthToken;
 import com.cloud99.invest.events.OnRegistrationRequestEvent;
 import com.cloud99.invest.repo.UserRepo;
 import com.cloud99.invest.repo.VerificationTokenRepo;
+import com.cloud99.invest.repo.redis.AuthTokenRepo;
 import com.cloud99.invest.services.exceptions.EntityNotFoundException;
 import com.cloud99.invest.services.exceptions.ServiceException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,9 +30,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UUID;
+import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -47,10 +51,58 @@ public class UserService implements UserDetailsService {
 	@Autowired
 	private VerificationTokenRepo tokenRepo;
 
-	public String loginUser(String userEmail, String password) {
-		User user = findUserByEmailAndValidate(userEmail);
+	@Autowired
+	private AuthTokenRepo authTokenRepo;
 
-		return null;
+	public User getCurrentSessionUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return (User) authentication.getDetails();
+	}
+
+	public User findAndValidateUserByAuthToken(String authToken) {
+
+		if (StringUtils.isBlank(authToken)) {
+			throw new EntityNotFoundException("auth.token.required");
+		}
+
+		Optional<AuthToken> tokenOptional = authTokenRepo.findById(authToken);
+		if (!tokenOptional.isPresent()) {
+			throw new AccessDeniedException("auth.session.required");
+		}
+
+		if (tokenOptional.get().getExpiryDateTime().isBeforeNow()) {
+			authTokenRepo.delete(tokenOptional.get());
+			throw new AccessDeniedException("auth.token.expired");
+		}
+
+		Optional<User> user = userRepo.findById(tokenOptional.get().getUserId());
+
+		if (!user.isPresent() || !user.get().isEnabled()) {
+			throw new ServiceException("user.not.enabled");
+		}
+		return user.get();
+	}
+
+	public AuthToken loginUser(String userEmail, String password) {
+
+		User user = findUserByEmailAndValidate(userEmail);
+		if (!user.isEnabled()) {
+			throw new ServiceException("user.not.enabled");
+		}
+		if (!validatePassword(user.getPassword(), password)) {
+			throw new ServiceException("invalid.user.or.password");
+		}
+		return createAuthToken(user.getId());
+	}
+
+	public AuthToken createAuthToken(String userEmail) {
+		AuthToken token = new AuthToken(userEmail);
+		authTokenRepo.save(token);
+		return token;
+	}
+
+	private boolean validatePassword(String existingPassword, String incomingPassword) {
+		return BCrypt.checkpw(incomingPassword, existingPassword);
 	}
 
 	@Transactional
@@ -114,6 +166,7 @@ public class UserService implements UserDetailsService {
 	}
 
 	private User activateUser(User user) {
+
 		user = findUserByEmail(user.getEmail());
 		user.setEnabled(true);
 		return userRepo.save(user);
@@ -127,7 +180,7 @@ public class UserService implements UserDetailsService {
 			throw new ServiceException("user.not.found");
 		}
 
-		VerificationToken token = tokenRepo.save(new VerificationToken(UUID.randomUUID().toString(), registrationRequestTokenExpireInHours, userEmail, accountId));
+		VerificationToken token = tokenRepo.save(new VerificationToken(registrationRequestTokenExpireInHours, user.getId(), accountId));
 		LOGGER.debug("Created new verification token: " + token);
 
 		return token;
@@ -148,7 +201,7 @@ public class UserService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
 		User user = findUserByEmailAndValidate(username);
-		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), buildAuthorities(user.getUserRoles()));
+		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), user.getAuthorities());
 	}
 
 	public boolean emailExist(String email) {
@@ -157,6 +210,10 @@ public class UserService implements UserDetailsService {
 			return true;
 		}
 		return false;
+	}
+
+	public Optional<User> findUserById(String id) {
+		return userRepo.findById(id);
 	}
 
 	public User findUserByEmailAndValidate(String email) {
@@ -172,12 +229,33 @@ public class UserService implements UserDetailsService {
 		return user;
 	}
 
-	private Collection<? extends GrantedAuthority> buildAuthorities(Collection<UserRole> applicationRoles) {
+//	@Override
+//	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+//		authentication.getPrincipal();
+//		authentication.setAuthenticated(true);
+//		return authentication;
+//	}
+//
+//	@Override
+//	public boolean supports(Class<?> authentication) {
+//		if (User.class.isAssignableFrom(authentication)) {
+//			return true;
+//		}
+//		return false;
+//	}
 
-		Collection<SimpleGrantedAuthority> auths = new ArrayList<>();
-		for (UserRole role : applicationRoles) {
-			auths.add(new SimpleGrantedAuthority(role.getAuthority()));
+	public void logoutUser(String token) {
+		Optional<AuthToken> authTokenOptional = authTokenRepo.findById(token);
+
+		if (authTokenOptional.isPresent()) {
+			authTokenRepo.delete(authTokenOptional.get());
 		}
-		return auths;
+	}
+
+	public User addPropertyRefToUser(User user, String id) {
+
+		user.getPropertyRefs().add(id);
+		return userRepo.save(user);
+
 	}
 }

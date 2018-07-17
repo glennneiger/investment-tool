@@ -3,6 +3,7 @@ package com.cloud99.invest.domain;
 import org.springframework.data.annotation.Id;
 
 public class Address implements MongoDocument {
+	private static final long serialVersionUID = -3350152411681350957L;
 
 	@Id
 	private String id;

@@ -5,8 +5,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document
-public interface MongoDocument {
+import java.io.Serializable;
+
+public interface MongoDocument extends Serializable {
 
 	@Id
 	public String getId();

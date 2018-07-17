@@ -1,5 +1,7 @@
 package com.cloud99.invest.domain.financial;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
@@ -64,5 +66,10 @@ public class FinancingDetails {
 
 	public void setLoanTermYears(Double loanTermYears) {
 		this.loanTermYears = loanTermYears;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 }

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
@@ -32,6 +33,7 @@ import java.util.TimeZone;
 @ComponentScan(basePackages = { "com.cloud99.invest" })
 @PropertySource("classpath:application.properties")
 @EnableWebMvc
+@Order(1)
 public class AppConfig {
 
 	public static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS’Z");

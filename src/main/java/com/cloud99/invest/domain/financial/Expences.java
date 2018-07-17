@@ -11,7 +11,7 @@ import java.util.Collection;
 @Document
 public class Expences {
 
-	private Integer vacancyRate = 0;
+	private float vacancyRate = 0.0F;
 	private Collection<ItemizedCost> operatingExpences = new ArrayList<>(0);
 
 	public Money getTotalAnnualOperatingExpences(CurrencyUnit currency) {
@@ -28,11 +28,11 @@ public class Expences {
 		return total;
 	}
 
-	public Integer getVacancyRate() {
+	public Float getVacancyRate() {
 		return vacancyRate;
 	}
 
-	public void setVacancyRate(Integer vacancyRate) {
+	public void setVacancyRate(Float vacancyRate) {
 		this.vacancyRate = vacancyRate;
 	}
 
@@ -43,5 +43,4 @@ public class Expences {
 	public void setOperatingExpences(Collection<ItemizedCost> operatingExpences) {
 		this.operatingExpences = operatingExpences;
 	}
-
 }

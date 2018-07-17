@@ -5,7 +5,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 
+import java.util.UUID;
+
 public class VerificationToken implements MongoDocument {
+	private static final long serialVersionUID = 7857956068873809073L;
 
 	@Id
 	private String id;
@@ -22,10 +25,10 @@ public class VerificationToken implements MongoDocument {
 	public VerificationToken() {
 	}
 
-	public VerificationToken(String token, int expiryTimeInHours, String userEmail, String accountId) {
+	public VerificationToken(int expiryTimeInHours, String userEmail, String accountId) {
 		this.expiryTimeInHours = expiryTimeInHours;
 		expiryDate = calculateExpiryDate(expiryTimeInHours);
-		this.token = token;
+		this.token = UUID.randomUUID().toString();
 		this.userEmail = userEmail;
 		this.accountId = accountId;
 	}
@@ -61,6 +64,7 @@ public class VerificationToken implements MongoDocument {
 		this.userEmail = userEmail;
 	}
 
+	@Transient
 	public DateTime getExpiryDate() {
 		return expiryDate;
 	}
