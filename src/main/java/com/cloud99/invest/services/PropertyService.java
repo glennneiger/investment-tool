@@ -3,7 +3,9 @@ package com.cloud99.invest.services;
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.financial.PropertyFinances;
 import com.cloud99.invest.domain.property.Property;
+import com.cloud99.invest.domain.property.SingleFamilyProperty;
 import com.cloud99.invest.repo.PropertyRepo;
+import com.cloud99.invest.repo.SingleFamilyPropertyRepo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +27,13 @@ public class PropertyService {
 	@Autowired
 	private PropertyRepo propertyRepo;
 	
-	public <T extends Property> T createProperty(T property) {
-		LOGGER.trace("Starting to create a new property: " + property.toJsonString());
+	@Autowired
+	private SingleFamilyPropertyRepo singlePropertyRepo;
 
-		property = propertyRepo.save(property);
+	public <T extends Property> T createProperty(T property) {
+		LOGGER.debug("Starting to create a new property: " + property.toJsonString());
+
+		property = (T) singlePropertyRepo.save((SingleFamilyProperty) property);
 
 		User user = userService.getCurrentSessionUser();
 		userService.addPropertyRefToUser(user, property.getId());

@@ -3,15 +3,19 @@ package com.cloud99.invest.domain;
 import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.repo.extensions.CascadeSave;
 import com.cloud99.invest.validation.PasswordMatches;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -24,11 +28,12 @@ import java.util.Locale;
 
 @PasswordMatches
 @Document
-public class User extends Person implements MongoDocument, Authentication {
+public class User extends Person implements Authentication, UserDetails {
 	private static final long serialVersionUID = 1445414593887068772L;
 
 	@Id
-	private String id;
+	@JsonProperty("_id")
+	private ObjectId id;
 
 	@Indexed
 	@NotNull(message = "required.email")
@@ -56,6 +61,7 @@ public class User extends Person implements MongoDocument, Authentication {
 
 	// mongo objectId references to all properties user has access to
 	@CascadeSave
+	@DBRef
 	private List<String> propertyRefs = new ArrayList<>(0);
 
 	@Override
@@ -112,12 +118,11 @@ public class User extends Person implements MongoDocument, Authentication {
 		this.enabled = enabled;
 	}
 
-	@Override
-	public String getId() {
-		return id;
+	public ObjectId getObjectId() {
+		return this.id;
 	}
 
-	public void setId(String id) {
+	public void setObjectId(ObjectId id) {
 		this.id = id;
 	}
 
@@ -143,11 +148,6 @@ public class User extends Person implements MongoDocument, Authentication {
 
 	public String getMatchingPassword() {
 		return matchingPassword;
-	}
-
-	@Override
-	public String toString() {
-		return toJsonString();
 	}
 
 	public void addUserRole(UserRole role) {
@@ -182,6 +182,26 @@ public class User extends Person implements MongoDocument, Authentication {
 	@Override
 	public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
 		this.setAuthenticated(isAuthenticated);
+	}
+
+	@Override
+	public String getUsername() {
+		return getEmail();
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
 	}
 
 }

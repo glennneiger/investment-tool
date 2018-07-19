@@ -4,10 +4,13 @@ import com.cloud99.invest.domain.MongoDocument;
 import com.cloud99.invest.domain.TimeUnit;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 
+@Document(collection = "property")
 public abstract class SingleUnit extends BaseProperty implements MongoDocument {
+	private static final long serialVersionUID = -6232616464839422314L;
 
 	@Id
 	private String id;
@@ -22,6 +25,10 @@ public abstract class SingleUnit extends BaseProperty implements MongoDocument {
 
 	private BigDecimal grossRent;
 	private TimeUnit grossRentUnit;
+
+	public SingleUnit(PropertyType propertyType) {
+		super(propertyType);
+	}
 
 	public BigDecimal getGrossRent() {
 		return grossRent;

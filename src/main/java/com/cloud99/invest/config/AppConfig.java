@@ -1,11 +1,19 @@
 package com.cloud99.invest.config;
 
 import com.cloud99.invest.util.LoggingRequestInterceptor;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 
+import org.bson.types.ObjectId;
 import org.springframework.boot.jackson.JsonComponentModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -23,6 +31,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +56,21 @@ public class AppConfig {
 		df.setTimeZone(TimeZone.getTimeZone("UTC"));
 		mapper.setDateFormat(df);
 
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+		mapper.registerModule(new SimpleModule() {
+			{
+				addDeserializer(ObjectId.class, new JsonDeserializer<ObjectId>() {
+					@Override
+					public ObjectId deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+						TreeNode oid = p.readValueAsTree().get("$oid");
+						String string = oid.toString().replaceAll("\"", "");
+
+						return new ObjectId(string);
+					}
+				});
+			}
+		});
 		return mapper;
 	}
 

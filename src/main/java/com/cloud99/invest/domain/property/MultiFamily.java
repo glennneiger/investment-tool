@@ -1,6 +1,5 @@
 package com.cloud99.invest.domain.property;
 
-import com.cloud99.invest.domain.Address;
 import com.cloud99.invest.domain.MongoDocument;
 import com.cloud99.invest.repo.extensions.CascadeSave;
 
@@ -11,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class MultiFamily extends BaseProperty implements MongoDocument {
+	private static final long serialVersionUID = -3298223584103684973L;
 
 	@Id
 	private String id;
@@ -19,6 +19,10 @@ public class MultiFamily extends BaseProperty implements MongoDocument {
 	@CascadeSave
 	private Collection<SingleUnit> units = new ArrayList<>(0);
 
+	public MultiFamily() {
+		super(PropertyType.MULTI_FAMILY);
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -34,10 +38,4 @@ public class MultiFamily extends BaseProperty implements MongoDocument {
 	public void setUnits(Collection<SingleUnit> units) {
 		this.units = units;
 	}
-
-	@Override
-	public PropertyType getPropertyType() {
-		return PropertyType.MULTI_FAMILY;
-	}
-
 }

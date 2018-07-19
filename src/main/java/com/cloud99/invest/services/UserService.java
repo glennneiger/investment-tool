@@ -56,7 +56,7 @@ public class UserService implements UserDetailsService {
 
 	public User getCurrentSessionUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		return (User) authentication.getDetails();
+		return (User) authentication.getPrincipal();
 	}
 
 	public User findAndValidateUserByAuthToken(String authToken) {
@@ -92,7 +92,7 @@ public class UserService implements UserDetailsService {
 		if (!validatePassword(user.getPassword(), password)) {
 			throw new ServiceException("invalid.user.or.password");
 		}
-		return createAuthToken(user.getId());
+		return createAuthToken(user.getObjectId().toString());
 	}
 
 	public AuthToken createAuthToken(String userEmail) {
@@ -180,7 +180,7 @@ public class UserService implements UserDetailsService {
 			throw new ServiceException("user.not.found");
 		}
 
-		VerificationToken token = tokenRepo.save(new VerificationToken(registrationRequestTokenExpireInHours, user.getId(), accountId));
+		VerificationToken token = tokenRepo.save(new VerificationToken(registrationRequestTokenExpireInHours, user.getObjectId().toString(), accountId));
 		LOGGER.debug("Created new verification token: " + token);
 
 		return token;
@@ -201,7 +201,7 @@ public class UserService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
 		User user = findUserByEmailAndValidate(username);
-		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), user.getAuthorities());
+		return user;
 	}
 
 	public boolean emailExist(String email) {
