@@ -3,19 +3,15 @@ package com.cloud99.invest.domain;
 import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.repo.extensions.CascadeSave;
 import com.cloud99.invest.validation.PasswordMatches;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -26,47 +22,70 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @PasswordMatches
 @Document
-public class User extends Person implements Authentication, UserDetails {
+public class User extends Person implements MongoDocument, Authentication {
 	private static final long serialVersionUID = 1445414593887068772L;
 
 	@Id
-	@JsonProperty("_id")
-	private ObjectId id;
+	@Getter
+	@Setter
+	private String id;
 
 	@Indexed
 	@NotNull(message = "required.email")
 	@NotEmpty(message = "required.email")
 	@Email
+	@Getter
+	@Setter
 	private String email;
 
 	@NotNull(message = "password.required")
 	@NotEmpty(message = "password.required")
+	@Getter
+	@Setter
 	private String password;
 
 	@NotNull(message = "password.required")
 	@NotEmpty(message = "password.required")
 	@Transient
+	@Getter
+	@Setter
 	private String matchingPassword;
 
+	@Getter
+	@Setter
 	private Locale locale;
+
+	@Getter
+	@Setter
 	private boolean enabled = false;
+
+	@Getter
+	@Setter
 	private boolean isAuthenticated;
 
+	@Getter
+	@Setter
 	private DateTime lastLoginDate;
 
 	@CascadeSave
+	@Getter
+	@Setter
 	private Collection<UserRole> userRoles = new ArrayList<>(0);
 
 	// mongo objectId references to all properties user has access to
 	@CascadeSave
-	@DBRef
+	@Getter
+	@Setter
 	private List<String> propertyRefs = new ArrayList<>(0);
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return buildAuthorities(this.getUserRoles());
+		return buildAuthorities(this.userRoles);
 	}
 
 	private Collection<? extends GrantedAuthority> buildAuthorities(Collection<UserRole> applicationRoles) {
@@ -78,76 +97,9 @@ public class User extends Person implements Authentication, UserDetails {
 		return auths;
 	}
 
-	public List<String> getPropertyRefs() {
-		return propertyRefs;
-	}
-
-	public void setPropertyRefs(List<String> propertyRefs) {
-		this.propertyRefs = propertyRefs;
-	}
-
-	public DateTime getLastLoginDate() {
-		return lastLoginDate;
-	}
-
-	public void setLastLoginDate(DateTime lastLoginDate) {
-		this.lastLoginDate = lastLoginDate;
-	}
-
-	public Locale getLocale() {
-		return locale;
-	}
-
-	public void setLocale(Locale locale) {
-		this.locale = locale;
-	}
-
-	public Collection<UserRole> getUserRoles() {
-		return userRoles;
-	}
-
-	public void setUserRoles(Collection<UserRole> userRoles) {
-		this.userRoles = userRoles;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-
-	public ObjectId getObjectId() {
-		return this.id;
-	}
-
-	public void setObjectId(ObjectId id) {
-		this.id = id;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public void setMatchingPassword(String password) {
-		this.matchingPassword = password;
-	}
-
-	public String getMatchingPassword() {
-		return matchingPassword;
+	@Override
+	public String toString() {
+		return toJsonString();
 	}
 
 	public void addUserRole(UserRole role) {
@@ -174,34 +126,7 @@ public class User extends Person implements Authentication, UserDetails {
 		return this;
 	}
 
-	@Override
-	public boolean isAuthenticated() {
-		return isAuthenticated;
+	public void setUserRoles(List<UserRole> roles) {
+		this.userRoles = roles;
 	}
-
-	@Override
-	public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-		this.setAuthenticated(isAuthenticated);
-	}
-
-	@Override
-	public String getUsername() {
-		return getEmail();
-	}
-
-	@Override
-	public boolean isAccountNonExpired() {
-		return true;
-	}
-
-	@Override
-	public boolean isAccountNonLocked() {
-		return true;
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return true;
-	}
-
 }

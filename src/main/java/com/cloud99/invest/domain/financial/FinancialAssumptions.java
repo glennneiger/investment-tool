@@ -1,64 +1,42 @@
 package com.cloud99.invest.domain.financial;
 
-import org.joda.money.Money;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.math.BigDecimal;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class FinancialAssumptions {
 
+	@Getter
+	@Setter
 	private Float appreciationPercent = 0f;
+
+	@Getter
+	@Setter
 	private Float incomeIncreasePercent = 0f;
+
+	@Getter
+	@Setter
 	private Float expencesIncreasePercent = 0f;
+
+	@Getter
+	@Setter
 	private Float sellingCostPercent = 0f;
+
+	@Getter
+	@Setter
 	private Float vacancyRate = 0f;
+
+	@Getter
+	@Setter
 	private BigDecimal landValue = new BigDecimal(0);
 
-	public Float getVacancyRate() {
-		return vacancyRate;
-	}
-
-	public void setVacancyRate(Float vacancyRate) {
-		this.vacancyRate = vacancyRate;
-	}
-
-	public BigDecimal getLandValue() {
-		return landValue;
-	}
-
-	public void setLandValue(BigDecimal landValue) {
-		this.landValue = landValue;
-	}
-
-	public Float getAppreciationPercent() {
-		return appreciationPercent;
-	}
-
-	public void setAppreciationPercent(Float appreciationPercent) {
-		this.appreciationPercent = appreciationPercent;
-	}
-
-	public Float getIncomeIncreasePercent() {
-		return incomeIncreasePercent;
-	}
-
-	public void setIncomeIncreasePercent(Float incomeIncreasePercent) {
-		this.incomeIncreasePercent = incomeIncreasePercent;
-	}
-
-	public Float getExpencesIncreasePercent() {
-		return expencesIncreasePercent;
-	}
-
-	public void setExpencesIncreasePercent(Float expencesIncreasePercent) {
-		this.expencesIncreasePercent = expencesIncreasePercent;
-	}
-
-	public Float getSellingCostPercent() {
-		return sellingCostPercent;
-	}
-
-	public void setSellingCostPercent(Float sellingCostPercent) {
-		this.sellingCostPercent = sellingCostPercent;
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "/v1/users")
-public class UserController implements Controller {
+public class UserController implements BaseController {
 
 	@Autowired
 	private UserService userService;

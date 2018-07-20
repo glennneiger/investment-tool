@@ -3,17 +3,26 @@ package com.cloud99.invest.dataLoader;
 import com.cloud99.invest.domain.Address;
 import com.cloud99.invest.domain.Name;
 import com.cloud99.invest.domain.Person.Gender;
+import com.cloud99.invest.domain.TimeUnit;
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.account.UserRole;
+import com.cloud99.invest.domain.financial.Expences;
+import com.cloud99.invest.domain.financial.FinancingDetails;
+import com.cloud99.invest.domain.financial.FinancingDetails.LoanType;
+import com.cloud99.invest.domain.financial.Income;
+import com.cloud99.invest.domain.financial.ItemizedCost;
+import com.cloud99.invest.domain.financial.PropertyFinances;
+import com.cloud99.invest.domain.financial.PurchaseDetails;
 import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.domain.property.SingleFamilyProperty;
 import com.cloud99.invest.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.deser.BuilderBasedDeserializer;
 
+import org.joda.money.CurrencyUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 @Component
@@ -25,9 +34,50 @@ public class Loader {
 	private UserService userService;
 
 	public static void main(String[] args) throws Exception {
-		User user = buildUser();
-		Property p = buildProperty();
-		System.out.println(objMapper.writeValueAsString(p));
+		// User user = buildUser();
+		// Property p = buildProperty();
+		PropertyFinances finances = buildPropertyFinances();
+		System.out.println(objMapper.writeValueAsString(finances));
+	}
+
+	private static PropertyFinances buildPropertyFinances() {
+		PropertyFinances cashFlow = new PropertyFinances(buildExpences(), buildIncome(), buildPurchaseDetails(), CurrencyUnit.USD);
+
+		return cashFlow;
+	}
+
+	private static PurchaseDetails buildPurchaseDetails() {
+		PurchaseDetails p = new PurchaseDetails();
+		p.setAfterRepairValue(new BigDecimal(420000));
+		p.setFinancingDetails(buildFinancingDetails());
+		p.setPurchasePrice(new BigDecimal(350000));
+		return p;
+	}
+
+	private static FinancingDetails buildFinancingDetails() {
+		FinancingDetails f = new FinancingDetails();
+		f.setDownPayment(new BigDecimal(20000));
+		f.setInterestRate(4.9F);
+		f.setLoanAmount(new BigDecimal(350000));
+		f.setLoanTermYears(30D);
+		f.setLoanType(LoanType.AMORTIZING);
+		f.setMortgageInsuranceAmount(new BigDecimal(300));
+
+		return f;
+	}
+
+	private static Income buildIncome() {
+		Income i = new Income();
+		i.setDeposit(new BigDecimal(2500));
+		i.setGrossRent(new BigDecimal(2000));
+		i.setRentUnit(TimeUnit.MONTHY);
+		return i;
+	}
+
+	private static Expences buildExpences() {
+		Expences e = new Expences();
+		e.setOperatingExpences(Arrays.asList(new ItemizedCost("Closing costs", new BigDecimal(500), TimeUnit.ANNUALLY)));
+		return e;
 	}
 
 	private static User buildUser() {
@@ -36,7 +86,7 @@ public class Loader {
 		user.setEmail("nickgilas@gmail.com");
 		user.setPassword("password");
 		user.setMatchingPassword("password");
-		user.setName(buildName("Nick", "Gilas"));
+		user.setPersonName(buildName("Nick", "Gilas"));
 		user.setBirthDate(org.joda.time.LocalDate.now().withYear(1980).withMonthOfYear(3).withDayOfMonth(23));
 		user.setGender(Gender.MALE);
 		return user;

@@ -6,22 +6,22 @@ import com.cloud99.invest.domain.account.Account;
 import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.domain.redis.AuthToken;
 import com.cloud99.invest.events.OnRegistrationRequestEvent;
+import com.cloud99.invest.exceptions.EntityNotFoundException;
+import com.cloud99.invest.exceptions.ServiceException;
 import com.cloud99.invest.repo.UserRepo;
 import com.cloud99.invest.repo.VerificationTokenRepo;
 import com.cloud99.invest.repo.redis.AuthTokenRepo;
-import com.cloud99.invest.services.exceptions.EntityNotFoundException;
-import com.cloud99.invest.services.exceptions.ServiceException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -59,10 +59,11 @@ public class UserService implements UserDetailsService {
 		return (User) authentication.getPrincipal();
 	}
 
+	@Cacheable(cacheNames = "investment", key = "#authToken")
 	public User findAndValidateUserByAuthToken(String authToken) {
 
 		if (StringUtils.isBlank(authToken)) {
-			throw new EntityNotFoundException("auth.token.required");
+			throw new ServiceException("auth.token.required", null);
 		}
 
 		Optional<AuthToken> tokenOptional = authTokenRepo.findById(authToken);
@@ -78,7 +79,7 @@ public class UserService implements UserDetailsService {
 		Optional<User> user = userRepo.findById(tokenOptional.get().getUserId());
 
 		if (!user.isPresent() || !user.get().isEnabled()) {
-			throw new ServiceException("user.not.enabled");
+			throw new ServiceException("user.not.enabled", null);
 		}
 		return user.get();
 	}
@@ -87,12 +88,12 @@ public class UserService implements UserDetailsService {
 
 		User user = findUserByEmailAndValidate(userEmail);
 		if (!user.isEnabled()) {
-			throw new ServiceException("user.not.enabled");
+			throw new ServiceException("user.not.enabled", null);
 		}
 		if (!validatePassword(user.getPassword(), password)) {
-			throw new ServiceException("invalid.user.or.password");
+			throw new ServiceException("invalid.user.or.password", null);
 		}
-		return createAuthToken(user.getObjectId().toString());
+		return createAuthToken(user.getId());
 	}
 
 	public AuthToken createAuthToken(String userEmail) {
@@ -110,13 +111,14 @@ public class UserService implements UserDetailsService {
 		LOGGER.debug("Starting to create new user and account: " + user);
 
 		if (emailExist(user.getEmail())) {
-			throw new ServiceException("user.email.exists");
+			throw new ServiceException("user.email.exists", null, user.getEmail());
 		}
 
 		String pwHash = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 		user.setPassword(pwHash);
 		user.setEnabled(false);
 
+		user.setCreateDate(DateTime.now());
 		user.addUserRole(UserRole.FREE_USER);
 
 		user = userRepo.save(user);
@@ -135,17 +137,17 @@ public class UserService implements UserDetailsService {
 		VerificationToken tokenObj = tokenRepo.findByToken(token);
 
 		if (tokenObj == null) {
-			throw new EntityNotFoundException("account.not.found");
+			throw new EntityNotFoundException("Verification token", token);
 		}
 
 		User user = findUserByEmail(tokenObj.getUserEmail());
 		if (user == null) {
-			throw new EntityNotFoundException("user.not.found");
+			throw new EntityNotFoundException("User", tokenObj.getUserEmail());
 		}
 		// has the token expired?
 		if (tokenObj.getExpiryDate().isBeforeNow()) {
 			handlExpiredVerificationToken(tokenObj);
-			throw new ServiceException("registration.token.expire");
+			throw new ServiceException("registration.token.expire", null);
 		}
 		// token is good, activate account and user and delete token
 		Account account = acctService.getAccount(tokenObj.getAccountId());
@@ -177,10 +179,10 @@ public class UserService implements UserDetailsService {
 		
 		User user = findUserByEmail(userEmail);
 		if (user == null) {
-			throw new ServiceException("user.not.found");
+			throw new ServiceException("User", null, userEmail);
 		}
 
-		VerificationToken token = tokenRepo.save(new VerificationToken(registrationRequestTokenExpireInHours, user.getObjectId().toString(), accountId));
+		VerificationToken token = tokenRepo.save(new VerificationToken(registrationRequestTokenExpireInHours, user.getId(), accountId));
 		LOGGER.debug("Created new verification token: " + token);
 
 		return token;
@@ -201,7 +203,7 @@ public class UserService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
 		User user = findUserByEmailAndValidate(username);
-		return user;
+		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), user.getAuthorities());
 	}
 
 	public boolean emailExist(String email) {
@@ -219,7 +221,7 @@ public class UserService implements UserDetailsService {
 	public User findUserByEmailAndValidate(String email) {
 		User user = findUserByEmail(email);
 		if (user == null) {
-			throw new EntityNotFoundException("user.not.found");
+			throw new EntityNotFoundException("User", email);
 		}
 		return user;
 	}
@@ -228,21 +230,6 @@ public class UserService implements UserDetailsService {
 		User user = userRepo.findByEmail(email);
 		return user;
 	}
-
-//	@Override
-//	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-//		authentication.getPrincipal();
-//		authentication.setAuthenticated(true);
-//		return authentication;
-//	}
-//
-//	@Override
-//	public boolean supports(Class<?> authentication) {
-//		if (User.class.isAssignableFrom(authentication)) {
-//			return true;
-//		}
-//		return false;
-//	}
 
 	public void logoutUser(String token) {
 		Optional<AuthToken> authTokenOptional = authTokenRepo.findById(token);

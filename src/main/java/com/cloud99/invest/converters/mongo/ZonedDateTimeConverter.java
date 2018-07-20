@@ -1,4 +1,4 @@
-package com.cloud99.invest.converters;
+package com.cloud99.invest.converters.mongo;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;

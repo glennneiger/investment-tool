@@ -41,5 +41,9 @@ public interface Property extends MongoDocument {
 
 	public FinancingDetails getFinancingDetails();
 
+	public void setFinancingDetails(FinancingDetails details);
+
 	public PropertyFinances getPropertyFinances();
+
+	public void setPropertyFinances(PropertyFinances finances);
 }

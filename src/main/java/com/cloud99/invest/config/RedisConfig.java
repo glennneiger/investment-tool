@@ -20,6 +20,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Order(20)
 public class RedisConfig {
 
+	// TODO - NG - need to create password for redis and inject
 	@Value("${redis.host}")
 	private String hostName;
 
@@ -39,13 +40,6 @@ public class RedisConfig {
 
 		return jedisConFactory;
 	}
-
-	// @Bean
-	// public LettuceConnectionFactory redisConnectionFactory() {
-	//
-	// return new LettuceConnectionFactory(new
-	// RedisStandaloneConfiguration(hostName, port));
-	// }
 
 	@Bean
 	public RedisTemplate<String, Object> redisTemplate() {

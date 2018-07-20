@@ -1,19 +1,37 @@
 package com.cloud99.invest.domain.financial;
 
+import com.cloud99.invest.domain.BaseDomainObject;
+import com.cloud99.invest.domain.MongoDocument;
+
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Document
-public class Expences {
+import lombok.Getter;
+import lombok.Setter;
 
+@Document
+public class Expences extends BaseDomainObject implements MongoDocument {
+	private static final long serialVersionUID = -4305901713759899401L;
+
+	@Getter
+	@Setter
+	private String id;
+
+	@Getter
+	@Setter
 	private float vacancyRate = 0.0F;
+
+	@Getter
+	@Setter
 	private Collection<ItemizedCost> operatingExpences = new ArrayList<>(0);
 
+	@Transient
 	public Money getTotalAnnualOperatingExpences(CurrencyUnit currency) {
 
 		Money total = Money.of(currency, 0);
@@ -28,19 +46,4 @@ public class Expences {
 		return total;
 	}
 
-	public Float getVacancyRate() {
-		return vacancyRate;
-	}
-
-	public void setVacancyRate(Float vacancyRate) {
-		this.vacancyRate = vacancyRate;
-	}
-
-	public Collection<ItemizedCost> getOperatingExpences() {
-		return operatingExpences;
-	}
-
-	public void setOperatingExpences(Collection<ItemizedCost> operatingExpences) {
-		this.operatingExpences = operatingExpences;
-	}
 }

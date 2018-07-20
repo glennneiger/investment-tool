@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -18,6 +19,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 // TODO - NG - need to add a property or class for all of the account settings like # of allowed docs or number of docs that can be stored
+@Document
 public class Account implements MongoDocument {
 
 	public static final String DEFAULT_TIMEZONE = "US/Mountain";

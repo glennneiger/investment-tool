@@ -4,17 +4,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.cloud99.invest.MockitoTest;
 import com.cloud99.invest.domain.TimeUnit;
+import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.services.AnalyzerService;
+import com.cloud99.invest.services.PropertyService;
 
 import org.joda.money.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 
 public class AnalyzerServiceTest extends MockitoTest {
 
-	private AnalyzerService service = new AnalyzerService();
+	@InjectMocks
+	private AnalyzerService service;
+
+	@Mock
+	private PropertyService propServiceMock;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -37,8 +46,14 @@ public class AnalyzerServiceTest extends MockitoTest {
 		PurchaseDetails purchaseDetails = buildPurchaseDetails(purchasePrice, 350000D);
 		purchaseDetails.setFinancingDetails(details);
 
+
 		PropertyFinances cash = new PropertyFinances(expences, income, purchaseDetails, CURRENCY);
-		Money noi = service.calculateNetOperatingIncome(cash);
+		
+		// TODO - NG - implement the buildProperty or get it from Loader
+		Property property = null; // buildProperty();
+
+		Mockito.when(propServiceMock.getProperty(Mockito.anyString())).thenReturn(property);
+		Money noi = service.calculateNetOperatingIncome("somePropId");
 		assertEquals(buildMoney(16500), noi);
 
 	}
@@ -60,7 +75,12 @@ public class AnalyzerServiceTest extends MockitoTest {
 		purchaseDetails.setFinancingDetails(details);
 
 		PropertyFinances cash = new PropertyFinances(expences, income, purchaseDetails, CURRENCY);
-		assertEquals(new Float(.055), service.calculateCapRate(cash));
+
+		// TODO - NG - implement the buildProperty or get it from Loader
+		Property property = null; // buildProperty();
+
+		Mockito.when(propServiceMock.getProperty(Mockito.anyString())).thenReturn(property);
+		assertEquals(new Float(.055), service.calculateCapRate("somePropId"));
 
 	}
 

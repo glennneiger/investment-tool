@@ -1,29 +1,56 @@
 package com.cloud99.invest.domain.financial;
 
+import com.cloud99.invest.domain.BaseDomainObject;
+import com.cloud99.invest.domain.MongoDocument;
+
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Document
-public class PurchaseDetails {
+import lombok.Getter;
+import lombok.Setter;
 
+@Document
+public class PurchaseDetails extends BaseDomainObject implements MongoDocument {
+	private static final long serialVersionUID = -5837071805268532820L;
+
+	@Getter
+	@Setter
+	private String id;
+
+	@Getter
+	@Setter
 	private BigDecimal purchasePrice = new BigDecimal(0);
+
+	@Getter
+	@Setter
 	private BigDecimal afterRepairValue = new BigDecimal(0);
+
+	@Getter
+	@Setter
 	private Collection<ItemizedCost> rehabCosts = new ArrayList<>(0);
+
+	@Getter
+	@Setter
 	private Collection<ItemizedCost> itemizedClosingCosts = new ArrayList<>(0);
 
+	@Getter
+	@Setter
 	private FinancingDetails financingDetails;
 
+	@Transient
 	public Money getTotalPurchaseCost(CurrencyUnit currency) {
 		Money total = Money.of(currency, 0);
 		total = total.plus(purchasePrice).plus(sumItems(currency, itemizedClosingCosts));
 		return total;
 	}
 
+	@Transient
 	public Money sumItems(CurrencyUnit currency, Collection<ItemizedCost> costs) {
 
 		Money total = Money.of(currency, 0);
@@ -32,45 +59,4 @@ public class PurchaseDetails {
 		}
 		return total;
 	}
-
-	public Collection<ItemizedCost> getRehabCosts() {
-		return rehabCosts;
-	}
-
-	public void setRehabCosts(Collection<ItemizedCost> rehabCosts) {
-		this.rehabCosts = rehabCosts;
-	}
-
-	public Collection<ItemizedCost> getItemizedClosingCosts() {
-		return itemizedClosingCosts;
-	}
-
-	public void setItemizedClosingCosts(Collection<ItemizedCost> itemizedClosingCosts) {
-		this.itemizedClosingCosts = itemizedClosingCosts;
-	}
-
-	public FinancingDetails getFinancingDetails() {
-		return financingDetails;
-	}
-
-	public void setFinancingDetails(FinancingDetails financingDetails) {
-		this.financingDetails = financingDetails;
-	}
-
-	public BigDecimal getPurchasePrice() {
-		return purchasePrice;
-	}
-
-	public void setPurchasePrice(BigDecimal purchasePrice) {
-		this.purchasePrice = purchasePrice;
-	}
-
-	public BigDecimal getAfterRepairValue() {
-		return afterRepairValue;
-	}
-
-	public void setAfterRepairValue(BigDecimal afterRepairValue) {
-		this.afterRepairValue = afterRepairValue;
-	}
-
 }

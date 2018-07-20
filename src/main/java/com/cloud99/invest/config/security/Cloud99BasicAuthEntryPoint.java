@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+// TODO - NG - I don't think this class is needed and we can delete it and remove the usage in the WebSecurityConfig
 @Component
 public class Cloud99BasicAuthEntryPoint extends BasicAuthenticationEntryPoint {
 

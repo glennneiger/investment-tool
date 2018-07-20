@@ -1,23 +1,38 @@
 package com.cloud99.invest.services;
 
 import com.cloud99.invest.domain.financial.PropertyFinances;
+import com.cloud99.invest.domain.property.Property;
 
 import org.joda.money.Money;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 
 public class AnalyzerService {
 
-	public Money calculateNetOperatingIncome(PropertyFinances cashFlow) {
+	@Autowired
+	private PropertyService propertyService;
+
+	@Cacheable(cacheNames = { "investment" }, key = "#propertyId.concat('-noi')")
+	public Money calculateNetOperatingIncome(String propertyId) {
+
+		Property property = propertyService.getProperty(propertyId);
+
+		PropertyFinances propertyFinances = property.getPropertyFinances();
+
 		// TODO - NG - need to add in vacancy rate if multi-family
 
 		// Money vacancyAmt =
 		// income.getTotalAnnualOperatingIncome(currency).multipliedBy(expences.getVacancyRate());
 
-		return cashFlow.getIncome().getTotalAnnualOperatingIncome(cashFlow.getCurrency()).minus(cashFlow.getExpences().getTotalAnnualOperatingExpences(cashFlow.getCurrency()));
+		return propertyFinances.getIncome().getTotalAnnualOperatingIncome(propertyFinances.getCurrency()).minus(propertyFinances.getExpences().getTotalAnnualOperatingExpences(propertyFinances.getCurrency()));
 	}
 
-	public Float calculateCapRate(PropertyFinances cashFlow) {
+	@Cacheable(cacheNames = { "investment" }, key = "#propertyId.concat('-capRate')")
+	public Float calculateCapRate(String propertyId) {
 
-		return calculateNetOperatingIncome(cashFlow).getAmount().floatValue() / cashFlow.getPurchaseDetails().getTotalPurchaseCost(cashFlow.getCurrency()).getAmount().floatValue();
+		Property property = propertyService.getProperty(propertyId);
+		PropertyFinances cashFlow = property.getPropertyFinances();
+		return calculateNetOperatingIncome(propertyId).getAmount().floatValue() / cashFlow.getPurchaseDetails().getTotalPurchaseCost(cashFlow.getCurrency()).getAmount().floatValue();
 
 	}
 }

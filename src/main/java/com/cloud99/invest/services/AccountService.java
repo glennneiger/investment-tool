@@ -4,8 +4,8 @@ import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.account.Account;
 import com.cloud99.invest.domain.account.Account.Status;
 import com.cloud99.invest.domain.account.UserRole;
+import com.cloud99.invest.exceptions.EntityNotFoundException;
 import com.cloud99.invest.repo.AccountRepo;
-import com.cloud99.invest.services.exceptions.EntityNotFoundException;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -56,7 +56,7 @@ public class AccountService {
 		if (optional.isPresent()) {
 			return optional.get();
 		} else {
-			throw new EntityNotFoundException(accountId);
+			throw new EntityNotFoundException("account", accountId);
 		}
 	}
 

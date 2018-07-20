@@ -56,11 +56,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	@Override
-	public void configure(final WebSecurity web) {
-		web.ignoring().requestMatchers(PUBLIC_URLS);
-	}
-
-	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 
 		auth.userDetailsService(userService);
@@ -70,18 +65,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http
+		http		
+		.anonymous()
+		.and()
 		.authorizeRequests()
-        .antMatchers("/public/**").permitAll()
+		.antMatchers("/public/**").permitAll()
         .and()
 		.authenticationProvider(tokenAuthenticationProvider())
 		.addFilterBefore(restAuthenticationFilter(), AnonymousAuthenticationFilter.class)
 		.exceptionHandling().defaultAuthenticationEntryPointFor(forbiddenEntryPoint(), PROTECTED_URLS).and()
 		.authorizeRequests().anyRequest().authenticated()
 		.and().formLogin().disable()
-		.httpBasic().disable()
+		.httpBasic()
+		.authenticationEntryPoint(authenticationEntryPoint)
+		.disable()
 		.logout().disable()
 		.csrf().disable();
+//		.rememberMe();
 	}
 
 	@Autowired

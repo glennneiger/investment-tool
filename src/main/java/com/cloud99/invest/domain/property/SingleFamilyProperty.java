@@ -7,17 +7,32 @@ import com.cloud99.invest.domain.TimeUnit;
 import com.cloud99.invest.domain.financial.FinancialAssumptions;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigDecimal;
+
+import lombok.Getter;
 
 @Document(collection = "property")
 public class SingleFamilyProperty extends SingleUnit implements Property, MongoDocument {
 	private static final long serialVersionUID = -7055052204391685075L;
 
+	@Field
+	private String myName;
+
+	public String getMyName() {
+		return myName;
+	}
+
+	public void setMyName(String myName) {
+		this.myName = myName;
+	}
+
 	public SingleFamilyProperty() {
 		super(PropertyType.SINGLE_FAMILY);
 	}
 
+	@Field
 	@Override
 	public BigDecimal getGrossRent() {
 
@@ -78,6 +93,7 @@ public class SingleFamilyProperty extends SingleUnit implements Property, MongoD
 		super.setBedrooms(bedrooms);
 	}
 
+	@Field
 	@Override
 	public Float getBathrooms() {
 

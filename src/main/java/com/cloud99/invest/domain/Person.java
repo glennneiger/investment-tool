@@ -1,11 +1,17 @@
 package com.cloud99.invest.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.security.core.Authentication;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 public abstract class Person {
 
@@ -15,56 +21,28 @@ public abstract class Person {
 
 	@Valid
 	@NotNull(message = "person.name.required")
+	@Getter
+	@Setter
+	// This method cannot be named just "getName()" since that conflicts with the
+	// {@link Authentication} interface used by our internal {@link User}
+	@JsonProperty("name")
 	private Name personName;
 
+	@Getter
+	@Setter
 	private Gender gender;
 
+	@Getter
+	@Setter
 	private LocalDate birthDate;
+
+	@Getter
+	@Setter
 	private DateTime createDate;
+	
+	@Getter
+	@Setter
 	private DateTime updateDate;
 
-	/**
-	 * This method cannot be named just "getName()" since that conflicts with the
-	 * {@link Authentication} interface used by our internal {@link User}
-	 */
-	public Name getPersonName() {
-		return personName;
-	}
-
-	public void setName(Name name) {
-		this.personName = name;
-	}
-
-	public Gender getGender() {
-		return gender;
-	}
-
-	public void setGender(Gender gender) {
-		this.gender = gender;
-	}
-
-	public LocalDate getBirthDate() {
-		return birthDate;
-	}
-
-	public void setBirthDate(LocalDate birthDate) {
-		this.birthDate = birthDate;
-	}
-
-	public DateTime getCreateDate() {
-		return createDate;
-	}
-
-	public void setCreateDate(DateTime createDate) {
-		this.createDate = createDate;
-	}
-
-	public DateTime getUpdateDate() {
-		return updateDate;
-	}
-
-	public void setUpdateDate(DateTime updateDate) {
-		this.updateDate = updateDate;
-	}
 
 }
