@@ -44,14 +44,27 @@ public class PurchaseDetails extends BaseDomainObject implements MongoDocument {
 	private FinancingDetails financingDetails;
 
 	@Transient
+	public Money getTotalMoneyInDeal(CurrencyUnit currency) {
+
+		return getTotalRehabCosts(currency).plus(financingDetails.getDownPayment());
+	}
+
+	@Transient
+	public Money getTotalRehabCosts(CurrencyUnit currency) {
+
+		return summerizeItemCosts(currency, rehabCosts);
+	}
+
+	@Transient
 	public Money getTotalPurchaseCost(CurrencyUnit currency) {
+
 		Money total = Money.of(currency, 0);
-		total = total.plus(purchasePrice).plus(sumItems(currency, itemizedClosingCosts));
+		total = total.plus(purchasePrice).plus(summerizeItemCosts(currency, itemizedClosingCosts));
 		return total;
 	}
 
 	@Transient
-	public Money sumItems(CurrencyUnit currency, Collection<ItemizedCost> costs) {
+	public Money summerizeItemCosts(CurrencyUnit currency, Collection<ItemizedCost> costs) {
 
 		Money total = Money.of(currency, 0);
 		for (ItemizedCost cost : costs) {

@@ -9,6 +9,7 @@ import com.cloud99.invest.domain.financial.ItemizedCost;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -17,8 +18,8 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @ExtendWith(MockitoExtension.class)
-@RunWith(MockitoJUnitRunner.class)
-// @RunWith(JUnitPlatform.class)
+// @RunWith(MockitoJUnitRunner.class)
+@RunWith(JUnitPlatform.class)
 public abstract class MockitoTest {
 
 	public static final CurrencyUnit CURRENCY = CurrencyUnit.USD;
