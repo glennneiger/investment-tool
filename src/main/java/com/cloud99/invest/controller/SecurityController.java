@@ -24,7 +24,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping(path = "/public")
-public class SecurityController implements BaseController {
+public class SecurityController implements Controller {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SecurityController.class);
 
 	@Autowired

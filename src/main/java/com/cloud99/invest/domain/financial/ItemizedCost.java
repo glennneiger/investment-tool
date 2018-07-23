@@ -4,50 +4,31 @@ import com.cloud99.invest.domain.TimeUnit;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-@Document
-public class ItemizedCost {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@NoArgsConstructor
+@AllArgsConstructor
+public class ItemizedCost implements Serializable {
+	private static final long serialVersionUID = 5407793684155600984L;
+
+	@Getter
+	@Setter
 	private String name;
+
+	@Getter
+	@Setter
 	private BigDecimal cost = new BigDecimal(0);
+
+	@Getter
+	@Setter
 	private TimeUnit numberOfPeriodsAnnually;
-
-	public ItemizedCost() {
-	}
-
-	public ItemizedCost(String name, BigDecimal cost, TimeUnit numberOfPeriodsAnnually) {
-		super();
-		this.name = name;
-		this.cost = cost;
-		this.numberOfPeriodsAnnually = numberOfPeriodsAnnually;
-	}
-
-	public TimeUnit getNumberOfPeriodsAnnually() {
-		return numberOfPeriodsAnnually;
-	}
-
-	public void setNumberOfPeriodsAnnually(TimeUnit numberOfPeriodsAnnually) {
-		this.numberOfPeriodsAnnually = numberOfPeriodsAnnually;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public BigDecimal getCost() {
-		return cost;
-	}
-
-	public void setCost(BigDecimal cost) {
-		this.cost = cost;
-	}
 
 	@Override
 	public String toString() {

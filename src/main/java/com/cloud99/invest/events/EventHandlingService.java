@@ -40,7 +40,7 @@ public class EventHandlingService {
 		LOGGER.debug("registrationRequestHandler invoked for event: " + event);
 
 		String userEmail = event.getUserEmail();
-		User user = userService.findUserByEmail(userEmail);
+		User user = userService.findUserByEmailAndValidate(userEmail);
 		Account acct = event.getAccount();
 		VerificationToken token = userService.createVerificationToken(userEmail, acct.getId());
 

@@ -6,6 +6,8 @@ import com.cloud99.invest.domain.TimeUnit;
 
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
@@ -15,6 +17,7 @@ import lombok.Setter;
 
 public class Income extends BaseDomainObject implements MongoDocument {
 	private static final long serialVersionUID = 4657190579372392482L;
+	private static final Logger LOGGER = LoggerFactory.getLogger(Income.class);
 
 	@Getter
 	@Setter
@@ -50,25 +53,33 @@ public class Income extends BaseDomainObject implements MongoDocument {
 	@Transient
 	public Money getTotalAnnualOperatingIncome(CurrencyUnit currency) {
 
-		return getAnnualRentalIncome(currency).plus(getAnnualOtherIncome(currency));
+		Money m = getAnnualRentalIncome(currency).plus(getAnnualOtherIncome(currency));
+		LOGGER.debug(m + " - total annual rental income");
+		return m;
 	}
 
 	@Transient
 	public Money getAnnualRentalIncome(CurrencyUnit currency) {
 
-		return Money.of(currency, grossRent.multiply(new BigDecimal(rentUnit.getAnnualPeriods())));
+		Money income = Money.of(currency, grossRent.multiply(new BigDecimal(rentUnit.getAnnualPeriods())));
+		LOGGER.debug(income.getAmount() + " - annual rental income");
+		return income;
 	}
 
 	@Transient
 	public Money getAnnualOtherIncome(CurrencyUnit currency) {
 
-		return Money.of(currency, otherIncome.multiply(new BigDecimal(otherIncomeUnit.getAnnualPeriods())));
+		Money m = Money.of(currency, otherIncome.multiply(new BigDecimal(otherIncomeUnit.getAnnualPeriods())));
+		LOGGER.debug(m.getAmount() + " - Other annual income: " + m);
+		return m;
 	}
 
 	@Transient
 	public Money getTotalOperatingIncome(CurrencyUnit currency) {
 		Money total = Money.of(currency, 0);
-		return total.plus(grossRent).plus(otherIncome);
+		Money income = total.plus(grossRent).plus(otherIncome);
+		LOGGER.debug(income.getAmount() + " - total operating income");
+		return income;
 	}
 
 }

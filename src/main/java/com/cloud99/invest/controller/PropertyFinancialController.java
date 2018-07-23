@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "/v1/users/properties")
-public class PropertyFinancialController implements BaseController {
+public class PropertyFinancialController implements Controller {
 
 	@Autowired
 	private PropertyService propertyService;
@@ -33,5 +33,10 @@ public class PropertyFinancialController implements BaseController {
 	public PropertyFinances createPropertyFinances(@PathVariable String propertyId, @RequestBody PropertyFinances propFinances) {
 
 		return propertyService.createPropertyFinances(propertyId, propFinances);
+	}
+
+	@GetMapping(path = "/{propertyId}/", produces = JSON)
+	public void calcualteFlip() {
+
 	}
 }

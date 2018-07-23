@@ -1,10 +1,18 @@
 package com.cloud99.invest.domain.financial;
 
+import com.cloud99.invest.services.validationGroups.AmortizingGroup;
+import com.cloud99.invest.services.validationGroups.InterestOnlyGroup;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotNull;
+
 import java.math.BigDecimal;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Document
 public class FinancingDetails {
@@ -13,60 +21,33 @@ public class FinancingDetails {
 		AMORTIZING, INTEREST_ONLY, CASH
 	}
 
+	@Getter
+	@Setter
+	@NotNull(message = "loan.type.required")
 	private LoanType loanType;
+
+	@Getter
+	@Setter
+	@NotNull(message = "loan.amount.required")
 	private BigDecimal loanAmount;
-	private BigDecimal downPayment;
+
+	@Getter
+	@Setter
+	private BigDecimal downPayment = new BigDecimal(0);
+
+	@Getter
+	@Setter
+	@NotNull(message = "interest.rate.required", groups = AmortizingGroup.class)
 	private Float interestRate;
+
+	@Getter
+	@Setter
+	@NotNull(message = "loan.term.required", groups = { AmortizingGroup.class, InterestOnlyGroup.class })
 	private Double loanTermYears;
+
+	@Getter
+	@Setter
 	private BigDecimal mortgageInsuranceAmount;
-
-	public BigDecimal getMortgageInsuranceAmount() {
-		return mortgageInsuranceAmount;
-	}
-
-	public void setMortgageInsuranceAmount(BigDecimal mortgageInsuranceAmount) {
-		this.mortgageInsuranceAmount = mortgageInsuranceAmount;
-	}
-
-	public LoanType getLoanType() {
-		return loanType;
-	}
-
-	public void setLoanType(LoanType loanType) {
-		this.loanType = loanType;
-	}
-
-	public BigDecimal getLoanAmount() {
-		return loanAmount;
-	}
-
-	public void setLoanAmount(BigDecimal loanAmount) {
-		this.loanAmount = loanAmount;
-	}
-
-	public BigDecimal getDownPayment() {
-		return downPayment;
-	}
-
-	public void setDownPayment(BigDecimal downPayment) {
-		this.downPayment = downPayment;
-	}
-
-	public Float getInterestRate() {
-		return interestRate;
-	}
-
-	public void setInterestRate(Float interestRate) {
-		this.interestRate = interestRate;
-	}
-
-	public Double getLoanTermYears() {
-		return loanTermYears;
-	}
-
-	public void setLoanTermYears(Double loanTermYears) {
-		this.loanTermYears = loanTermYears;
-	}
 
 	@Override
 	public String toString() {

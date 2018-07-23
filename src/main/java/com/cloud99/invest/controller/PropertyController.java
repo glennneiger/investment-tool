@@ -23,7 +23,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping(path = "/v1/users/properties")
-public class PropertyController implements BaseController {
+public class PropertyController implements Controller {
 
 	@Autowired
 	private PropertyService propertyService;
