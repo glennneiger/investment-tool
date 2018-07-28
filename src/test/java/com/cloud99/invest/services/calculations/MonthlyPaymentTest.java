@@ -6,11 +6,11 @@ import com.cloud99.invest.services.calculations.Calculation.CalculationType;
 
 import org.joda.money.Money;
 
-public class AnnualDebtServiceTest extends BaseCalculationsTest {
+public class MonthlyPaymentTest extends BaseCalculationsTest {
 
 	@Override
 	public CalculationType getCalculationType() {
-		return CalculationType.ANNUAL_DEBT_SERVICE;
+		return CalculationType.MONTHLY_PAYMENT;
 	}
 
 	@Override
@@ -20,9 +20,8 @@ public class AnnualDebtServiceTest extends BaseCalculationsTest {
 
 	@Override
 	public <T> void assertResult(T result) {
-		Money expected = Money.of(CURRENCY, (1520.06D * 12));
+		Money expected = Money.of(CURRENCY, 1520.06D);
 		assertEquals(expected, result);
-
 	}
 
 }

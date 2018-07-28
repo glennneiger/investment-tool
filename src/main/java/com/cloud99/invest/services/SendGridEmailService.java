@@ -28,6 +28,8 @@ public class SendGridEmailService implements EmailService {
 	@Override
 	public void sentUserRegistrationConfirmationEmail(User user, String appUrl) {
 
+		// TODO - NG - add configuration property to specify base URL and then tack on
+		// the appUrl
 		SimpleMailMessage email = new SimpleMailMessage();
 		email.setTo(user.getEmail());
 		email.setSubject(messages.getMessage("user.registration.request.subject", null, user.getLocale()));

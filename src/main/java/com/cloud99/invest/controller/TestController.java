@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+// TODO - NG - delete after testing foo!
 @RestController
 @RequestMapping(path = "/test")
 public class TestController {

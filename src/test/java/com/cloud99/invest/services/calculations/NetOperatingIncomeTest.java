@@ -4,25 +4,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.cloud99.invest.services.calculations.Calculation.CalculationType;
 
-import org.joda.money.Money;
-
-public class AnnualDebtServiceTest extends BaseCalculationsTest {
+public class NetOperatingIncomeTest extends BaseCalculationsTest {
 
 	@Override
 	public CalculationType getCalculationType() {
-		return CalculationType.ANNUAL_DEBT_SERVICE;
+		return CalculationType.NOI;
 	}
 
 	@Override
 	public double getLoanAmount() {
-		return 300000;
+		return 250000D;
 	}
 
 	@Override
 	public <T> void assertResult(T result) {
-		Money expected = Money.of(CURRENCY, (1520.06D * 12));
-		assertEquals(expected, result);
-
+		assertEquals(buildMoney(25000), result);
 	}
 
 }

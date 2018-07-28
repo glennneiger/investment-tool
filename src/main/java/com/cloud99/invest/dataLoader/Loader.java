@@ -3,7 +3,7 @@ package com.cloud99.invest.dataLoader;
 import com.cloud99.invest.domain.Address;
 import com.cloud99.invest.domain.Name;
 import com.cloud99.invest.domain.Person.Gender;
-import com.cloud99.invest.domain.TimeUnit;
+import com.cloud99.invest.domain.Frequency;
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.domain.financial.Expences;
@@ -30,14 +30,30 @@ public class Loader {
 
 	public static ObjectMapper objMapper = new ObjectMapper();
 
-	@Autowired
-	private UserService userService;
-
 	public static void main(String[] args) throws Exception {
 		// User user = buildUser();
 		// Property p = buildProperty();
-		PropertyFinances finances = buildPropertyFinances();
-		System.out.println(objMapper.writeValueAsString(finances));
+		buildTypicalClosingCosts();
+	}
+
+	public static void buildTypicalClosingCosts() throws Exception {
+		ObjectMapper m = new ObjectMapper();
+		String[] items = { "Loan Origination Fee", "Discount Fee", "Processing Fee", "Underwriting Fee", "Wire Transfer", "Credit Report", "Tax Service", "Flood Certification", "Title Insurance", "Escrow", "Courier Fee", "Appraisal", "Recording Fee",
+				"Homeowner’s Insurance first year premium", "6 Months’ Property Tax Reserves" };
+
+		for (String item : items) {
+			System.out.println(m.writeValueAsString(new ItemizedCost(item, new BigDecimal(0), Frequency.SINGLE)) + ",");
+		}
+	}
+
+	public static void buildTypicalExpences(String[] args) throws Exception {
+		ObjectMapper m = new ObjectMapper();
+		String[] items = { "Accounting", "License Fees", "Maintenance", "Advertising", "Office Expenses", "Supplies", "Attorny and Legal Fees", "Insurance", "Property Managment", "Property Taxes", "Travel", "Leasing Commissions",
+				"Salary and Wages" };
+
+		for (String item : items) {
+			System.out.println(m.writeValueAsString(new ItemizedCost(item, new BigDecimal(0), Frequency.MONTHY)) + ",");
+		}
 	}
 
 	private static PropertyFinances buildPropertyFinances() {
@@ -70,13 +86,13 @@ public class Loader {
 		Income i = new Income();
 		i.setDeposit(new BigDecimal(2500));
 		i.setGrossRent(new BigDecimal(2000));
-		i.setRentUnit(TimeUnit.MONTHY);
+		i.setRentUnit(Frequency.MONTHY);
 		return i;
 	}
 
 	private static Expences buildExpences() {
 		Expences e = new Expences();
-		e.setOperatingExpences(Arrays.asList(new ItemizedCost("Closing costs", new BigDecimal(500), TimeUnit.ANNUALLY)));
+		e.setOperatingExpences(Arrays.asList(new ItemizedCost("Closing costs", new BigDecimal(500), Frequency.ANNUALLY)));
 		return e;
 	}
 

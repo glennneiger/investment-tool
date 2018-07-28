@@ -58,11 +58,11 @@ public class User extends Person implements MongoDocument, Authentication {
 
 	@Getter
 	@Setter
-	private Locale locale;
+	private Locale locale = Locale.getDefault();
 
 	@Getter
 	@Setter
-	private boolean enabled = false;
+	private boolean enabled;
 
 	@Getter
 	@Setter
@@ -126,7 +126,4 @@ public class User extends Person implements MongoDocument, Authentication {
 		return this;
 	}
 
-	public void setUserRoles(List<UserRole> roles) {
-		this.userRoles = roles;
-	}
 }

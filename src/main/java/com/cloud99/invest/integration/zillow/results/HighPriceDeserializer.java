@@ -17,8 +17,12 @@ public class HighPriceDeserializer extends JsonDeserializer<High> {
 		ObjectCodec oc = jp.getCodec();
 		JsonNode node = oc.readTree(jp);
 
-		JsonNode content = node.get("");
 		High high = new High();
+		JsonNode content = node.get("");
+
+		if (content == null) {
+			return high;
+		}
 		high.setContent(content.asDouble());
 		high.setCurrency(node.get("currency").asText());
 

@@ -16,9 +16,12 @@ public class LowPriceDeserializer extends JsonDeserializer<Low> {
 
 		ObjectCodec oc = jp.getCodec();
 		JsonNode node = oc.readTree(jp);
-		Low low = new Low();
 
+		Low low = new Low();
 		JsonNode content = node.get("");
+		if (content == null) {
+			return low;
+		}
 		low.setContent(content.asDouble());
 		low.setCurrency(node.get("currency").asText());
 		return low;

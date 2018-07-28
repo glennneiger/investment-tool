@@ -4,7 +4,6 @@ import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 import com.cloud99.invest.converters.mongo.ZonedDateTimeConverter;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
@@ -12,17 +11,14 @@ import com.mongodb.ServerAddress;
 
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.CustomConversions;
-import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
-import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import java.util.ArrayList;
@@ -39,7 +35,7 @@ public class MongoConfig extends AbstractMongoConfiguration {
 	private String hostName;
 
 	@Value("${mongo.port}")
-	private Integer port;
+	private int port;
 
 	@Value("${mongo.user.name}")
 	private String userName;
@@ -47,7 +43,7 @@ public class MongoConfig extends AbstractMongoConfiguration {
 	@Value("${mongo.user.password}")
 	private String password;
 
-	private List<Converter<?, ?>> converters = new ArrayList<Converter<?, ?>>();
+	private List<Converter<?, ?>> converters = new ArrayList<>();
 
     @Override
     public MongoClient mongoClient() {

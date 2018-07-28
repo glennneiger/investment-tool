@@ -37,7 +37,6 @@ public class Cloud99SimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthe
 			return;
 		}
 
-
 		clearAuthenticationAttributes(request);
 	}
 

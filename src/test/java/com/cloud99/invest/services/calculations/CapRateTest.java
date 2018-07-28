@@ -4,25 +4,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.cloud99.invest.services.calculations.Calculation.CalculationType;
 
-import org.joda.money.Money;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
-public class AnnualDebtServiceTest extends BaseCalculationsTest {
+public class CapRateTest extends BaseCalculationsTest {
 
 	@Override
 	public CalculationType getCalculationType() {
-		return CalculationType.ANNUAL_DEBT_SERVICE;
+		return CalculationType.CAP_RATE;
 	}
 
 	@Override
 	public double getLoanAmount() {
-		return 300000;
+		return 300000D;
 	}
 
 	@Override
 	public <T> void assertResult(T result) {
-		Money expected = Money.of(CURRENCY, (1520.06D * 12));
-		assertEquals(expected, result);
-
+		assertEquals(new BigDecimal(0.0694).setScale(4, RoundingMode.HALF_EVEN), result);
 	}
 
 }

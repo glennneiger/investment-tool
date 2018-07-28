@@ -19,6 +19,9 @@ public class AmountJsonDeserializer extends JsonDeserializer<Amount> {
 		Amount amount = new Amount();
 
 		JsonNode content = node.get("");
+		if (content == null) {
+			return amount;
+		}
 		amount.setContent(content.asDouble());
 		amount.setCurrency(node.get("currency").asText());
 		return amount;

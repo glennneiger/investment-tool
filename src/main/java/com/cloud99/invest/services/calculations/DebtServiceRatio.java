@@ -23,7 +23,7 @@ public class DebtServiceRatio implements Calculation<Double> {
 		Money annualDebtService = (Money) allCalculations.get(CalculationType.ANNUAL_DEBT_SERVICE).calculate(propertyFinances, allCalculations);
 
 		Money ratio = noi.dividedBy(annualDebtService.getAmount(), RoundingMode.HALF_EVEN);
-		LOGGER.debug("Debt service ratio: " + ratio);
+		LOGGER.debug("Debt service ratio:\t" + ratio);
 
 		return ratio.getAmount().doubleValue();
 	}

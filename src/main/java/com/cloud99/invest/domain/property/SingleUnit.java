@@ -1,7 +1,7 @@
 package com.cloud99.invest.domain.property;
 
 import com.cloud99.invest.domain.MongoDocument;
-import com.cloud99.invest.domain.TimeUnit;
+import com.cloud99.invest.domain.Frequency;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -51,7 +51,7 @@ public abstract class SingleUnit extends BaseProperty implements MongoDocument {
 
 	@Getter
 	@Setter
-	private TimeUnit grossRentUnit;
+	private Frequency grossRentUnit;
 
 	public SingleUnit(PropertyType propertyType) {
 		super(propertyType);

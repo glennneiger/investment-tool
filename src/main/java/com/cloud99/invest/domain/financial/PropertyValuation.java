@@ -14,6 +14,7 @@ import lombok.Setter;
  * zillow
  */
 public class PropertyValuation extends BaseDomainObject implements MongoDocument {
+	private static final long serialVersionUID = -8588143174207294793L;
 
 	@Getter
 	@Setter

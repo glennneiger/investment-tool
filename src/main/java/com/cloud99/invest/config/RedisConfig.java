@@ -25,7 +25,7 @@ public class RedisConfig {
 	private String hostName;
 
 	@Value("${redis.port}")
-	private Integer port;
+	private int port;
 
 	@Value("${redis.database}")
 	private String database;
@@ -46,7 +46,7 @@ public class RedisConfig {
 		RedisTemplate<String, Object> template = new RedisTemplate<>();
 		template.setConnectionFactory(jedisConnectionFactory());
 		template.setKeySerializer(new StringRedisSerializer());
-		template.setValueSerializer(new Jackson2JsonRedisSerializer(Object.class));
+		template.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
 		return template;
 	}
 }

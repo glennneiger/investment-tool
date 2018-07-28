@@ -21,7 +21,7 @@ public class AuthToken implements Serializable {
 
 	private String userId;
 
-	private long expiryDate;
+	private Long expiryDate;
 
 	// TODO - NG - move this to a config property
 	private int expiryTimeInHours = 24;
@@ -29,6 +29,7 @@ public class AuthToken implements Serializable {
 	@Transient
 	private DateTime expiryDateTime;
 
+	@SuppressWarnings("boxing")
 	public AuthToken(String userId) {
 		this.userId = userId;
 		token = UUID.randomUUID().toString();

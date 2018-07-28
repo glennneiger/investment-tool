@@ -2,7 +2,7 @@ package com.cloud99.invest.domain.financial;
 
 import com.cloud99.invest.domain.BaseDomainObject;
 import com.cloud99.invest.domain.MongoDocument;
-import com.cloud99.invest.domain.TimeUnit;
+import com.cloud99.invest.domain.Frequency;
 
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.Transient;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,23 +27,23 @@ public class Income extends BaseDomainObject implements MongoDocument {
 
 	@Getter
 	@Setter
-	private BigDecimal deposit = new BigDecimal(0);
+	private BigDecimal deposit = new BigDecimal(0, new MathContext(2, RoundingMode.HALF_EVEN));
 
 	@Getter
 	@Setter
-	private BigDecimal grossRent = new BigDecimal(0);
+	private BigDecimal grossRent = new BigDecimal(0, new MathContext(2, RoundingMode.HALF_EVEN));
 
 	@Getter
 	@Setter
-	private TimeUnit rentUnit = TimeUnit.MONTHY;
+	private Frequency rentUnit = Frequency.MONTHY;
 
 	@Getter
 	@Setter
-	private BigDecimal otherIncome = new BigDecimal(0);
+	private BigDecimal otherIncome = new BigDecimal(0, new MathContext(2, RoundingMode.HALF_EVEN));
 
 	@Getter
 	@Setter
-	private TimeUnit otherIncomeUnit = TimeUnit.MONTHY;
+	private Frequency otherIncomeUnit = Frequency.MONTHY;
 
 	@Transient
 	public Money getTotalIncome(CurrencyUnit currency) {
@@ -61,7 +63,7 @@ public class Income extends BaseDomainObject implements MongoDocument {
 	@Transient
 	public Money getAnnualRentalIncome(CurrencyUnit currency) {
 
-		Money income = Money.of(currency, grossRent.multiply(new BigDecimal(rentUnit.getAnnualPeriods())));
+		Money income = Money.of(currency, grossRent.multiply(new BigDecimal(rentUnit.getAnnualPeriods(), new MathContext(2, RoundingMode.HALF_EVEN))));
 		LOGGER.debug(income.getAmount() + " - annual rental income");
 		return income;
 	}
@@ -69,7 +71,7 @@ public class Income extends BaseDomainObject implements MongoDocument {
 	@Transient
 	public Money getAnnualOtherIncome(CurrencyUnit currency) {
 
-		Money m = Money.of(currency, otherIncome.multiply(new BigDecimal(otherIncomeUnit.getAnnualPeriods())));
+		Money m = Money.of(currency, otherIncome.multiply(new BigDecimal(otherIncomeUnit.getAnnualPeriods(), new MathContext(2, RoundingMode.HALF_EVEN))));
 		LOGGER.debug(m.getAmount() + " - Other annual income: " + m);
 		return m;
 	}

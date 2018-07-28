@@ -4,18 +4,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.springframework.security.core.Authentication;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 
-public abstract class Person {
+/**
+ * Domain object representation of a person
+ */
+@NoArgsConstructor
+@SuppressWarnings("PMD.CommentRequired")
+public class Person {
 
-	public static enum Gender {
+	/**
+	 * Enum for setting the gender on a person
+	 */
+	public enum Gender {
 		MALE, FEMALE
 	}
 

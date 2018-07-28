@@ -1,5 +1,8 @@
 package com.cloud99.invest.domain;
 
+/**
+ * Defines the parking type a property has
+ */
 public enum ParkingType {
 	NONE("None"),
 	GARAGE("Garage"),
@@ -8,13 +11,13 @@ public enum ParkingType {
 	OFF_STREET("Off Street"),
 	ON_STREET("On Street");
 	
-	private String name;
+	private final String name;
 
 	private ParkingType(String name) {
 		this.name = name;
 	}
 	
 	public String getName() {
-		return name;
+		return this.name;
 	}
 }

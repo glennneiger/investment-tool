@@ -45,8 +45,9 @@ import java.util.TimeZone;
 @Order(1)
 public class AppConfig {
 
-	public static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS’Z");
+	public final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS’Z");
 
+	@SuppressWarnings("serial")
 	@Bean
 	public ObjectMapper objectMapper() {
 

@@ -4,6 +4,7 @@ import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.financial.PropertyFinances;
 import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.exceptions.EntityNotFoundException;
+import com.cloud99.invest.exceptions.ServiceException;
 import com.cloud99.invest.repo.PropertyFinancesRepo;
 import com.cloud99.invest.repo.PropertyRepo;
 
@@ -32,23 +33,26 @@ public class PropertyService {
 	@Autowired
 	private PropertyFinancesRepo financesRepo;
 
-	public <T extends Property> T createProperty(T property) {
+	public <T extends Property> T createProperty(String userEmail, T property) {
 		LOGGER.debug("Starting to create a new property: " + property.toJsonString());
 
-		property = (T) propertyRepo.save(property);
+		// validate user
+		User user = userService.findUserByEmailAndValidate(userEmail);
 
-		User user = userService.getCurrentSessionUser();
+		Property dbProperty = propertyRepo.save(property);
+
 		user.setPropertyRefs(new ArrayList<>());
 
-		userService.addPropertyRefToUser(user, property.getId());
+		userService.addPropertyRefToUser(user, dbProperty.getId());
 
 		return property;
 	}
 
-	public Iterable<Property> getPropertyDetails(Collection<String> userPropertyRefs) {
-		LOGGER.trace("getProperty() : " + userPropertyRefs);
+	public Iterable<Property> getPropertyDetails(String userEmail) {
+		LOGGER.trace("getProperty() : " + userEmail);
 
-		return propertyRepo.findAllById(convertIteratorToIterable(userPropertyRefs.iterator()));
+		User user = userService.findUserByEmailAndValidate(userEmail);
+		return propertyRepo.findAllById(convertIteratorToIterable(user.getPropertyRefs().iterator()));
 
 	}
 
@@ -57,7 +61,8 @@ public class PropertyService {
 		propertyRepo.delete(property);
 	}
 
-	public Property updateProperty(@Valid Property property) {
+	public Property updateProperty(String userEmail, @Valid Property property) {
+		userService.findUserByEmailAndValidate(userEmail);
 		return propertyRepo.save(property);
 	}
 
@@ -66,12 +71,11 @@ public class PropertyService {
 		Optional<Property> prop = propertyRepo.findById(propertyId);
 		if (!prop.isPresent()) {
 			throw new EntityNotFoundException("Property ID", propertyId);
-		} else {
-			Property property = prop.get();
-			property.setPropertyFinances(propFinances);
-			propertyRepo.save(property);
-			return property.getPropertyFinances();
 		}
+		Property property = prop.get();
+		property.setPropertyFinances(propFinances);
+		propertyRepo.save(property);
+		return property.getPropertyFinances();
 
 	}
 
@@ -84,15 +88,14 @@ public class PropertyService {
 		return optional.get();
 	}
 
-	/**
-	 * Quick easy Java 8 way to convert an Iterator into an Iterable
-	 */
-	private <T> Iterable<T> convertIteratorToIterable(Iterator<T> iter) {
-		return () -> iter;
-	}
+	public void deleteProperty(String userEmail, String propertyId) {
+		User user = userService.findUserByEmailAndValidate(userEmail);
 
-	public void deleteProperty(String propertyId) {
-		propertyRepo.deleteById(propertyId);
+		if (user.getPropertyRefs().contains(propertyId)) {
+			propertyRepo.deleteById(propertyId);
+		} else {
+			throw new ServiceException("user.not.authorized.property", null, propertyId);
+		}
 	}
 
 	public Property getProperty(String propertyId) {
@@ -102,6 +105,12 @@ public class PropertyService {
 			throw new EntityNotFoundException("Property", propertyId);
 		}
 		return optional.get();
+	}
 
+	/**
+	 * Quick easy Java 8 way to convert an Iterator into an Iterable
+	 */
+	private <T> Iterable<T> convertIteratorToIterable(Iterator<T> iter) {
+		return () -> iter;
 	}
 }

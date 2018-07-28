@@ -18,9 +18,11 @@ public class ValueChangeDeserializer extends JsonDeserializer<ValueChange> {
 		ObjectCodec oc = jp.getCodec();
 		JsonNode node = oc.readTree(jp);
 
-		JsonNode content = node.get("");
 		ValueChange obj = new ValueChange();
-
+		JsonNode content = node.get("");
+		if (content == null) {
+			return obj;
+		}
 		obj.setContent(Double.valueOf(content.asText()));
 		obj.setCurrency(node.get("currency").asText());
 		obj.setDuration(node.get("duration").asInt());

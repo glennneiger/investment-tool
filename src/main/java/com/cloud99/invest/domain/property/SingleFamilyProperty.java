@@ -3,7 +3,7 @@ package com.cloud99.invest.domain.property;
 import com.cloud99.invest.domain.Address;
 import com.cloud99.invest.domain.MongoDocument;
 import com.cloud99.invest.domain.ParkingType;
-import com.cloud99.invest.domain.TimeUnit;
+import com.cloud99.invest.domain.Frequency;
 import com.cloud99.invest.domain.financial.FinancialAssumptions;
 
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -46,13 +46,13 @@ public class SingleFamilyProperty extends SingleUnit implements Property, MongoD
 	}
 
 	@Override
-	public TimeUnit getGrossRentUnit() {
+	public Frequency getGrossRentUnit() {
 
 		return super.getGrossRentUnit();
 	}
 
 	@Override
-	public void setGrossRentUnit(TimeUnit grossRentUnit) {
+	public void setGrossRentUnit(Frequency grossRentUnit) {
 
 		super.setGrossRentUnit(grossRentUnit);
 	}

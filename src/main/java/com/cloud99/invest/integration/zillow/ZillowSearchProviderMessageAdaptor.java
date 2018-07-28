@@ -10,14 +10,16 @@ import com.cloud99.invest.integration.zillow.results.SearchResults;
 import com.cloud99.invest.integration.zillow.results.Zestimate;
 import com.cloud99.invest.util.Util;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@AllArgsConstructor
 public class ZillowSearchProviderMessageAdaptor implements MessageAdaptor<PropertyValuationResult, SearchResults> {
 
+	@Setter
 	private Util util;
-
-	public ZillowSearchProviderMessageAdaptor(Util util) {
-		super();
-		this.util = util;
-	}
 
 	/* (non-Javadoc)
 	 * @see com.cloud99.invest.investmenttool.integration.providers.Message#convert(com.cloud99.invest.investmenttool.integration.zillow.results.SearchResults)
@@ -79,7 +81,4 @@ public class ZillowSearchProviderMessageAdaptor implements MessageAdaptor<Proper
 		return new Address(address.getStreet(), address.getCity(), address.getState(), address.getZipcode());
 	}
 
-	public void setUtil(Util util) {
-		this.util = util;
-	}
 }

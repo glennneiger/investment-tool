@@ -2,42 +2,34 @@ package com.cloud99.invest.domain.financial;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.cloud99.invest.MockitoTest;
-import com.cloud99.invest.domain.TimeUnit;
+import com.cloud99.invest.BaseFinancialTest;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
+import java.math.RoundingMode;
 
-class PurchaseDetailsTest extends MockitoTest {
+class PurchaseDetailsTest extends BaseFinancialTest {
 
 	@InjectMocks
 	private PurchaseDetails purchaseDetails;
-
-	@BeforeEach
-	void setUp() throws Exception {
-	}
 
 	@Test
 	void testGetTotalPurchaseCost() {
 
 		double downPayment = 20000;
 		double loanAmt = 300000;
-		purchaseDetails.setAfterRepairValue(new BigDecimal(325000));
+		double rehabCosts = 15000;
+		double closingCost1 = 550;
+		double closingCost2 = 12475;
+		purchaseDetails.setPurchasePrice(new BigDecimal(loanAmt));
 		purchaseDetails.setFinancingDetails(buildFinancingDetails(loanAmt, downPayment, 4.5f));
-		purchaseDetails.setItemizedClosingCosts(buildItemizedCost(550, 12475));
-		assertEquals(550 + 12475 + loanAmt, purchaseDetails.getTotalPurchaseCost(CURRENCY));
+		purchaseDetails.setItemizedClosingCosts(buildMonthlyItemizedCost(closingCost1, closingCost2));
+		purchaseDetails.setRehabCosts(buildItemizedCost(rehabCosts));
+		BigDecimal expected = new BigDecimal(loanAmt + closingCost1 + closingCost2 + rehabCosts + downPayment).setScale(2, RoundingMode.HALF_EVEN);
+		assertEquals(expected, purchaseDetails.getTotalPurchaseCost(CURRENCY).getAmount());
 
-	}
-
-	public Collection<ItemizedCost> buildItemizedCost(double expence1, double expense2) {
-		return Arrays.asList(
-				new ItemizedCost("Expence1", new BigDecimal(expence1), TimeUnit.MONTHY),
-				new ItemizedCost("Expence1", new BigDecimal(expence1), TimeUnit.MONTHY));
 	}
 
 }

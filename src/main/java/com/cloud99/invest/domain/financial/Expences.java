@@ -11,6 +11,7 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,7 +44,7 @@ public class Expences extends BaseDomainObject implements MongoDocument {
 		if (operatingExpences != null) {
 
 			for (ItemizedCost cost : operatingExpences) {
-				BigDecimal annual = cost.getCost().multiply(new BigDecimal(cost.getNumberOfPeriodsAnnually().getAnnualPeriods()));
+				BigDecimal annual = cost.getCost().multiply(new BigDecimal(cost.getNumberOfPeriodsAnnually().getAnnualPeriods(), new MathContext(2, RoundingMode.HALF_EVEN)));
 				total = total.plus(annual, RoundingMode.CEILING);
 			}
 		}

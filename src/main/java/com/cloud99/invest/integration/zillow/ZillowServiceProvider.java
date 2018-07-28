@@ -1,5 +1,6 @@
 package com.cloud99.invest.integration.zillow;
 
+import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.dto.PropertySearchRequest;
 import com.cloud99.invest.dto.PropertyValuationResult;
 import com.cloud99.invest.integration.DataProviderException;
@@ -19,8 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -33,12 +32,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 @PropertySource("classpath:application.properties")
+@Slf4j
 public class ZillowServiceProvider implements ServiceProvider {
-	final static Logger log = LoggerFactory.getLogger(ZillowServiceProvider.class);
 
-	private static final String PROPERTY_SEARCH_URL = "http://www.zillow.com/webservice/GetSearchResults.htm?zws-id={zws-id}&address={address}&citystatezip={citystatezip}";
+	private static final String PROPERTY_SEARCH_URL = "http://www.zillow.com/webservice/GetDeepSearchResults.htm?zws-id={zws-id}&address={address}&citystatezip={citystatezip}";
 
 	@Value("${zillow.id}")
 	private String zillowId;
@@ -66,6 +67,12 @@ public class ZillowServiceProvider implements ServiceProvider {
 	}
 
 	@Override
+	public Collection<Property> searchProperties(PropertySearchRequest request) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public PropertyValuationResult propertyValuation(PropertySearchRequest request) throws Exception {
 		log.debug("PropertyValuationRequest: " + request.toString());
 
@@ -87,14 +94,17 @@ public class ZillowServiceProvider implements ServiceProvider {
 		
 		if ("0".equals(response.getMessage().getCode())) {
 				return adaptor.convert(response);
-		} else {
-			throw new DataProviderException("zillow.failed.service.call", response.getMessage().getText());
 		}
+		throw new DataProviderException("zillow.failed.service.call", response.getMessage().getText());
 	}
 
+	// TODO - NG - create mapping between zillow error codes and our message values
+	private void mapErrorCode(String code) {
+
+	}
 	@Override
 	public Collection<PropertyValuationResult> propertyCompLookup(PropertySearchRequest request) {
-		// TODO FInish me
+		// TODO - NG - implement once it become a priority
 		throw new RuntimeException("implement me foo!!!");
 
 	}

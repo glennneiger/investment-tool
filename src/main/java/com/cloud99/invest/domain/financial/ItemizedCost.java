@@ -1,18 +1,23 @@
 package com.cloud99.invest.domain.financial;
 
-import com.cloud99.invest.domain.TimeUnit;
+import com.cloud99.invest.domain.Frequency;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.MathContext;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * This domain object represents a generic cost or expense with an associated
+ * frequency of the cost or expense
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemizedCost implements Serializable {
@@ -24,11 +29,11 @@ public class ItemizedCost implements Serializable {
 
 	@Getter
 	@Setter
-	private BigDecimal cost = new BigDecimal(0);
+	private BigDecimal cost = new BigDecimal(0, new MathContext(2));
 
 	@Getter
 	@Setter
-	private TimeUnit numberOfPeriodsAnnually;
+	private Frequency numberOfPeriodsAnnually;
 
 	@Override
 	public String toString() {

@@ -1,5 +1,6 @@
 package com.cloud99.invest.integration;
 
+import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.dto.PropertySearchRequest;
 import com.cloud99.invest.dto.PropertyValuationResult;
 
@@ -9,6 +10,8 @@ import java.util.Collection;
 
 @Service
 public interface ServiceProvider {
+
+	public Collection<Property> searchProperties(PropertySearchRequest request) throws Exception;
 
 	public PropertyValuationResult propertyValuation(PropertySearchRequest request) throws Exception;
 

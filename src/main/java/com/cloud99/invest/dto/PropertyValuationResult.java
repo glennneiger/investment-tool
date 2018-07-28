@@ -6,25 +6,27 @@ import com.cloud99.invest.integration.ProviderInfo;
 
 import org.joda.money.Money;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class PropertyValuationResult {
 
+	@Setter
+	@Getter
 	private String providerId;
 
+	@Setter
+	@Getter
 	private ProviderInfo providerInfo;
 
 	private PropertyValuation propertyValuation;
+
+	@Setter
+	@Getter
 	private Property property;
 
 	public PropertyValuationResult() {
 		propertyValuation = new PropertyValuation();
-	}
-
-	public Property getProperty() {
-		return property;
-	}
-
-	public void setProperty(Property property) {
-		this.property = property;
 	}
 
 	public Money getCurrentEstimate() {
@@ -65,26 +67,6 @@ public class PropertyValuationResult {
 
 	public void setPercentileChange(Float percentileChange) {
 		propertyValuation.setPercentileChange(percentileChange);
-	}
-
-	public boolean equals(Object obj) {
-		return propertyValuation.equals(obj);
-	}
-
-	public ProviderInfo getProviderInfo() {
-		return providerInfo;
-	}
-
-	public void setProviderInfo(ProviderInfo providerInfo) {
-		this.providerInfo = providerInfo;
-	}
-
-	public String getProviderId() {
-		return providerId;
-	}
-
-	public void setProviderId(String providerId) {
-		this.providerId = providerId;
 	}
 
 }

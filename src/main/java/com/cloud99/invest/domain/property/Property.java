@@ -23,6 +23,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 		@JsonSubTypes.Type(value = MultiFamily.class, name = "MULTI_FAMILY") })
 public interface Property extends MongoDocument {
 
+	public String getId();
+
+	public void setId(String id);
+
 	public PropertyType getPropertyType();
 
 	public String getName();

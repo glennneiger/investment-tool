@@ -1,18 +1,22 @@
 package com.cloud99.invest.services.calculations;
 
+import com.cloud99.invest.domain.Frequency;
+import com.cloud99.invest.domain.financial.ItemizedCost;
 import com.cloud99.invest.domain.financial.PropertyFinances;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.joda.money.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Map;
 
 /**
- * Cash Flow = (Net Operating Income - Debt Service)
+ * Annual Cash Flow = (Net Operating Income - Debt Service)
  * 
- * Cash on Cash = (Cash Flow / Cash into Deal)
+ * Annual Cash on Cash = (Cash Flow / Cash into Deal)
  * 
  * @param propertyFinances
  * @return
@@ -39,5 +43,4 @@ public class CashOnCash implements Calculation<Double> {
 
 		return cashOnCash.getAmount().doubleValue();
 	}
-
 }

@@ -3,7 +3,6 @@ package com.cloud99.invest.integration.zillow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.cloud99.invest.MockitoExtension;
 import com.cloud99.invest.MockitoTest;
 import com.cloud99.invest.dto.PropertyValuationResult;
 import com.cloud99.invest.integration.zillow.results.Address;
@@ -20,25 +19,24 @@ import com.cloud99.invest.integration.zillow.results.ValueChange;
 import com.cloud99.invest.integration.zillow.results.Zestimate;
 import com.cloud99.invest.util.Util;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 
-@ExtendWith(MockitoExtension.class)
-//@RunWith(JUnitPlatform.class)
 public class ZillowMessageAdaptorTest extends MockitoTest {
 
 	@InjectMocks
-	private ZillowSearchProviderMessageAdaptor adaptor;
+	private ZillowSearchProviderMessageAdaptor adaptor = new ZillowSearchProviderMessageAdaptor();
 	
 	private Zestimate zestimate;
-	private Result zillowResult;
 
-	@BeforeEach
+	private Util util = new Util();
+
+	@Before
 	public void setup() {
-		adaptor.setUtil(new Util());
+		super.setup();
+		adaptor.setUtil(util);
 	}
 
 	@Test
@@ -89,7 +87,6 @@ public class ZillowMessageAdaptorTest extends MockitoTest {
 		r.setAddress(buildAddress());
 		r.setZestimate(buildZestimate());
 
-		zillowResult = r;
 		return r;
 	}
 
