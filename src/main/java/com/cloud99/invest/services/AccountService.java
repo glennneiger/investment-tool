@@ -32,7 +32,7 @@ public class AccountService {
 
 		Account account = new Account();
 		account.setStatus(Status.PENDING);
-		account.setOwner(owner);
+		account.setOwnerId(owner.getId());
 		account.setCreateDate(DateTime.now());
 		account.setName(accountName);
 
@@ -46,18 +46,25 @@ public class AccountService {
 		return account;
 	}
 
+	public Account getOwnersAccountAndValidate(String userId) {
+		Account acct = acctRepo.findByOwnerId(userId);
+		if (acct == null) {
+			throw new EntityNotFoundException("Account", "");
+		}
+		return acct;
+	}
+
 	public Long deleteAccountByName(String name) {
 		return acctRepo.deleteByName(name);
 	}
 
-	public Account getAccount(String accountId) {
+	public Account getAccountAndValidate(String accountId) {
 		Optional<Account> optional = acctRepo.findById(accountId);
 		
 		if (optional.isPresent()) {
 			return optional.get();
-		} else {
-			throw new EntityNotFoundException("account", accountId);
 		}
+		throw new EntityNotFoundException("Account", accountId);
 	}
 
 	public Account activateAccount(Account account) {
@@ -68,6 +75,16 @@ public class AccountService {
 
 	public void deleteAccount(String accountId) {
 		acctRepo.deleteById(accountId);
+
+	}
+
+	public void deleteOwnersAccount(String userId) {
+		try {
+			Account acct = getOwnersAccountAndValidate(userId);
+			acctRepo.delete(acct);
+		} catch (EntityNotFoundException e) {
+			// nothing to worry about, account doesn't exist
+		}
 
 	}
 

@@ -32,7 +32,7 @@ public class RentCost implements Calculation<Double> {
 		Money expences = rehab.plus(purchasePrice);
 		LOGGER.debug("Total Expences: " + expences);
 
-		BigDecimal rentCost = rent.divide(expences.getAmount(), 4, RoundingMode.HALF_EVEN);
+		BigDecimal rentCost = rent.divide(expences.getAmount(), 4, RoundingMode.HALF_EVEN).multiply(new BigDecimal(100));
 		LOGGER.debug("Rent Cost: " + rentCost);
 
 		return rentCost.doubleValue();

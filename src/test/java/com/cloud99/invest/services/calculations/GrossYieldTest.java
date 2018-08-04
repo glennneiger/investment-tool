@@ -8,6 +8,9 @@ import com.cloud99.invest.services.calculations.Calculation.CalculationType;
 
 import org.junit.jupiter.api.BeforeEach;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 class GrossYieldTest extends BaseCalculationsTest {
 
 	@BeforeEach
@@ -42,7 +45,7 @@ class GrossYieldTest extends BaseCalculationsTest {
 	public <T> void assertResult(T result) {
 		// Purchase costs: 100k
 		// Annual rent: 9k
-		assertEquals(.09D, result);
+		assertEquals(9.00D, result);
 	}
 
 }

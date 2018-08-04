@@ -1,6 +1,10 @@
 package com.cloud99.invest.config.security;
 
+import com.cloud99.invest.services.UserService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
@@ -19,9 +23,17 @@ public class Cloud99SimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthe
 
 	private RequestCache requestCache = new HttpSessionRequestCache();
 
+	@Autowired
+	private UserService userSerivce;
+
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws ServletException, IOException {
+
+		// don't forget that we need to update the expiry time since the user
+		// successfully authenticated again
+		UserDetails ud = (UserDetails) authentication.getPrincipal();
+		userSerivce.updateUserTokenExpireTime(ud.getUsername());
 
 		SavedRequest savedRequest = requestCache.getRequest(request, response);
 

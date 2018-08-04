@@ -12,14 +12,17 @@ import com.mongodb.ServerAddress;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.CustomConversions;
+import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +32,7 @@ import java.util.List;
 @Configuration
 @PropertySource("classpath:application.properties")
 @Order(15)
+@EnableTransactionManagement
 public class MongoConfig extends AbstractMongoConfiguration {
 
 	@Value("${mongo.host}")
@@ -64,6 +68,10 @@ public class MongoConfig extends AbstractMongoConfiguration {
 		return new MongoClient(Arrays.asList(address), credential, opts.build());
     }
 
+	@Bean
+	public MongoTransactionManager transactionManager(MongoDbFactory dbFactory) {
+		return new MongoTransactionManager(dbFactory);
+	}
 
     @Override
 	public CustomConversions customConversions() {
@@ -75,5 +83,40 @@ public class MongoConfig extends AbstractMongoConfiguration {
     protected String getDatabaseName() {
 		return "investment";
     }
+
+	@SuppressWarnings("boxing")
+	public static void printConnectionOptions(MongoClientOptions options) {
+		StringBuffer msg = new StringBuffer();
+		msg.append("MongoDB Connection Options ---\n" + LINE + "\n");
+		msg.append(format("ApplicationName", options.getApplicationName()));
+		msg.append(format("ConnectionsPerHost", options.getConnectionsPerHost()));
+		msg.append(format("ConnectTimeout", options.getConnectTimeout()));
+		msg.append(format("HeartbeatConnectTimeout", options.getHeartbeatConnectTimeout()));
+		msg.append(format("HeartbeatFrequency", options.getHeartbeatFrequency()));
+		msg.append(format("HeartbeatSocketTimeout", options.getHeartbeatSocketTimeout()));
+		msg.append(format("LocalThreshold", options.getLocalThreshold()));
+		msg.append(format("MaxConnectionIdleTime", options.getMaxConnectionIdleTime()));
+		msg.append(format("MaxConnectionLifeTime", options.getMaxConnectionLifeTime()));
+		msg.append(format("MaxWaitTime", options.getMaxWaitTime()));
+		msg.append(format("MinConnectionsPerHost", options.getMinConnectionsPerHost()));
+		msg.append(format("MinHeartbeatFrequency", options.getMinHeartbeatFrequency()));
+		msg.append(format("ServerSelectionTimeout", options.getServerSelectionTimeout()));
+		msg.append(format("SocketTimeout", options.getSocketTimeout()));
+		msg.append(format("isSocketKeepAlive", options.isSocketKeepAlive()));
+		msg.append(format("SslEnabled", options.isSslEnabled()));
+		msg.append(format("ThreadsAllowedToBlockForConnectionMultiplier", options.getThreadsAllowedToBlockForConnectionMultiplier()));
+
+		System.out.println(msg.toString());
+
+		// LOGGER.info(msg.toString());
+	}
+
+	public static String PADDING = "%-40s%s\n";
+	public static String LINE = "--------------------------------------------";
+
+	public static String format(String name, Object val) {
+		return String.format(PADDING, name, val) + LINE + "\n";
+
+	}
 
 }

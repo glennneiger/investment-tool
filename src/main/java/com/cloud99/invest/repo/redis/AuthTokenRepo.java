@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AuthTokenRepo extends CrudRepository<AuthToken, String> {
 
+	public AuthToken findAuthTokenByUserId(String userId);
 }

@@ -18,9 +18,12 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.TimeZone;
 
-// TODO - NG - need to add a property or class for all of the account settings like # of allowed docs or number of docs that can be stored
-@Document
+import lombok.Getter;
+import lombok.Setter;
+
+@Document(collection = "Account")
 public class Account implements MongoDocument {
+	private static final long serialVersionUID = -7224716818049308814L;
 
 	public static final String DEFAULT_TIMEZONE = "US/Mountain";
 
@@ -29,109 +32,53 @@ public class Account implements MongoDocument {
 	}
 
 	@Id
+	@Setter
+	@Getter
 	private String id;
 
+	@Setter
+	@Getter
 	@NotNull(message = "account.name.required")
 	@NotEmpty(message = "account.name.required")
 	private String name;
 
+	@Setter
+	@Getter
 	private DateTime createDate;
+
+	@Setter
+	@Getter
 	private DateTime updateDate;
+
+	@Setter
+	@Getter
 	private TimeZone timeZone = TimeZone.getTimeZone(DEFAULT_TIMEZONE);
+
+	@Setter
+	@Getter
 	private Locale locale = Locale.getDefault();
 
+	@Setter
+	@Getter
 	private Status status;
 
+	@Setter
+	@Getter
 	private Integer numberOfPropertiesAllowed;
 
+	@Setter
+	@Getter
 	@DBRef
 	@CascadeSave
 	private Collection<User> assignedUsers;
 
-	private User owner;
-
-	public Integer getNumberOfPropertiesAllowed() {
-		return numberOfPropertiesAllowed;
-	}
-
-	public void setNumberOfPropertiesAllowed(Integer numberOfPropertiesAllowed) {
-		this.numberOfPropertiesAllowed = numberOfPropertiesAllowed;
-	}
-
-	public User getOwner() {
-		return owner;
-	}
-
-	public void setOwner(User owner) {
-		this.owner = owner;
-	}
-
-	public Locale getLocale() {
-		return locale;
-	}
-
-	public void setLocale(Locale locale) {
-		this.locale = locale;
-	}
-
-	public TimeZone getTimeZone() {
-		return timeZone;
-	}
-
-	public void setTimeZone(TimeZone timeZone) {
-		this.timeZone = timeZone;
-	}
+	@DBRef
+	@Setter
+	@Getter
+	private String ownerId;
 
 	public static String getDefaultTimezone() {
 		return DEFAULT_TIMEZONE;
-	}
-
-	public Collection<User> getAssignedUsers() {
-		return assignedUsers;
-	}
-
-	public void setAssignedUsers(Collection<User> assignedUsers) {
-		this.assignedUsers = assignedUsers;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public DateTime getCreateDate() {
-		return createDate;
-	}
-
-	public void setCreateDate(DateTime createDate) {
-		this.createDate = createDate;
-	}
-
-	public DateTime getUpdateDate() {
-		return updateDate;
-	}
-
-	public void setUpdateDate(DateTime updateDate) {
-		this.updateDate = updateDate;
-	}
-
-	public Status getStatus() {
-		return status;
-	}
-
-	public void setStatus(Status status) {
-		this.status = status;
 	}
 
 	@Override

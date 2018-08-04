@@ -16,15 +16,16 @@ import java.util.Map;
 public class CapRate implements Calculation<BigDecimal> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DebtServiceRatio.class);
 
+	@SuppressWarnings("boxing")
 	@Override
 	public BigDecimal calculate(PropertyFinances propertyFinances, Map<CalculationType, Calculation<?>> allCalculations) {
 
 		Money noi = (Money) allCalculations.get(CalculationType.NOI).calculate(propertyFinances, allCalculations);
 		Float purchasePrice = propertyFinances.getPurchaseDetails().getTotalPurchaseCost(propertyFinances.getCurrency()).getAmount().floatValue();
-		Double capRate = noi.getAmount().doubleValue() / purchasePrice;
+		BigDecimal capRate = BigDecimal.valueOf(noi.getAmount().doubleValue() / purchasePrice * 100).setScale(4, RoundingMode.HALF_EVEN);
 		LOGGER.debug("Cap Rate: " + capRate);
 
-		return new BigDecimal(capRate).setScale(4, RoundingMode.HALF_EVEN);
+		return capRate;
 
 	}
 

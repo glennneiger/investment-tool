@@ -66,7 +66,7 @@ public class SecurityController implements Controller {
 	public User registrationConfirmation(@RequestParam String token) {
 
 		User user = userService.confirmUserRegistration(token);
-		userService.createAuthToken(user.getEmail());
+		userService.createAuthToken(user.getId());
 		return user;
 	}
 }

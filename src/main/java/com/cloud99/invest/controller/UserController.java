@@ -16,8 +16,8 @@ public class UserController implements Controller {
 	private UserService userService;
 
 	@DeleteMapping()
-	public void deleteUsers(@RequestParam String email) {
-		userService.deleteUser(email);
+	public void deleteUser(@RequestParam String userId) {
+		userService.deleteUser(userId);
 	}
 
 }

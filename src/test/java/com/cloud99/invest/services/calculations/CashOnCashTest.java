@@ -6,6 +6,9 @@ import com.cloud99.invest.domain.financial.Expences;
 import com.cloud99.invest.domain.financial.PurchaseDetails;
 import com.cloud99.invest.services.calculations.Calculation.CalculationType;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  * Cash Flow / Cash In Deal Cash Flow = (Net Operating Income – Debt Service)
  */
@@ -35,7 +38,6 @@ public class CashOnCashTest extends BaseCalculationsTest {
 		return 300000D;
 	}
 
-	@SuppressWarnings("boxing")
 	@Override
 	public <T> void assertResult(T result) {
 		// closing costs = 5,000
@@ -47,7 +49,7 @@ public class CashOnCashTest extends BaseCalculationsTest {
 		// cash flow = 6,759.28
 		// cash in deal = 65000.00
 
-		assertEquals(.10D, result);
+		assertEquals(new BigDecimal(10.00D).setScale(2, RoundingMode.HALF_EVEN), result);
 
 	}
 

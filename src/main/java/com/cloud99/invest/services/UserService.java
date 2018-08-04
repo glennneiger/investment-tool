@@ -43,6 +43,12 @@ public class UserService implements UserDetailsService {
 	@Value("${registration.request.token.exipire.in.hours}")
 	public int registrationRequestTokenExpireInHours;
 
+	@Value("${auth.token.expire.time.in.minutes}")
+	public int authTokenExpireTimeInMinutes;
+
+	@Value("${verification.token.expire.time.in.minutes}")
+	public int verificationTokenExpireTimeInMinutes;
+
 	@Autowired
 	private UserRepo userRepo;
 
@@ -63,7 +69,13 @@ public class UserService implements UserDetailsService {
 		return (User) authentication.getPrincipal();
 	}
 
-	@Cacheable(key = "#id")
+	public void updateUserTokenExpireTime(String userName) {
+		User user = findUserByEmail(userName);
+		AuthToken token = authTokenRepo.findAuthTokenByUserId(user.getId());
+		token.updateExpireDateFromNow(authTokenExpireTimeInMinutes);
+		authTokenRepo.save(token);
+	}
+
 	public AuthToken findAuthTokenByIdAndValidate(String id) {
 
 		Optional<AuthToken> tokenOptional = findAuthTokenById(id);
@@ -85,12 +97,11 @@ public class UserService implements UserDetailsService {
 
 		AuthToken token = findAuthTokenByIdAndValidate(authToken);
 
-		if (token.getExpiryDateTime().isBeforeNow()) {
+		if (token.getExpireDateTime().isBeforeNow()) {
 			authTokenRepo.delete(token);
 			throw new AccessDeniedException("auth.token.expired");
 		}
 
-		// Optional<User> user = userRepo.findById(tokenOptional.get().getUserId());
 		User user = findUserByIdAndValidate(token.getUserId());
 
 		if (!user.isEnabled()) {
@@ -99,8 +110,6 @@ public class UserService implements UserDetailsService {
 		return user;
 	}
 
-
-	@Cacheable(key = "'authToken-' + #authToken", unless = "#result != null")
 	public AuthToken loginUser(String userEmail, String password) {
 
 		User user = findUserByEmailAndValidate(userEmail);
@@ -113,8 +122,8 @@ public class UserService implements UserDetailsService {
 		return createAuthToken(user.getId());
 	}
 
-	public AuthToken createAuthToken(String userEmail) {
-		AuthToken token = new AuthToken(userEmail);
+	public AuthToken createAuthToken(String userId) {
+		AuthToken token = new AuthToken(userId, authTokenExpireTimeInMinutes);
 		authTokenRepo.save(token);
 		return token;
 	}
@@ -157,15 +166,15 @@ public class UserService implements UserDetailsService {
 			throw new EntityNotFoundException("Verification token", token);
 		}
 
-		User user = findUserByEmailAndValidate(tokenObj.getUserEmail());
+		User user = findUserByIdAndValidate(tokenObj.getUserId());
 
 		// has the token expired?
-		if (tokenObj.getExpiryDate().isBeforeNow()) {
+		if (tokenObj.getExpireDateTime().isBeforeNow()) {
 			handlExpiredVerificationToken(tokenObj);
 			throw new ServiceException("registration.token.expire", null);
 		}
 		// token is good, activate account and user and delete token
-		Account account = acctService.getAccount(tokenObj.getAccountId());
+		Account account = acctService.getOwnersAccountAndValidate(user.getId());
 		account = acctService.activateAccount(account);
 		user = activateUser(user);
 		tokenRepo.delete(tokenObj);
@@ -178,34 +187,31 @@ public class UserService implements UserDetailsService {
 
 		// delete token, user and account
 		tokenRepo.delete(token);
-		acctService.deleteAccount(token.getAccountId());
-		deleteUser(token.getUserEmail());
+		acctService.deleteOwnersAccount(token.getUserId());
+		deleteUser(token.getUserId());
 	}
 
-	@CachePut(key = "#user.getUserId", unless = "#result != null")
 	private User activateUser(User user) {
 
-		user = findUserByEmail(user.getEmail());
+		user = findUserByIdAndValidate(user.getId());
 		user.setEnabled(true);
 		return userRepo.save(user);
 	}
 
-	public VerificationToken createVerificationToken(String userEmail, String accountId) {
+	public VerificationToken createVerificationToken(String userEmail) {
 		LOGGER.debug("createVerificationToken() invoked for userEmail: " + userEmail);
 		
 		User user = findUserByEmailAndValidate(userEmail);
 
-		VerificationToken token = tokenRepo.save(new VerificationToken(registrationRequestTokenExpireInHours, user.getId(), accountId));
+		VerificationToken token = tokenRepo.save(new VerificationToken(user.getId(), verificationTokenExpireTimeInMinutes));
 		LOGGER.debug("Created new verification token: " + token);
 
 		return token;
 	}
 
-	@CacheEvict(key = "#email")
-	public void deleteUser(String email) {
-
-		User user = userRepo.findByEmail(email);
-		userRepo.delete(user);
+	@CacheEvict(key = "#userId")
+	public void deleteUser(String userId) {
+		userRepo.deleteById(userId);
 
 	}
 
@@ -234,16 +240,15 @@ public class UserService implements UserDetailsService {
 		Optional<User> optional = findUserById(id);
 		if (optional.isPresent()) {
 			return optional.get();
-		} else {
-			throw new EntityNotFoundException("User", id);
 		}
+		throw new EntityNotFoundException("User", id);
+
 	}
 
 	public Optional<User> findUserById(String id) {
 		return userRepo.findById(id);
 	}
 
-	@Cacheable(key = "#email")
 	public User findUserByEmailAndValidate(String email) {
 		User user = findUserByEmail(email);
 		if (user == null) {
@@ -252,12 +257,12 @@ public class UserService implements UserDetailsService {
 		return user;
 	}
 
+	@Cacheable(key = "#result.getUserId", unless = "#result != null")
 	public User findUserByEmail(String email) {
 		User user = userRepo.findByEmail(email);
 		return user;
 	}
 
-	@CacheEvict(key = "'authToken-' + #token")
 	public void logoutUser(String token) {
 		Optional<AuthToken> authTokenOptional = authTokenRepo.findById(token);
 

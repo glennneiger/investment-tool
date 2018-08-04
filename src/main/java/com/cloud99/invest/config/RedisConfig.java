@@ -8,6 +8,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisKeyValueAdapter.EnableKeyspaceEvents;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -16,7 +17,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 @ComponentScan(basePackages = { "com.cloud99.invest" })
 @PropertySource("classpath:application.properties")
-@EnableRedisRepositories(basePackages = "com.cloud99.invest.repo.redis")
+@EnableRedisRepositories(basePackages = "com.cloud99.invest.repo.redis", enableKeyspaceEvents = EnableKeyspaceEvents.ON_STARTUP)
 @Order(20)
 public class RedisConfig {
 

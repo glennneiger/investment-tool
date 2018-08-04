@@ -21,7 +21,7 @@ public class CapRateTest extends BaseCalculationsTest {
 
 	@Override
 	public <T> void assertResult(T result) {
-		assertEquals(new BigDecimal(0.0694).setScale(4, RoundingMode.HALF_EVEN), result);
+		assertEquals(new BigDecimal(6.9444).setScale(4, RoundingMode.HALF_EVEN), result);
 	}
 
 }

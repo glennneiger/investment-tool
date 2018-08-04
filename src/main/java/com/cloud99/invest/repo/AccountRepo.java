@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface AccountRepo extends MongoRepository<Account, String> {
 
 	Long deleteByName(String name);
+
+	Account findByOwnerId(String userId);
 }

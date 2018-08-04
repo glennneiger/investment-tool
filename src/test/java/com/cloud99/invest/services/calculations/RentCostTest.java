@@ -43,7 +43,7 @@ public class RentCostTest extends BaseCalculationsTest {
 		// 50k purchase
 		// 25K rehab
 		// 1000 rent
-		assertEquals(.0133D, result);
+		assertEquals(1.33D, result);
 
 	}
 

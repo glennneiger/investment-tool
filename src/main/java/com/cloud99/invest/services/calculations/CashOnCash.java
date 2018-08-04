@@ -1,9 +1,6 @@
 package com.cloud99.invest.services.calculations;
 
-import com.cloud99.invest.domain.Frequency;
-import com.cloud99.invest.domain.financial.ItemizedCost;
 import com.cloud99.invest.domain.financial.PropertyFinances;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.joda.money.Money;
 import org.slf4j.Logger;
@@ -21,11 +18,11 @@ import java.util.Map;
  * @param propertyFinances
  * @return
  */
-public class CashOnCash implements Calculation<Double> {
+public class CashOnCash implements Calculation<BigDecimal> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CashOnCash.class);
 
 	@Override
-	public Double calculate(PropertyFinances propertyFinances, Map<CalculationType, Calculation<?>> allCalculations) {
+	public BigDecimal calculate(PropertyFinances propertyFinances, Map<CalculationType, Calculation<?>> allCalculations) {
 
 		Money noi = (Money) allCalculations.get(CalculationType.NOI).calculate(propertyFinances, allCalculations);
 
@@ -38,9 +35,9 @@ public class CashOnCash implements Calculation<Double> {
 		// down payment, financing expenses,
 		Money cashInDeal = propertyFinances.getPurchaseDetails().getTotalMoneyInDeal(propertyFinances.getCurrency());
 
-		Money cashOnCash = cashFlow.dividedBy(cashInDeal.getAmount(), RoundingMode.HALF_EVEN);
+		Money cashOnCash = cashFlow.dividedBy(cashInDeal.getAmount(), RoundingMode.HALF_EVEN).multipliedBy(100);
 		LOGGER.debug("Cash on cash return: " + cashOnCash);
 
-		return cashOnCash.getAmount().doubleValue();
+		return cashOnCash.getAmount().setScale(2, RoundingMode.HALF_EVEN);
 	}
 }

@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.cloud99.invest.services.calculations.Calculation.CalculationType;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class DebtServiceRatioTest extends BaseCalculationsTest {
 
 	@Override
@@ -11,7 +14,7 @@ public class DebtServiceRatioTest extends BaseCalculationsTest {
 
 		// debt = 18240.72
 		// noi = 25000.00
-		assertEquals(new Double(1.37), (Double) result);
+		assertEquals(new BigDecimal(137.00).setScale(2, RoundingMode.HALF_EVEN), result);
 
 	}
 
