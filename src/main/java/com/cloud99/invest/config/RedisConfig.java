@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -18,7 +19,9 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @ComponentScan(basePackages = { "com.cloud99.invest" })
 @PropertySource("classpath:application.properties")
 @EnableRedisRepositories(basePackages = "com.cloud99.invest.repo.redis", enableKeyspaceEvents = EnableKeyspaceEvents.ON_STARTUP)
+
 @Order(20)
+@Profile("production")
 public class RedisConfig {
 
 	// TODO - NG - need to create password for redis and inject

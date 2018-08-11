@@ -1,8 +1,8 @@
 package com.cloud99.invest.services;
 
+import com.cloud99.invest.domain.Status;
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.account.Account;
-import com.cloud99.invest.domain.account.Account.Status;
 import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.exceptions.EntityNotFoundException;
 import com.cloud99.invest.repo.AccountRepo;
@@ -36,10 +36,10 @@ public class AccountService {
 		account.setCreateDate(DateTime.now());
 		account.setName(accountName);
 
-		// TODO - NG - change this to be something else, either have just a single role for a user or implement new object for identifying paying customer
 		if (UserRole.FREE_USER.equals(role)) {
 			account.setNumberOfPropertiesAllowed(freeUserNumOfProperties);
 		}
+
 		account = acctRepo.save(account);
 		LOGGER.debug("Created new account: " + account);
 

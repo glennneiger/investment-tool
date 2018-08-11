@@ -69,9 +69,9 @@ public class UserService implements UserDetailsService {
 		return (User) authentication.getPrincipal();
 	}
 
-	public void updateUserTokenExpireTime(String userName) {
-		User user = findUserByEmail(userName);
-		AuthToken token = authTokenRepo.findAuthTokenByUserId(user.getId());
+	public void updateUserTokenExpireTime(String tokenId) {
+		AuthToken token = findAuthTokenByIdAndValidate(tokenId);
+
 		token.updateExpireDateFromNow(authTokenExpireTimeInMinutes);
 		authTokenRepo.save(token);
 	}
@@ -145,6 +145,7 @@ public class UserService implements UserDetailsService {
 		user.setEnabled(false);
 
 		user.setCreateDate(DateTime.now());
+		user.setUserRoles(null);
 		user.addUserRole(UserRole.FREE_USER);
 
 		user = userRepo.save(user);
@@ -221,6 +222,7 @@ public class UserService implements UserDetailsService {
 	}
 
 	@Override
+	// TODO - NG - cache this
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
 		User user = findUserByEmailAndValidate(username);

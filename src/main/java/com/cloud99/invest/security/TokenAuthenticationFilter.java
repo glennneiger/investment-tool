@@ -1,4 +1,4 @@
-package com.cloud99.invest.config.security;
+package com.cloud99.invest.security;
 
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.services.UserService;
@@ -32,7 +32,7 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
 	public Authentication attemptAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
 		LOGGER.trace("Attempting to authenticate request");
 		final String authToken = request.getHeader("authorization");
-		
+
 		final User user = userService.findAndValidateUserByAuthToken(authToken);
 		UserDetails ud = userService.loadUserByUsername(user.getEmail());
 		final Authentication auth = new UsernamePasswordAuthenticationToken(ud, authToken);
@@ -42,6 +42,7 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
 	@Override
 	protected void successfulAuthentication(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain, final Authentication authResult) throws IOException, ServletException {
 		super.successfulAuthentication(request, response, chain, authResult);
+		userService.updateUserTokenExpireTime((String) authResult.getCredentials());
 		chain.doFilter(request, response);
 	}
 

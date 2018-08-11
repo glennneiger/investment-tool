@@ -1,4 +1,4 @@
-package com.cloud99.invest.config.security;
+package com.cloud99.invest.security;
 
 import com.cloud99.invest.services.UserService;
 
@@ -26,7 +26,6 @@ public class TokenAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
 	@Override
 	protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-
 		return userService.loadUserByUsername(username);
 	}
 

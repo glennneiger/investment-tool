@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Properties;
@@ -18,7 +19,7 @@ public class EmailConfig {
 	private String host;
 
 	@Value("${mail.port}")
-	private Integer port;
+	private int port;
 
 	@Value("${mail.properties.mail.smtp.auth}")
 	private Boolean auth;
@@ -36,7 +37,7 @@ public class EmailConfig {
 	private Boolean debug;
 
 	@Bean
-	public JavaMailSenderImpl getJavaMailSender() {
+	public JavaMailSender getJavaMailSenders() {
 
 		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 		mailSender.setHost(host);
@@ -54,4 +55,5 @@ public class EmailConfig {
 		return mailSender;
 
 	}
+
 }

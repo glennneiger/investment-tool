@@ -16,7 +16,7 @@ public class ExpencesTest extends BaseFinancialTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-
+		super.setup();
 	}
 
 	@Test

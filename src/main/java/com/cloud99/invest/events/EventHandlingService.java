@@ -13,6 +13,9 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Centralized service to register all {@link EventListener} that handle
  * {@link ApplicationEvent}
@@ -22,9 +25,13 @@ import org.springframework.stereotype.Service;
 public class EventHandlingService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EventHandlingService.class);
 
+	@Setter
+	@Getter
 	@Autowired
 	private EmailService emailService;
 
+	@Setter
+	@Getter
 	@Autowired
 	private UserService userService;
 

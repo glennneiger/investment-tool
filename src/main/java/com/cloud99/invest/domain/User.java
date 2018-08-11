@@ -18,6 +18,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -75,26 +76,30 @@ public class User extends Person implements MongoDocument, Authentication {
 	@CascadeSave
 	@Getter
 	@Setter
-	private Collection<UserRole> userRoles = new ArrayList<>(0);
+	private List<UserRole> userRoles;
 
 	// mongo objectId references to all properties user has access to
 	@CascadeSave
 	@Getter
 	@Setter
-	private List<String> propertyRefs = new ArrayList<>(0);
+	private List<String> propertyRefs = new ArrayList<>(Arrays.asList());
+
+	private List<SimpleGrantedAuthority> authorities;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return buildAuthorities(this.userRoles);
+		if (authorities == null) {
+			authorities = buildAuthorities(this.userRoles);
+		}
+		return authorities;
 	}
 
-	private Collection<? extends GrantedAuthority> buildAuthorities(Collection<UserRole> applicationRoles) {
-
-		Collection<SimpleGrantedAuthority> auths = new ArrayList<>();
+	private List<SimpleGrantedAuthority> buildAuthorities(Collection<UserRole> applicationRoles) {
+		authorities = new ArrayList<>(applicationRoles.size());
 		for (UserRole role : applicationRoles) {
-			auths.add(new SimpleGrantedAuthority(role.getAuthority()));
+			authorities.add(new SimpleGrantedAuthority(role.getAuthority()));
 		}
-		return auths;
+		return authorities;
 	}
 
 	@Override
@@ -103,7 +108,12 @@ public class User extends Person implements MongoDocument, Authentication {
 	}
 
 	public void addUserRole(UserRole role) {
-		this.userRoles.add(role);
+		if (this.userRoles == null) {
+			this.userRoles = new ArrayList<>(Arrays.asList());
+		}
+		if (!userRoles.contains(role)) {
+			userRoles.add(role);
+		}
 	}
 
 	@Override

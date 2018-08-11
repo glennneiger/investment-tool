@@ -1,4 +1,4 @@
-package com.cloud99.invest.config.security;
+package com.cloud99.invest.security;
 
 import org.springframework.security.web.RedirectStrategy;
 

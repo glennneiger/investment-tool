@@ -1,10 +1,9 @@
 package com.cloud99.invest.config;
 
-import com.cloud99.invest.config.security.Cloud99BasicAuthEntryPoint;
-import com.cloud99.invest.config.security.Cloud99SimpleUrlAuthenticationSuccessHandler;
-import com.cloud99.invest.config.security.NoRedirectStrategy;
-import com.cloud99.invest.config.security.TokenAuthenticationFilter;
-import com.cloud99.invest.config.security.TokenAuthenticationProvider;
+import com.cloud99.invest.security.Cloud99BasicAuthEntryPoint;
+import com.cloud99.invest.security.Cloud99SimpleUrlAuthenticationSuccessHandler;
+import com.cloud99.invest.security.TokenAuthenticationFilter;
+import com.cloud99.invest.security.TokenAuthenticationProvider;
 import com.cloud99.invest.services.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +21,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -37,7 +36,7 @@ import java.util.Arrays;
 @Order(2)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	private static final RequestMatcher PUBLIC_URLS = new OrRequestMatcher(new AntPathRequestMatcher("/public/**"));
+	private static final String PUBLIC_URLS = "/public/**";
 	private static final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(new AntPathRequestMatcher("/v1/**"));
 
 	@Autowired
@@ -46,17 +45,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private Cloud99SimpleUrlAuthenticationSuccessHandler successHandler;
+
 	@Bean
 	public static BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
 	@Override
-	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+	public void configure(AuthenticationManagerBuilder builder) throws Exception {
 
-		auth.userDetailsService(userService);
-		auth.authenticationProvider(tokenAuthenticationProvider());
-
+		builder.userDetailsService(userService);
+		builder.authenticationProvider(tokenAuthenticationProvider());
 	}
 
 	@Override
@@ -65,11 +66,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.anonymous()
 		.and()
 		.authorizeRequests()
-		.antMatchers("/public/**").permitAll()
+		.antMatchers(PUBLIC_URLS).permitAll()
         .and()
 		.authenticationProvider(tokenAuthenticationProvider())
 		.addFilterBefore(restAuthenticationFilter(), AnonymousAuthenticationFilter.class)
-		.exceptionHandling().defaultAuthenticationEntryPointFor(forbiddenEntryPoint(), PROTECTED_URLS).and()
+		.exceptionHandling().defaultAuthenticationEntryPointFor(forbiddenEntryPoint(), PROTECTED_URLS)
+		// TODO - NG - might want to create a custom AccessDeniedHandler and return a json payload instead of just a 403 status
+		.accessDeniedHandler(new AccessDeniedHandlerImpl())
+		.and()
 		.authorizeRequests().anyRequest().authenticated()
 		.and().formLogin().disable()
 		.httpBasic()
@@ -80,9 +84,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //		.rememberMe();
 	}
 
-	@Autowired
-	private Cloud99SimpleUrlAuthenticationSuccessHandler successHandler;
-
 	@Bean
 	AuthenticationEntryPoint forbiddenEntryPoint() {
 		return new HttpStatusEntryPoint(HttpStatus.FORBIDDEN);
@@ -91,7 +92,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public TokenAuthenticationFilter restAuthenticationFilter() throws Exception {
 		final TokenAuthenticationFilter filter = new TokenAuthenticationFilter(PROTECTED_URLS, userService);
-		filter.setAuthenticationManager(authenticationManager(null));
+		filter.setAuthenticationManager(authenticationManager(tokenAuthenticationProvider()));
 		filter.setAuthenticationSuccessHandler(successHandler);
 		return filter;
 	}
@@ -106,20 +107,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //		return registration;
 //	}
 
-	@Bean
-	SimpleUrlAuthenticationSuccessHandler successHandler() {
-		final SimpleUrlAuthenticationSuccessHandler successHandler = new SimpleUrlAuthenticationSuccessHandler();
-		successHandler.setRedirectStrategy(new NoRedirectStrategy());
-		return successHandler;
-	}
+//	@Bean
+//	public SimpleUrlAuthenticationSuccessHandler successHandler() {
+//		final SimpleUrlAuthenticationSuccessHandler successHandler = new SimpleUrlAuthenticationSuccessHandler();
+//		successHandler.setRedirectStrategy(new NoRedirectStrategy());
+//		return successHandler;
+//	}
 
 	@Bean
 	public AuthenticationProvider tokenAuthenticationProvider() {
-		return new TokenAuthenticationProvider(userService); 
+		return new TokenAuthenticationProvider(userService);
 	}
 	
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationProvider provider) {
-		return new ProviderManager(Arrays.asList(new TokenAuthenticationProvider(userService)));
+		ProviderManager mgr = new ProviderManager(Arrays.asList(provider));
+		mgr.setEraseCredentialsAfterAuthentication(false);
+		return mgr;
 	}
 }
