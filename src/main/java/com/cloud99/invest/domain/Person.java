@@ -15,9 +15,9 @@ import lombok.Setter;
 /**
  * Domain object representation of a person
  */
+@SuppressWarnings("serial")
 @NoArgsConstructor
-@SuppressWarnings("PMD.CommentRequired")
-public class Person {
+public class Person extends BaseDomainObject {
 
 	/**
 	 * Enum for setting the gender on a person

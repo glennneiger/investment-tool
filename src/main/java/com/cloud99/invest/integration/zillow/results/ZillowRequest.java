@@ -3,7 +3,7 @@ package com.cloud99.invest.integration.zillow.results;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Request {
+public class ZillowRequest {
 
 	private String address;
 

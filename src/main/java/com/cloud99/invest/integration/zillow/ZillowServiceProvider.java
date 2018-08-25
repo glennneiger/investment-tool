@@ -1,20 +1,24 @@
 package com.cloud99.invest.integration.zillow;
 
-import com.cloud99.invest.domain.property.Property;
-import com.cloud99.invest.dto.PropertySearchRequest;
-import com.cloud99.invest.dto.PropertyValuationResult;
+import com.cloud99.invest.dto.requests.PropertySearchRequest;
+import com.cloud99.invest.dto.responses.PropertySearchResult;
+import com.cloud99.invest.dto.responses.PropertyValuationResult;
 import com.cloud99.invest.integration.DataProviderException;
-import com.cloud99.invest.integration.MessageAdaptor;
+import com.cloud99.invest.integration.MessageConverter;
 import com.cloud99.invest.integration.ServiceProvider;
+import com.cloud99.invest.integration.zillow.deserializers.AmountJsonDeserializer;
+import com.cloud99.invest.integration.zillow.deserializers.HighPriceDeserializer;
+import com.cloud99.invest.integration.zillow.deserializers.LowPriceDeserializer;
+import com.cloud99.invest.integration.zillow.deserializers.ValueChangeDeserializer;
+import com.cloud99.invest.integration.zillow.messageConverters.ZillowMessageConverterManager;
+import com.cloud99.invest.integration.zillow.messageConverters.ZillowPropertyConverter;
+import com.cloud99.invest.integration.zillow.messageConverters.ZillowValuationConverter;
 import com.cloud99.invest.integration.zillow.results.Amount;
-import com.cloud99.invest.integration.zillow.results.AmountJsonDeserializer;
 import com.cloud99.invest.integration.zillow.results.High;
-import com.cloud99.invest.integration.zillow.results.HighPriceDeserializer;
 import com.cloud99.invest.integration.zillow.results.Low;
-import com.cloud99.invest.integration.zillow.results.LowPriceDeserializer;
-import com.cloud99.invest.integration.zillow.results.SearchResults;
 import com.cloud99.invest.integration.zillow.results.ValueChange;
-import com.cloud99.invest.integration.zillow.results.ValueChangeDeserializer;
+import com.cloud99.invest.integration.zillow.results.ZillowEstimate;
+import com.cloud99.invest.integration.zillow.results.ZillowSearchResults;
 import com.cloud99.invest.util.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -39,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ZillowServiceProvider implements ServiceProvider {
 
-	private static final String PROPERTY_SEARCH_URL = "http://www.zillow.com/webservice/GetDeepSearchResults.htm?zws-id={zws-id}&address={address}&citystatezip={citystatezip}";
+	private static final String PROPERTY_SEARCH_URL = "http://www.zillow.com/webservice/GetDeepSearchResults.htm?zws-id={zws-id}&address={address}&citystatezip={citystatezip}&rentzestimate={rentzestimate}";
 
 	@Value("${zillow.id}")
 	private String zillowId;
@@ -67,41 +71,50 @@ public class ZillowServiceProvider implements ServiceProvider {
 	}
 
 	@Override
-	public Collection<Property> searchProperties(PropertySearchRequest request) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public PropertySearchResult propertySearch(PropertySearchRequest request) throws Exception {
+		log.trace("PropertySearchRequest: " + request.toString());
+
+		String returnJson = getSearchResults(request);
+
+		ZillowSearchResults response = mapper.readValue(returnJson, ZillowSearchResults.class);
+		if ("0".equals(response.getMessage().getCode())) {
+			ZillowMessageConverterManager manager = new ZillowMessageConverterManager();
+			return manager.convert(response);
+		}
+		throw new DataProviderException("zillow.failed.service.call", response.getMessage().getText(), "zillow call failed");
 	}
 
 	@Override
 	public PropertyValuationResult propertyValuation(PropertySearchRequest request) throws Exception {
 		log.debug("PropertyValuationRequest: " + request.toString());
 
-		String zwsid = zillowId;
+		String returnJson = getSearchResults(request);
 
-		// TODO scrub the incoming data for special chars and whatnot
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("zws-id", zwsid);
+		MessageConverter<PropertyValuationResult, ZillowEstimate> adaptor = new ZillowValuationConverter(util);
+
+		// convert json to object
+		ZillowSearchResults response = mapper.readValue(returnJson, ZillowSearchResults.class);
+
+		if ("0".equals(response.getMessage().getCode())) {
+			return adaptor.convert(response.getResponse().getResults().getZillowResult().getZestimate());
+		}
+		throw new DataProviderException("zillow.failed.service.call", response.getMessage().getText(), "zillow call failed");
+	}
+
+	private String getSearchResults(PropertySearchRequest request) {
+		// TODO scrub the incoming data for special chars and what not
+		Map<String, String> params = new HashMap<>();
+		params.put("zws-id", zillowId);
 		params.put("address", request.getAddress1());
 		params.put("citystatezip", request.getCity() + " " + request.getState() + " " + request.getZip());
+		params.put("rentzestimate", Boolean.toString(request.isIncludeRentEstimate()));
 
 		String str = restTemplate.getForObject(PROPERTY_SEARCH_URL, String.class, params);
 		
 		log.debug("Search provider result: " + str);
-		
-		MessageAdaptor<PropertyValuationResult, SearchResults> adaptor = new ZillowSearchProviderMessageAdaptor(util);
-
-		SearchResults response = mapper.readValue(str, SearchResults.class);
-		
-		if ("0".equals(response.getMessage().getCode())) {
-				return adaptor.convert(response);
-		}
-		throw new DataProviderException("zillow.failed.service.call", response.getMessage().getText());
+		return str;
 	}
 
-	// TODO - NG - create mapping between zillow error codes and our message values
-	private void mapErrorCode(String code) {
-
-	}
 	@Override
 	public Collection<PropertyValuationResult> propertyCompLookup(PropertySearchRequest request) {
 		// TODO - NG - implement once it become a priority

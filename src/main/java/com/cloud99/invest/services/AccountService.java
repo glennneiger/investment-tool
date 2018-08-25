@@ -3,7 +3,9 @@ package com.cloud99.invest.services;
 import com.cloud99.invest.domain.Status;
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.account.Account;
-import com.cloud99.invest.domain.account.UserRole;
+import com.cloud99.invest.domain.account.AccountOptions;
+import com.cloud99.invest.domain.account.SubscriptionType;
+import com.cloud99.invest.dto.requests.AccountCreationRequest;
 import com.cloud99.invest.exceptions.EntityNotFoundException;
 import com.cloud99.invest.repo.AccountRepo;
 
@@ -28,21 +30,26 @@ public class AccountService {
 	@Value("${free.user.num.of.properties}")
 	private Integer freeUserNumOfProperties;
 
-	public Account createAccount(User owner, String accountName, UserRole role) {
+	public Account createAccount(AccountCreationRequest request, User owner) {
 
 		Account account = new Account();
 		account.setStatus(Status.PENDING);
 		account.setOwnerId(owner.getId());
 		account.setCreateDate(DateTime.now());
-		account.setName(accountName);
-
-		if (UserRole.FREE_USER.equals(role)) {
-			account.setNumberOfPropertiesAllowed(freeUserNumOfProperties);
-		}
-
+		account.setName(request.getAccountName());
 		account = acctRepo.save(account);
+		
+		Integer numOfProperties = freeUserNumOfProperties;
+		AccountOptions acctOptions = new AccountOptions();
+		if (SubscriptionType.PAID.equals(request.getSubscription())) {
+			numOfProperties = -1;
+		}
+		acctOptions.setStoredDocumentCount(numOfProperties);
+		acctOptions.setStoredDocumentCount(0);
+		account.setAccountOptions(acctOptions);
+		
 		LOGGER.debug("Created new account: " + account);
-
+		
 		return account;
 	}
 

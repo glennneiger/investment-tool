@@ -37,6 +37,6 @@ public class PropertyFinancialController implements Controller {
 
 	@GetMapping(path = "/{propertyId}/", produces = JSON)
 	public void calcualteFlip() {
-
+		// TODO - NG - implement me!
 	}
 }

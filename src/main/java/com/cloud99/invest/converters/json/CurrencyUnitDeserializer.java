@@ -13,6 +13,9 @@ import org.joda.money.IllegalCurrencyException;
 
 import java.io.IOException;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class CurrencyUnitDeserializer extends JsonDeserializer<CurrencyUnit> {
 
 	@Override
@@ -22,17 +25,18 @@ public class CurrencyUnitDeserializer extends JsonDeserializer<CurrencyUnit> {
 
 		try {
 			JsonNode node = jp.getCodec().readTree(jp);
-			currencyCode = (String) node.asText();
+			currencyCode = node.asText();
 			if (!StringUtils.isEmpty(currencyCode)) {
 				return CurrencyUnit.getInstance(currencyCode);
-			} else {
-				// default value
-				return getDefaulCurrency();
 			}
+			// default value
+			return getDefaulCurrency();
+
 		} catch (IllegalCurrencyException e) {
-			// user tried to supploy
+			log.error("Error converting currency unit: " + e.getMessage(), e);
 			throw new ServiceException("currency.code.unknown", null, currencyCode);
 		} catch (Throwable t) {
+			log.error("Unhandled exception caught converting currency unit: " + t.getMessage(), t);
 			return getDefaulCurrency();
 		}
 

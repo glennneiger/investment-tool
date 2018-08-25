@@ -1,6 +1,5 @@
 package com.cloud99.invest.domain.property;
 
-import com.cloud99.invest.domain.MongoDocument;
 import com.cloud99.invest.repo.extensions.CascadeSave;
 
 import org.springframework.data.annotation.Id;
@@ -9,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class MultiFamily extends BaseProperty implements MongoDocument {
+public class MultiFamily extends BaseMultiFamilyProperty {
 	private static final long serialVersionUID = -3298223584103684973L;
 
 	@Id

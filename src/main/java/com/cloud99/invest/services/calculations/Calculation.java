@@ -29,7 +29,7 @@ public interface Calculation<RETURN_TYPE> {
 
 	public static Map<CalculationType, Calculation<?>> ALL_CALCULATIONS = allCalculationsMap();
 
-	static public Map<CalculationType, Calculation<?>> allCalculationsMap() {
+	public static Map<CalculationType, Calculation<?>> allCalculationsMap() {
 		Map<CalculationType, Calculation<?>> map = new HashMap<>(CalculationType.values().length);
 
 		for (CalculationType type : CalculationType.values()) {

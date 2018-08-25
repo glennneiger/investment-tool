@@ -1,18 +1,42 @@
 package com.cloud99.invest.domain;
 
-import org.springframework.data.annotation.Id;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class Address implements MongoDocument {
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+public class Address implements Serializable {
 	private static final long serialVersionUID = -3350152411681350957L;
 
-	@Id
-	private String id;
+	@Getter
+	@Setter
 	private String address1;
+
+	@Getter
+	@Setter
 	private String address2;
+
+	@Getter
+	@Setter
 	private String state;
+
+	@Getter
+	@Setter
 	private String city;
+
+	@Getter
+	@Setter
 	private String zip;
+
+	@Getter
+	@Setter
 	private Double latitude;
+
+	@Getter
+	@Setter
 	private Double longitude;
 
 	public Address() {
@@ -38,72 +62,8 @@ public class Address implements MongoDocument {
 		this.longitude = longitude;
 	}
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public Double getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(Double latitude) {
-		this.latitude = latitude;
-	}
-
-	public Double getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(Double longitude) {
-		this.longitude = longitude;
-	}
-
-	public String getAddress1() {
-		return address1;
-	}
-
-	public void setAddress1(String address1) {
-		this.address1 = address1;
-	}
-
-	public String getAddress2() {
-		return address2;
-	}
-
-	public void setAddress2(String address2) {
-		this.address2 = address2;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getZip() {
-		return zip;
-	}
-
-	public void setZip(String zip) {
-		this.zip = zip;
-	}
-
 	@Override
 	public String toString() {
-		return toJsonString();
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
 	}
 }

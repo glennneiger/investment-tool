@@ -24,6 +24,7 @@ public class TestMongoConfig {
 		mongo.setBindIp(MONGO_DB_URL);
 		MongoClient mongoClient = mongo.getObject();
 		MongoTemplate mongoTemplate = new MongoTemplate(mongoClient, MONGO_DB_NAME);
+
 		return mongoTemplate;
 	}
 

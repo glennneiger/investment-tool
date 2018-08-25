@@ -7,7 +7,7 @@ package com.cloud99.invest.domain;
  */
 public enum Frequency {
 
-	SINGLE(0), DAILY(360), WEEKLY(52), MONTHY(12), ANNUALLY(1);
+	SINGLE(0), DAILY(365), WEEKLY(52), MONTHY(12), ANNUALLY(1);
 
 	private int annualPeriods;
 

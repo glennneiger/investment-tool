@@ -1,5 +1,6 @@
-package com.cloud99.invest.integration.zillow.results;
+package com.cloud99.invest.integration.zillow.deserializers;
 
+import com.cloud99.invest.integration.zillow.results.ValueChange;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.ObjectCodec;

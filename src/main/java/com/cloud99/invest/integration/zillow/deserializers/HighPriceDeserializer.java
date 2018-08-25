@@ -1,5 +1,6 @@
-package com.cloud99.invest.integration.zillow.results;
+package com.cloud99.invest.integration.zillow.deserializers;
 
+import com.cloud99.invest.integration.zillow.results.High;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.ObjectCodec;
@@ -9,22 +10,24 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
 
-public class LowPriceDeserializer extends JsonDeserializer<Low> {
+public class HighPriceDeserializer extends JsonDeserializer<High> {
 
 	@Override
-	public Low deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+	public High deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
 
 		ObjectCodec oc = jp.getCodec();
 		JsonNode node = oc.readTree(jp);
 
-		Low low = new Low();
+		High high = new High();
 		JsonNode content = node.get("");
+
 		if (content == null) {
-			return low;
+			return high;
 		}
-		low.setContent(content.asDouble());
-		low.setCurrency(node.get("currency").asText());
-		return low;
+		high.setContent(content.asDouble());
+		high.setCurrency(node.get("currency").asText());
+
+		return high;
 	}
 
 }

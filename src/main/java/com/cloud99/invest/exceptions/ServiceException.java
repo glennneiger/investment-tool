@@ -30,15 +30,12 @@ public class ServiceException extends RuntimeException {
 	@Setter
 	private String[] messageValues;
 
-	public ServiceException(String errorMessageCode, String devDetails, String[]... messageValues) {
+	public ServiceException(String errorMessageCode, String devDetails, String... messageValues) {
 		super(errorMessageCode);
 		this.devDetails = devDetails;
 		txId = UUID.randomUUID().toString();
 		createTime = ZonedDateTime.now();
-	}
-
-	public ServiceException(String errorMessageCode, String devDetails, String value) {
-		this(errorMessageCode, devDetails, new String[] { value });
+		this.messageValues = messageValues;
 	}
 
 }

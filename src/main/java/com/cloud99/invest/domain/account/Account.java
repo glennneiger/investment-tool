@@ -2,23 +2,15 @@ package com.cloud99.invest.domain.account;
 
 import com.cloud99.invest.domain.MongoDocument;
 import com.cloud99.invest.domain.Status;
-import com.cloud99.invest.domain.User;
-import com.cloud99.invest.repo.extensions.CascadeSave;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -64,39 +56,20 @@ public class Account implements MongoDocument {
 
 	@Setter
 	@Getter
-	private Integer numberOfPropertiesAllowed;
-
-	@CascadeSave
-	private Collection<User> assignedUsers;
+	private String ownerId;
 
 	@Setter
 	@Getter
-	private String ownerId;
+	private AccountOptions accountOptions;
 
 	@Transient
 	public static String getDefaultTimezone() {
 		return DEFAULT_TIMEZONE;
 	}
 
-	public void addAssignedUser(User user) {
-		Collection<User> users = getAssignedUsers();
-		users.add(user);
-	}
-
-	public Collection<User> getAssignedUsers() {
-		if (assignedUsers == null) {
-			assignedUsers = new ArrayList<>(Arrays.asList());
-		}
-		return assignedUsers;
-	}
-
-	public void setAssignedUsers(Collection<User> assignedUsers) {
-		this.assignedUsers = assignedUsers;
-	}
-
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
+		return toJsonString();
 	}
 
 }

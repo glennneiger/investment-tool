@@ -21,11 +21,10 @@ public class TestAppConfig {
 	
 	@Bean
 	public AuthTokenRepo authTokenRepo() {
-		authTokenRepoMock = Mockito.mock(AuthTokenRepo.class);
+		if (authTokenRepoMock == null) {
+			authTokenRepoMock = Mockito.mock(AuthTokenRepo.class);
+		}
 		return authTokenRepoMock;
 	}
 
-	public AuthTokenRepo getAuthTokenRepo() {
-		return authTokenRepoMock;
-	}
 }

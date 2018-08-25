@@ -1,16 +1,20 @@
-package com.cloud99.invest.dto;
+package com.cloud99.invest.dto.responses;
 
 import com.cloud99.invest.domain.financial.PropertyValuation;
-import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.integration.ProviderInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.joda.money.Money;
 
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * DTO class for returning property valuation data to a consumer
+ */
 public class PropertyValuationResult {
 
+	@JsonIgnore
 	@Setter
 	@Getter
 	private String providerId;
@@ -20,10 +24,6 @@ public class PropertyValuationResult {
 	private ProviderInfo providerInfo;
 
 	private PropertyValuation propertyValuation;
-
-	@Setter
-	@Getter
-	private Property property;
 
 	public PropertyValuationResult() {
 		propertyValuation = new PropertyValuation();

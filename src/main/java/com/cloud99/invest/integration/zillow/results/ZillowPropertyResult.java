@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ZillowPropertyResult {
 	private Message message;
 
-	private Response response;
+	private ZillowResponse response;
 
 	public Message getMessage() {
 		return message;
@@ -16,11 +16,11 @@ public class ZillowPropertyResult {
 		this.message = message;
 	}
 
-	public Response getResponse() {
+	public ZillowResponse getResponse() {
 		return response;
 	}
 
-	public void setResponse(Response response) {
+	public void setResponse(ZillowResponse response) {
 		this.response = response;
 	}
 

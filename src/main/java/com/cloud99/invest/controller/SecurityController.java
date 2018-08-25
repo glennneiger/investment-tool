@@ -1,11 +1,11 @@
 package com.cloud99.invest.controller;
 
 import com.cloud99.invest.domain.User;
+import com.cloud99.invest.domain.account.Account;
 import com.cloud99.invest.domain.redis.AuthToken;
+import com.cloud99.invest.dto.requests.AccountCreationRequest;
 import com.cloud99.invest.services.UserService;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,10 +22,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequestMapping(path = "/public")
 public class SecurityController implements Controller {
-	private static final Logger LOGGER = LoggerFactory.getLogger(SecurityController.class);
 
 	@Autowired
 	private UserService userService;
@@ -48,7 +50,7 @@ public class SecurityController implements Controller {
 				session.invalidate();
 			}
 		} catch (ServletException e) {
-			LOGGER.error("Error occurred while logging out user from the HttpServletRequest: " + e.getMessage(), e);
+			log.error("Error occurred while logging out user from the HttpServletRequest: " + e.getMessage(), e);
 		}
 		userService.logoutUser(token);
 	}
@@ -56,9 +58,9 @@ public class SecurityController implements Controller {
 	@PostMapping(path = "/registration", produces = JSON, consumes = JSON)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.ACCEPTED)
-	public User registerUserAndAccount(@RequestBody @Valid User user, @RequestParam String accountName, WebRequest request) {
+	public Account registerUserAndAccount(@RequestBody @Valid AccountCreationRequest accountRequest, WebRequest request) {
 
-		return userService.registerUserAndAccount(user, accountName, request.getContextPath());
+		return userService.registerUserAndAccount(accountRequest, request.getContextPath());
 	}
 
 	@PostMapping(path = "/registrationConfirmation", produces = JSON)

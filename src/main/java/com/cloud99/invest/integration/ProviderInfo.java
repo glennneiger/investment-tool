@@ -7,6 +7,8 @@ import java.net.URL;
 
 public enum ProviderInfo {
 
+	// TODO - NG - change the URL logo link to be relative to the controller that
+	// will host out the file or a link to a CDN
 	ZILLOW(ZillowServiceProvider.class, "http://www.rentrange.com/");
 
 	private URL logoLink;

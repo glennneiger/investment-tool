@@ -35,7 +35,7 @@ public class PurchaseDetails extends BaseDomainObject implements MongoDocument {
 
 	@Getter
 	@Setter
-	private Collection<ItemizedCost> itemizedClosingCosts = new ArrayList<>(0);
+	private Collection<ItemizedCost> closingCosts = new ArrayList<>(0);
 
 	@Getter
 	@Setter
@@ -58,7 +58,7 @@ public class PurchaseDetails extends BaseDomainObject implements MongoDocument {
 	@Transient
 	public Money getTotalClosingCosts(CurrencyUnit currency) {
 
-		return summerizeItemCosts(currency, itemizedClosingCosts);
+		return summerizeItemCosts(currency, closingCosts);
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class PurchaseDetails extends BaseDomainObject implements MongoDocument {
 		Money total = Money.of(currency, 0);
 		total = total
 				.plus(purchasePrice)
-				.plus(summerizeItemCosts(currency, itemizedClosingCosts))
+				.plus(summerizeItemCosts(currency, closingCosts))
 				.plus(getTotalRehabCosts(currency))
 				.plus(getFinancingDetails().getDownPayment(), RoundingMode.HALF_EVEN);
 		return total;

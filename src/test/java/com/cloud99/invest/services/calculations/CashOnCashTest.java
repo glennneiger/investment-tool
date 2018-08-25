@@ -17,7 +17,7 @@ public class CashOnCashTest extends BaseCalculationsTest {
 	@Override
 	public PurchaseDetails buildPurchaseDetails(double purchasePrice, double arv) {		
 		PurchaseDetails d = super.buildPurchaseDetails(purchasePrice, arv);
-		d.setItemizedClosingCosts(buildItemizedCost(5000D));
+		d.setClosingCosts(buildItemizedCost(5000D));
 		return d;
 
 	}

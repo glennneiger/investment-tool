@@ -1,19 +1,18 @@
 package com.cloud99.invest.domain.financial;
 
 import com.cloud99.invest.domain.BaseDomainObject;
-import com.cloud99.invest.domain.MongoDocument;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.joda.money.Money;
 
 import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Used for capturing detailed valuations for third-party integrations like
- * zillow
+ * Used to capture either current or future financial valuations. If future
+ * valuation is needed then the <code>FinancialAssumtions</code> should be
+ * included
  */
-public class PropertyValuation extends BaseDomainObject implements MongoDocument {
+public class PropertyValuation extends BaseDomainObject {
 	private static final long serialVersionUID = -8588143174207294793L;
 
 	@Getter
@@ -40,6 +39,9 @@ public class PropertyValuation extends BaseDomainObject implements MongoDocument
 	@Setter
 	private Float percentileChange;
 
+	/**
+	 * Optional financial attributes used when forecasting scenarios
+	 */
 	@Getter
 	@Setter
 	private FinancialAssumptions assumptions;

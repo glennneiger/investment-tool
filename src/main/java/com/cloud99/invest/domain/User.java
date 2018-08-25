@@ -3,6 +3,7 @@ package com.cloud99.invest.domain;
 import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.repo.extensions.CascadeSave;
 import com.cloud99.invest.validation.PasswordMatches;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
@@ -28,7 +29,7 @@ import lombok.Setter;
 
 @PasswordMatches
 @Document
-public class User extends Person implements MongoDocument, Authentication {
+public class User extends Person implements Authentication {
 	private static final long serialVersionUID = 1445414593887068772L;
 
 	@Id
@@ -67,15 +68,18 @@ public class User extends Person implements MongoDocument, Authentication {
 
 	@Getter
 	@Setter
+	@JsonIgnore
 	private boolean isAuthenticated;
 
 	@Getter
 	@Setter
+	@JsonIgnore
 	private DateTime lastLoginDate;
 
 	@CascadeSave
 	@Getter
 	@Setter
+	@JsonIgnore
 	private List<UserRole> userRoles;
 
 	// mongo objectId references to all properties user has access to
@@ -84,8 +88,11 @@ public class User extends Person implements MongoDocument, Authentication {
 	@Setter
 	private List<String> propertyRefs = new ArrayList<>(Arrays.asList());
 
+	@JsonIgnore
+	@Transient
 	private List<SimpleGrantedAuthority> authorities;
 
+	@Transient
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		if (authorities == null) {
@@ -94,6 +101,7 @@ public class User extends Person implements MongoDocument, Authentication {
 		return authorities;
 	}
 
+	@Transient
 	private List<SimpleGrantedAuthority> buildAuthorities(Collection<UserRole> applicationRoles) {
 		authorities = new ArrayList<>(applicationRoles.size());
 		for (UserRole role : applicationRoles) {
@@ -107,6 +115,7 @@ public class User extends Person implements MongoDocument, Authentication {
 		return toJsonString();
 	}
 
+	@Transient
 	public void addUserRole(UserRole role) {
 		if (this.userRoles == null) {
 			this.userRoles = new ArrayList<>(Arrays.asList());
@@ -117,21 +126,25 @@ public class User extends Person implements MongoDocument, Authentication {
 	}
 
 	@Override
+	@JsonIgnore
 	public String getName() {
 		return getEmail();
 	}
 
 	@Override
+	@JsonIgnore
 	public Object getCredentials() {
 		return getAuthorities();
 	}
 
 	@Override
+	@JsonIgnore
 	public Object getDetails() {
 		return this;
 	}
 
 	@Override
+	@JsonIgnore
 	public Object getPrincipal() {
 		return this;
 	}

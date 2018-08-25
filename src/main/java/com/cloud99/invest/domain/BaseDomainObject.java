@@ -10,8 +10,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+@SuppressWarnings("serial")
 @EqualsAndHashCode
-public class BaseDomainObject {
+public class BaseDomainObject implements MongoDocument {
 
 	@Getter
 	@Setter

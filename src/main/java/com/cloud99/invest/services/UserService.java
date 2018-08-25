@@ -1,16 +1,19 @@
 package com.cloud99.invest.services;
 
+import com.cloud99.invest.domain.Name;
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.VerificationToken;
 import com.cloud99.invest.domain.account.Account;
 import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.domain.redis.AuthToken;
+import com.cloud99.invest.dto.requests.AccountCreationRequest;
 import com.cloud99.invest.events.OnRegistrationRequestEvent;
 import com.cloud99.invest.exceptions.EntityNotFoundException;
 import com.cloud99.invest.exceptions.ServiceException;
 import com.cloud99.invest.repo.UserRepo;
 import com.cloud99.invest.repo.VerificationTokenRepo;
 import com.cloud99.invest.repo.redis.AuthTokenRepo;
+import com.sun.scenario.effect.Effect.AccelType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -80,7 +83,7 @@ public class UserService implements UserDetailsService {
 
 		Optional<AuthToken> tokenOptional = findAuthTokenById(id);
 		if (!tokenOptional.isPresent()) {
-			throw new AccessDeniedException("auth.session.required");
+			throw new ServiceException("auth.session.required", "no auth token found");
 		}
 		return tokenOptional.get();
 	}
@@ -133,9 +136,33 @@ public class UserService implements UserDetailsService {
 	}
 
 	@Transactional
-	public User registerUserAndAccount(User user, String accountName, String callbackUrl) {
-		LOGGER.debug("Starting to create new user and account: " + user);
+	public Account registerUserAndAccount(AccountCreationRequest accountRequest, String callbackUrl) {
+		LOGGER.debug("Starting to create new user and account: {}, callback url: {}", accountRequest, callbackUrl);
 
+		User newUser = copyRequestUserAttributes(accountRequest);
+		newUser = createUser(newUser, UserRole.CUSTOMER);
+
+		// TODO - NG - need to integrate credit card payment and provide inputs to
+		// process card
+		Account acct = acctService.createAccount(accountRequest, newUser);
+
+		eventPublisher.publishEvent(new OnRegistrationRequestEvent(newUser.getEmail(), callbackUrl, acct));
+
+		return acct;
+	}
+
+	private User copyRequestUserAttributes(AccountCreationRequest accountRequest) {
+		User user = new User();
+		user.setPersonName(new Name(accountRequest.getFirstName(), accountRequest.getMiddleName(), accountRequest.getLastName()));
+		user.setBirthDate(accountRequest.getBirthDate());
+		user.setEmail(accountRequest.getEmail());
+		user.setLocale(accountRequest.getLocale());
+		user.setGender(accountRequest.getGender());
+
+		return user;
+	}
+
+	public User createUser(User user, UserRole userRole) {
 		if (emailExist(user.getEmail())) {
 			throw new ServiceException("user.email.exists", null, user.getEmail());
 		}
@@ -145,18 +172,12 @@ public class UserService implements UserDetailsService {
 		user.setEnabled(false);
 
 		user.setCreateDate(DateTime.now());
+
+		// make sure there are no roles incorrectly added
 		user.setUserRoles(null);
-		user.addUserRole(UserRole.FREE_USER);
+		user.addUserRole(userRole);
 
-		user = userRepo.save(user);
-		
-		// TODO - NG - need to integrate credit card payment and provide inputs to
-		// process card
-		Account acct = acctService.createAccount(user, accountName, UserRole.FREE_USER);
-
-		eventPublisher.publishEvent(new OnRegistrationRequestEvent(user.getEmail(), callbackUrl, acct));
-
-		return user;
+		return userRepo.save(user);
 	}
 
 	@Transactional
@@ -277,6 +298,9 @@ public class UserService implements UserDetailsService {
 
 		user.getPropertyRefs().add(id);
 		return userRepo.save(user);
+	}
 
+	public void setApplicationEventPublisher(ApplicationEventPublisher eventPublisher) {
+		this.eventPublisher = eventPublisher;
 	}
 }

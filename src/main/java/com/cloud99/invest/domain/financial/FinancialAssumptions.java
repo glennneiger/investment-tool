@@ -8,6 +8,11 @@ import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Domain object that represents and investors forecasted values used for
+ * financial assumptions for a property.
+ */
+@SuppressWarnings("boxing")
 public class FinancialAssumptions {
 
 	@Getter

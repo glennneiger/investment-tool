@@ -11,12 +11,12 @@ import com.cloud99.invest.repo.PropertyRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -41,7 +41,9 @@ public class PropertyService {
 
 		Property dbProperty = propertyRepo.save(property);
 
-		user.setPropertyRefs(new ArrayList<>());
+		if (user.getPropertyRefs() == null) {
+			user.setPropertyRefs(new ArrayList<>());
+		}
 
 		userService.addPropertyRefToUser(user, dbProperty.getId());
 
@@ -52,7 +54,8 @@ public class PropertyService {
 		LOGGER.trace("getProperty() : " + userEmail);
 
 		User user = userService.findUserByEmailAndValidate(userEmail);
-		return propertyRepo.findAllById(convertIteratorToIterable(user.getPropertyRefs().iterator()));
+		Iterable<Property> props = propertyRepo.findAllById(convertIteratorToIterable(user.getPropertyRefs().iterator()));
+		return props;
 
 	}
 

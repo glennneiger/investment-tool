@@ -1,0 +1,11 @@
+[
+{"name":"Loan Payment","cost":0,"numberOfPeriodsAnnually":"MONTHY"},
+{"name":"Property Taxes","cost":0,"numberOfPeriodsAnnually":"MONTHY"},
+{"name":"Electricity","cost":0,"numberOfPeriodsAnnually":"MONTHY"},
+{"name":"Water","cost":0,"numberOfPeriodsAnnually":"MONTHY"},
+{"name":"Garbage","cost":0,"numberOfPeriodsAnnually":"MONTHY"},
+{"name":"HOAs","cost":0,"numberOfPeriodsAnnually":"MONTHY"},
+{"name":"Monthly Insurance","cost":0,"numberOfPeriodsAnnually":"MONTHY"},
+{"name":"Lawn Care/Snow Removal","cost":0,"numberOfPeriodsAnnually":"MONTHY"},
+{"name":"Other Monthly Expenses","cost":0,"numberOfPeriodsAnnually":"MONTHY"}
+]

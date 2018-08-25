@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 
-public abstract class BaseFinancialTest extends MockitoTest {
+public abstract class BaseFinancialTest extends BaseMockitoTest {
 
 	public PropertyFinances buildPropertyFinances(double purchasePrice) {
 

@@ -2,7 +2,7 @@ package com.cloud99.invest.domain.financial;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.cloud99.invest.MockitoTest;
+import com.cloud99.invest.BaseMockitoTest;
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.account.UserRole;
 
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-public class UserTest extends MockitoTest {
+public class UserTest extends BaseMockitoTest {
 
 	private User user;
 
@@ -21,18 +21,18 @@ public class UserTest extends MockitoTest {
 
 	@Test
 	public void testAddRole() {
-		user.addUserRole(UserRole.PRO_USER);
+		user.addUserRole(UserRole.ADMIN);
 
-		assertTrue(user.getUserRoles().contains(UserRole.PRO_USER));
+		assertTrue(user.getUserRoles().contains(UserRole.ADMIN));
 	}
 
 	@Test
 	public void testGetAuthorities() {
 		user.addUserRole(UserRole.ADMIN);
-		user.addUserRole(UserRole.PRO_USER);
+		user.addUserRole(UserRole.CUSTOMER);
 
 		SimpleGrantedAuthority admin = new SimpleGrantedAuthority(UserRole.ADMIN.name());
-		SimpleGrantedAuthority pro = new SimpleGrantedAuthority(UserRole.PRO_USER.name());
+		SimpleGrantedAuthority pro = new SimpleGrantedAuthority(UserRole.CUSTOMER.name());
 
 		assertTrue(user.getAuthorities().contains(admin));
 		assertTrue(user.getAuthorities().contains(pro));

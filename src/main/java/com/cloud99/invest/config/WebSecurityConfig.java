@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -28,6 +29,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 import java.util.Arrays;
 
 @EnableGlobalAuthentication
@@ -70,9 +76,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .and()
 		.authenticationProvider(tokenAuthenticationProvider())
 		.addFilterBefore(restAuthenticationFilter(), AnonymousAuthenticationFilter.class)
-		.exceptionHandling().defaultAuthenticationEntryPointFor(forbiddenEntryPoint(), PROTECTED_URLS)
+				.exceptionHandling().defaultAuthenticationEntryPointFor(forbiddenEntryPoint(), PROTECTED_URLS)
 		// TODO - NG - might want to create a custom AccessDeniedHandler and return a json payload instead of just a 403 status
-		.accessDeniedHandler(new AccessDeniedHandlerImpl())
+		.accessDeniedHandler(new AccessDeniedHandlerImpl() {
+
+			@Override
+			public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+				// TODO Auto-generated method stub
+				super.handle(request, response, accessDeniedException);
+			}
+			
+		})
 		.and()
 		.authorizeRequests().anyRequest().authenticated()
 		.and().formLogin().disable()

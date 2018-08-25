@@ -1,17 +1,22 @@
 package com.cloud99.invest.integration;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class DataProviderException extends RuntimeException {
 
 	private static final long serialVersionUID = 7135865486636932975L;
 
+	@Getter
 	private String messageCode;
 	
-	public DataProviderException(String messageCode, String msg) {
+	@Getter
+	@Setter
+	private String devMessage;
+
+	public DataProviderException(String messageCode, String msg, String devMessage) {
 		super(msg);
 		this.messageCode = messageCode;
 	}
 
-	public String getMessageCode() {
-		return messageCode;
-	}
 }

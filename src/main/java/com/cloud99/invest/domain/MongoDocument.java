@@ -13,7 +13,7 @@ public interface MongoDocument extends Serializable {
 
 	default String toJsonString() {
 		try {
-			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE).toString();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

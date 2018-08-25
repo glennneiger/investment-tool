@@ -1,8 +1,9 @@
 package com.cloud99.invest.controller;
 
 import com.cloud99.invest.domain.property.Property;
-import com.cloud99.invest.dto.PropertySearchRequest;
-import com.cloud99.invest.dto.PropertyValuationResult;
+import com.cloud99.invest.dto.requests.PropertySearchRequest;
+import com.cloud99.invest.dto.responses.PropertySearchResult;
+import com.cloud99.invest.dto.responses.PropertyValuationResult;
 import com.cloud99.invest.integration.ProviderInfo;
 import com.cloud99.invest.integration.ServiceProvider;
 import com.cloud99.invest.integration.ServiceProviderFactory;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,7 +34,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
-@RequestMapping(path = "/v1/users")
+@RequestMapping(path = "/v1")
 public class PropertyController implements Controller {
 
 	@Autowired
@@ -52,6 +54,7 @@ public class PropertyController implements Controller {
 		serviceProvider = providerFactory.getServiceProvider(ProviderInfo.ZILLOW);
 	}
 
+	// TODO - NG - this needs to be moved to a resource controller or something
 	@GetMapping(path = "/image", produces = MediaType.IMAGE_JPEG_VALUE)
 	public void getImage(HttpServletResponse response) throws IOException {
 
@@ -61,38 +64,46 @@ public class PropertyController implements Controller {
 		StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
 	}
 
-	@PostMapping(consumes = JSON, produces = JSON, path = "/property/valuation")
+	@PostMapping(path = "/properties/search", consumes = JSON, produces = JSON)
 	@ResponseBody
-	public PropertyValuationResult lookupPropertyValuation(@RequestBody @Valid PropertySearchRequest request) throws Exception {
+	public PropertySearchResult propertySearch(@RequestBody @Valid PropertySearchRequest request) throws Exception {
+
+		return serviceProvider.propertySearch(request);
+
+	}
+
+	@PostMapping(path = "/properties/valuation", consumes = JSON, produces = JSON)
+	@ResponseBody
+	public PropertyValuationResult propertyValuation(@RequestBody @Valid PropertySearchRequest request) throws Exception {
 
 		return serviceProvider.propertyValuation(request);
 
 	}
 
-	@GetMapping(path = "/{userEmail}/properties", consumes = JSON, produces = JSON)
+	@GetMapping(path = "/users/properties", consumes = JSON, produces = JSON)
 	@ResponseBody
-	public Iterable<Property> getPropertiesByUser(@PathVariable String userEmail) throws Exception {
+	public Iterable<Property> getPropertiesByUser(@RequestParam String userEmail) throws Exception {
 
 		return propertyService.getPropertyDetails(userEmail);
 	}
 	
-	@PostMapping(path = "/{userEmail}/properties", consumes = JSON, produces = JSON)
+	@PostMapping(path = "/users/properties", consumes = JSON, produces = JSON)
 	@ResponseStatus(code = HttpStatus.CREATED)
-	public <T extends Property> T createProperty(@RequestBody @Valid T property, @PathVariable String userEmail) {
+	public <T extends Property> T createProperty(@RequestBody @Valid T property, @RequestParam String userEmail) {
 
 		return propertyService.createProperty(userEmail, property);
 	}
 
-	@PutMapping(path = "/{userEmail}/property/{propertyId}", consumes = JSON, produces = JSON)
+	@PutMapping(path = "/users/properties/{propertyId}", consumes = JSON, produces = JSON)
 	@ResponseStatus(code = HttpStatus.ACCEPTED)
-	public Property updateProperties(@PathVariable String userEmail, @PathVariable String propertyId, @Valid Property property) {
+	public Property updateProperties(@PathVariable String userEmail, @RequestParam String propertyId, @Valid Property property) {
 
 		property.setId(propertyId);
 		return propertyService.updateProperty(userEmail, property);
 	}
 
-	@DeleteMapping(path = "/{userEmail}/property/{propertyId}", consumes = JSON)
-	public void deleteProperty(@PathVariable String userEmail, @PathVariable String propertyId) {
+	@DeleteMapping(path = "/users/properties/{propertyId}", consumes = JSON)
+	public void deleteProperty(@RequestParam String userEmail, @PathVariable String propertyId) {
 
 		propertyService.deleteProperty(userEmail, propertyId);
 	}
