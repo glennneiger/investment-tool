@@ -12,7 +12,6 @@ import lombok.Setter;
  * Domain object that represents and investors forecasted values used for
  * financial assumptions for a property.
  */
-@SuppressWarnings("boxing")
 public class FinancialAssumptions {
 
 	@Getter

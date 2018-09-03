@@ -8,7 +8,6 @@ import com.cloud99.invest.integration.ProviderInfo;
 import com.cloud99.invest.integration.ServiceProvider;
 import com.cloud99.invest.integration.ServiceProviderFactory;
 import com.cloud99.invest.services.PropertyService;
-import com.cloud99.invest.services.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -39,9 +38,6 @@ public class PropertyController implements Controller {
 
 	@Autowired
 	private PropertyService propertyService;
-
-	@Autowired
-	private UserService userService;
 
 	@Autowired
 	private ServiceProviderFactory providerFactory;

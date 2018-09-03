@@ -17,6 +17,7 @@ public class DataProviderException extends RuntimeException {
 	public DataProviderException(String messageCode, String msg, String devMessage) {
 		super(msg);
 		this.messageCode = messageCode;
+		this.devMessage = devMessage;
 	}
 
 }

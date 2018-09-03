@@ -7,7 +7,6 @@ import com.cloud99.invest.dto.requests.FlipAnalysisRequest;
 import com.cloud99.invest.dto.responses.FlipAnalysisResults;
 
 import org.joda.money.CurrencyUnit;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

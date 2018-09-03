@@ -16,7 +16,6 @@ import java.util.Map;
 public class RentCost implements Calculation<Double> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RentCost.class);
 
-	@SuppressWarnings("boxing")
 	@Override
 	public Double calculate(PropertyFinances propertyFinances, Map<CalculationType, Calculation<?>> allCalculations) {
 

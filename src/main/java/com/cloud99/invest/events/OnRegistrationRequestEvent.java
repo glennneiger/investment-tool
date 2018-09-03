@@ -6,11 +6,23 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.context.ApplicationEvent;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class OnRegistrationRequestEvent extends ApplicationEvent {
 
 	private static final long serialVersionUID = 8406927110534724357L;
+
+	@Getter
+	@Setter
 	private String appUrl;
+
+	@Getter
+	@Setter
 	private String userEmail;
+
+	@Getter
+	@Setter
 	private Account account;
 
 	public OnRegistrationRequestEvent(String userEmail, String appUrl, Account account) {
@@ -19,30 +31,6 @@ public class OnRegistrationRequestEvent extends ApplicationEvent {
 		this.userEmail = userEmail;
 		this.appUrl = appUrl;
 		this.account = account;
-	}
-
-	public Account getAccount() {
-		return account;
-	}
-
-	public void setAccount(Account account) {
-		this.account = account;
-	}
-
-	public String getAppUrl() {
-		return appUrl;
-	}
-
-	public void setAppUrl(String appUrl) {
-		this.appUrl = appUrl;
-	}
-
-	public String getUserEmail() {
-		return userEmail;
-	}
-
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
 	}
 
 	@Override

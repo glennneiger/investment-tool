@@ -37,7 +37,6 @@ public class RentCostTest extends BaseCalculationsTest {
 		return 50000;
 	}
 
-	@SuppressWarnings("boxing")
 	@Override
 	public <T> void assertResult(T result) {
 		// 50k purchase

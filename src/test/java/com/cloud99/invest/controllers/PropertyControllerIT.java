@@ -41,7 +41,6 @@ public class PropertyControllerIT extends BaseIntegrationTest {
 	
 	private User user = dataCreator.buildUser();
 
-	@SuppressWarnings("boxing")
 	@Test
 	public void testPropertySearch() throws Exception {
 
@@ -120,7 +119,7 @@ public class PropertyControllerIT extends BaseIntegrationTest {
 		user.setEnabled(true);
 		userRepo.save(user);
 	
-		MvcResult result = invokeLoginEndpoint(user, HttpStatus.OK);
+		MvcResult result = invokeLoginEndpoint(user.getEmail(), HttpStatus.OK);
 				
 		String authTokenJson = result.getResponse().getContentAsString();
 		AuthToken authToken = objectMapper.readValue(authTokenJson, AuthToken.class);
@@ -130,12 +129,12 @@ public class PropertyControllerIT extends BaseIntegrationTest {
 		return authToken.getToken();
 	}
 	
-	private MvcResult invokeLoginEndpoint(User user, HttpStatus expectedStatus) {
+	private MvcResult invokeLoginEndpoint(String email, HttpStatus expectedStatus) {
 		MvcResult result = null;
 		try {
 			result = mvc.perform(post("/public/login")
 					.contentType(MediaType.APPLICATION_JSON_VALUE)
-					.param("userEmail", user.getEmail())
+					.param("userEmail", email)
 					.param("password", "password"))
 					.andExpect(status().is(expectedStatus.value()))
 					.andReturn();

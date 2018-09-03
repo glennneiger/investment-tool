@@ -2,28 +2,31 @@ package com.cloud99.invest.events;
 
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.VerificationToken;
+import com.cloud99.invest.domain.account.Account;
+import com.cloud99.invest.domain.financial.ItemizedCost;
+import com.cloud99.invest.repo.GenericRepo;
+import com.cloud99.invest.services.AccountService;
 import com.cloud99.invest.services.EmailService;
+import com.cloud99.invest.services.SecurityService;
 import com.cloud99.invest.services.UserService;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Centralized service to register all {@link EventListener} that handle
  * {@link ApplicationEvent}
  *
  */
+@Slf4j
 @Service
 public class EventHandlingService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(EventHandlingService.class);
 
 	@Setter
 	@Getter
@@ -35,10 +38,28 @@ public class EventHandlingService {
 	@Autowired
 	private UserService userService;
 
-	@EventListener
-	public void registrationRequestListener(OnRegistrationRequestEvent event) {
+	@Autowired
+	private SecurityService securityService;
 
-		registrationRequestHandler(event);
+	@Autowired
+	private GenericRepo genericRepo;
+
+	@Autowired
+	private AccountService accountService;
+
+	@EventListener
+	public void accountCreatedEventListener(AccountCreatedEvent event) {
+
+		log.debug(AccountCreatedEvent.class.getSimpleName() + " event listener invoked for event: " + event);
+
+		Account acct = event.getAccount();
+
+		acct.setClosingCostsList(genericRepo.getCollectionList(ItemizedCost.class, GenericRepo.CLOSING_COSTS_COLLECTION_NAME));
+		acct.setExpencesList(genericRepo.getCollectionList(ItemizedCost.class, GenericRepo.EXPENCES_COSTS_COLLECTION_NAME));
+		acct.setHoldingCostList(genericRepo.getCollectionList(ItemizedCost.class, GenericRepo.HOLDING_COSTS_COLLECTION_NAME));
+
+		accountService.save(acct);
+		log.debug("Finished loading account itemized costs ref data");
 	}
 
 	/**
@@ -46,15 +67,21 @@ public class EventHandlingService {
 	 * registration confirmation email
 	 * 
 	 * @param event
+	 *            that was generated from a new account registration
 	 */
-	@Async
-	public void registrationRequestHandler(OnRegistrationRequestEvent event) {
-		LOGGER.debug("registrationRequestHandler invoked for event: " + event);
+	@EventListener
+	public void registrationRequestListener(OnRegistrationRequestEvent event) {
+
+		registrationRequestHandler(event);
+	}
+
+	private void registrationRequestHandler(OnRegistrationRequestEvent event) {
+		log.debug("registrationRequestHandler invoked for event: " + event);
 
 		String userEmail = event.getUserEmail();
 		User user = userService.findUserByEmailAndValidate(userEmail);
 
-		VerificationToken token = userService.createVerificationToken(userEmail);
+		VerificationToken token = securityService.createVerificationToken(userEmail);
 
 		// TODO - NG - find a way to get the full application URI (maybe the URL to our load balancer)
 		String url = event.getAppUrl() + "/users/registrationConfirmation?token=" + token.getToken();

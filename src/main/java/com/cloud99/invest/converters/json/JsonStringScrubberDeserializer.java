@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JsonStringScrubberDeserializer extends JsonDeserializer<String> {
 
+	private Util util = new Util();
+
 	@Override
 	public String deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
 		String incomingVal = null;
@@ -23,7 +25,7 @@ public class JsonStringScrubberDeserializer extends JsonDeserializer<String> {
 			JsonNode node = jp.getCodec().readTree(jp);
 			if (node != null && !StringUtils.isEmpty(node.asText())) {
 				incomingVal = node.asText();
-				return Util.removeSpecialCharacters(incomingVal);
+				return util.removeSpecialCharacters(incomingVal);
 			}
 		} catch (Exception e) {
 			log.error("Error scrubbing json string value, msg: " + e.getMessage(), e);

@@ -11,7 +11,6 @@ import com.cloud99.invest.integration.zillow.deserializers.HighPriceDeserializer
 import com.cloud99.invest.integration.zillow.deserializers.LowPriceDeserializer;
 import com.cloud99.invest.integration.zillow.deserializers.ValueChangeDeserializer;
 import com.cloud99.invest.integration.zillow.messageConverters.ZillowMessageConverterManager;
-import com.cloud99.invest.integration.zillow.messageConverters.ZillowPropertyConverter;
 import com.cloud99.invest.integration.zillow.messageConverters.ZillowValuationConverter;
 import com.cloud99.invest.integration.zillow.results.Amount;
 import com.cloud99.invest.integration.zillow.results.High;

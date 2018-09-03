@@ -2,6 +2,7 @@ package com.cloud99.invest.util;
 
 import com.cloud99.invest.domain.financial.ItemizedCost;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.springframework.stereotype.Component;
@@ -11,11 +12,23 @@ import java.util.Collection;
 @Component
 public class Util {
 
+	public void validateNotNull(Object val, String msg) {
+		if (val == null) {
+			throw new IllegalStateException(msg);
+		}
+	}
+
+	public void validateNotEmpty(String val, String msg) throws IllegalStateException {
+		if (StringUtils.isEmpty(val)) {
+			throw new IllegalStateException(msg);
+		}
+	}
+
 	public Money convertToMoney(String currency, Double amount) {
 		return convertToMoney(amount, currency);
 	}
 
-	public static String removeSpecialCharacters(String str) {
+	public String removeSpecialCharacters(String str) {
 		return str.replaceAll("[^\\w\\s]", "");
 	}
 

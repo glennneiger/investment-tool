@@ -16,7 +16,6 @@ import java.util.Map;
 public class CapRate implements Calculation<BigDecimal> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DebtServiceRatio.class);
 
-	@SuppressWarnings("boxing")
 	@Override
 	public BigDecimal calculate(PropertyFinances propertyFinances, Map<CalculationType, Calculation<?>> allCalculations) {
 

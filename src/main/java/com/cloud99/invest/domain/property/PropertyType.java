@@ -1,8 +1,6 @@
 package com.cloud99.invest.domain.property;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum PropertyType {
 
@@ -35,9 +33,10 @@ public enum PropertyType {
 	}
 
 	@JsonCreator
-	public static PropertyType fromValue(String value) {
+	public static PropertyType fromValue(String javaKeyName) {
 		for (PropertyType type : values()) {
-			if (type.name.equals(value)) {
+			System.out.println(type.name());
+			if (type.name().equals(javaKeyName)) {
 				return type;
 			}
 		}

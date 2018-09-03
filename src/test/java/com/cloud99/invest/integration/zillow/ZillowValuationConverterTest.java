@@ -51,7 +51,7 @@ public class ZillowValuationConverterTest extends BaseMockitoTest {
 		});
 	}
 	
-	@SuppressWarnings({ "cast", "boxing" })
+	@SuppressWarnings("cast")
 	@Test
 	public void testConvertSearchResults() {
 
@@ -99,7 +99,6 @@ public class ZillowValuationConverterTest extends BaseMockitoTest {
 		return r;
 	}
 
-	@SuppressWarnings("boxing")
 	private ZillowResult buildResult() {
 
 		ZillowResult r = new ZillowResult();
@@ -120,7 +119,6 @@ public class ZillowValuationConverterTest extends BaseMockitoTest {
 		return r;
 	}
 
-	@SuppressWarnings("boxing")
 	private ZillowEstimate buildZestimate() {
 
 		ZillowEstimate z = new ZillowEstimate();
@@ -134,7 +132,6 @@ public class ZillowValuationConverterTest extends BaseMockitoTest {
 		return z;
 	}
 
-	@SuppressWarnings("boxing")
 	private ValueChange buildValueChange(double amt) {
 
 		ValueChange c = new ValueChange();
@@ -153,7 +150,6 @@ public class ZillowValuationConverterTest extends BaseMockitoTest {
 		return r;
 	}
 
-	@SuppressWarnings("boxing")
 	private Low buildLow(double i) {
 
 		Low l = new Low();
@@ -162,7 +158,6 @@ public class ZillowValuationConverterTest extends BaseMockitoTest {
 		return l;
 	}
 
-	@SuppressWarnings("boxing")
 	private High buildHigh(double amt) {
 
 		High h = new High();
@@ -171,7 +166,6 @@ public class ZillowValuationConverterTest extends BaseMockitoTest {
 		return h;
 	}
 
-	@SuppressWarnings("boxing")
 	private Amount buildAmount(double amount) {
 
 		Amount a = new Amount();

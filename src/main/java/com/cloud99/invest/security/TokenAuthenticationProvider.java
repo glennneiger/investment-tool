@@ -1,6 +1,6 @@
 package com.cloud99.invest.security;
 
-import com.cloud99.invest.services.UserService;
+import com.cloud99.invest.services.SecurityService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,10 +13,10 @@ import org.springframework.stereotype.Component;
 public class TokenAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
 	@Autowired
-	private UserService userService;
+	private SecurityService securityService;
 
-	public TokenAuthenticationProvider(UserService userService) {
-		this.userService = userService;
+	public TokenAuthenticationProvider(SecurityService securityService) {
+		this.securityService = securityService;
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public class TokenAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
 	@Override
 	protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-		return userService.loadUserByUsername(username);
+		return securityService.loadUserByUsername(username);
 	}
 
 }

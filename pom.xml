@@ -23,6 +23,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+		<skipTestsIT>false</skipTestsIT>
+		<skipTests>false</skipTests>
 	</properties>
 
 	<dependencies>
@@ -181,6 +183,12 @@
 			<scope>provided</scope>
 		</dependency>
 
+	<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools -->
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-devtools</artifactId>
+	</dependency>
+
 	</dependencies>
 
 	<build>
@@ -201,8 +209,8 @@
 								<includes>
 									<include>**/*IT.class</include>
 								</includes>
-								<skipITs>${skipTests}</skipITs>
-							</configuration>
+								<skipITs>${skipTestsIT}</skipITs>
+							</configuration>							
 						</execution>
 					</executions>
 				</plugin>
@@ -221,12 +229,12 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+        
 			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.0</version>
+				<artifactId>maven-surefire-plugin</artifactId>				
 				<configuration>
 					<includes>
-						<include>**/*Test.java</include>
+						<include>**/*IT.java</include>
 					</includes>
 				</configuration>
 				<dependencies>

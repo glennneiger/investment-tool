@@ -2,6 +2,7 @@ package com.cloud99.invest.domain.account;
 
 import com.cloud99.invest.domain.MongoDocument;
 import com.cloud99.invest.domain.Status;
+import com.cloud99.invest.domain.financial.ItemizedCost;
 
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
@@ -11,13 +12,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
 import lombok.Getter;
 import lombok.Setter;
 
-@Document(collection = "Account")
+@Document(collection = "account")
 public class Account implements MongoDocument {
 	private static final long serialVersionUID = -7224716818049308814L;
 
@@ -60,7 +62,19 @@ public class Account implements MongoDocument {
 
 	@Setter
 	@Getter
-	private AccountOptions accountOptions;
+	private GeneralSettings accountOptions;
+
+	@Getter
+	@Setter
+	private List<ItemizedCost> holdingCostList;
+
+	@Getter
+	@Setter
+	private List<ItemizedCost> expencesList;
+
+	@Getter
+	@Setter
+	private List<ItemizedCost> closingCostsList;
 
 	@Transient
 	public static String getDefaultTimezone() {

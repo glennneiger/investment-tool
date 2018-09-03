@@ -1,7 +1,6 @@
 package com.cloud99.invest.domain.property;
 
 import com.cloud99.invest.domain.Address;
-import com.cloud99.invest.domain.MongoDocument;
 import com.cloud99.invest.domain.ParkingType;
 import com.cloud99.invest.domain.financial.FinancialAssumptions;
 import com.cloud99.invest.domain.financial.FinancingDetails;

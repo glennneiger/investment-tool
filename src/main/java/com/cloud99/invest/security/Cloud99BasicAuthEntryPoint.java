@@ -21,8 +21,9 @@ public class Cloud99BasicAuthEntryPoint extends BasicAuthenticationEntryPoint {
 
 		response.addHeader("WWW-Authenticate", "Basic realm=\"" + getRealmName() + "\"");
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		PrintWriter writer = response.getWriter();
-		writer.println("HTTP Status 401 - " + authException.getMessage());
+		try (PrintWriter writer = response.getWriter()) {
+			writer.println("HTTP Status 401 - " + authException.getMessage());
+		}
 	}
 
 	@Override

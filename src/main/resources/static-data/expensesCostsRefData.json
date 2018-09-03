@@ -8,7 +8,7 @@
 {"name":"Attorny and Legal Fees","cost":0,"numberOfPeriodsAnnually":"MONTHY"},
 {"name":"Insurance","cost":0,"numberOfPeriodsAnnually":"MONTHY"},
 {"name":"Property Managment","cost":0,"numberOfPeriodsAnnually":"MONTHY"},
-{"name":"Property Taxes","cost":0,"numberOfPeriodsAnnually":"MONTHY"},
+{"name":"Property Taxes","cost":0,"numberOfPeriodsAnnually":"ANNUALLY"},
 {"name":"Travel","cost":0,"numberOfPeriodsAnnually":"MONTHY"},
 {"name":"Leasing Commissions","cost":0,"numberOfPeriodsAnnually":"MONTHY"},
 {"name":"Salary and Wages","cost":0,"numberOfPeriodsAnnually":"MONTHY"}

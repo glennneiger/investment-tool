@@ -20,14 +20,14 @@ import com.cloud99.invest.events.EventHandlingService;
 import com.cloud99.invest.events.OnRegistrationRequestEvent;
 import com.cloud99.invest.repo.AccountRepo;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 import java.util.Optional;
@@ -61,6 +61,7 @@ public class UserServiceIT extends BaseIntegrationTest {
 
 		// assert user attributes
 		Optional<User> userOpt = userService.findUserById(account.getOwnerId());
+
 		assertTrue(userOpt.isPresent());
 		User returnUser = userOpt.get();
 		assertTrue(returnUser.getAuthorities().contains(new SimpleGrantedAuthority(UserRole.CUSTOMER.name())));
@@ -87,8 +88,10 @@ public class UserServiceIT extends BaseIntegrationTest {
 	}
 
 	@Test
-	public void testAccessDeniedException_expected() throws Exception {
-		Assertions.assertThrows(AccessDeniedException.class, 
-				() -> mvc.perform(get("/v1/accounts/").header("authorization", "123456789").with(user("testUser"))));
+	public void testUnauthorized() throws Exception {
+		MvcResult result = mvc.perform(get("/v1/accounts/").header("authorization", "123456789").with(user("testUser"))).andReturn();
+
+		System.out.println(result.getResponse().getContentAsString());
+		assertEquals(HttpStatus.UNAUTHORIZED.value(), result.getResponse().getStatus());
 	}
 }

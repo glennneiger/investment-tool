@@ -2,8 +2,8 @@ package com.cloud99.invest.domain;
 
 /**
  * Represents a frequency or period of time as it associates to either an
- * expense or income. For each period it also stores the number of periods in a
- * year to help calculate annual amounts.
+ * reoccurring transaction. For each period, it also stores the number of
+ * periods in a year to help calculate annual amounts.
  */
 public enum Frequency {
 

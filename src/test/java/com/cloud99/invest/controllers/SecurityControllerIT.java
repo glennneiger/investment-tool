@@ -98,7 +98,9 @@ public class SecurityControllerIT extends BaseIntegrationTest {
 			
 			Mockito.when(authTokenRepo.findById(authToken.getToken())).thenReturn(Optional.empty());
 
-			assertEquals(HttpStatus.FORBIDDEN.value(), invokeSecuredEnpoint(user, authToken).getResponse().getStatus());
+			MvcResult securedEndpointResult = invokeSecuredEnpoint(user, authToken);
+
+			assertEquals(HttpStatus.UNAUTHORIZED.value(), securedEndpointResult.getResponse().getStatus());
 
 		} finally {
 			if (user != null && user.getId() != null) {
@@ -128,10 +130,11 @@ public class SecurityControllerIT extends BaseIntegrationTest {
 
 	private MvcResult invokeSecuredEnpoint(User user, AuthToken authToken) throws Exception {
 
-		return mvc.perform(get("/v1/users/{email}/properties", user.getEmail())
+		return mvc.perform(get("/v1/users/properties")
 				.accept(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON)
-				.header("authorization", authToken.getToken()))
+				.header("authorization", authToken.getToken())
+				.param("userEmail", user.getEmail()))
 				.andReturn();
 	}
 

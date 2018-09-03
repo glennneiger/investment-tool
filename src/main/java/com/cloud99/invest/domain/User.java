@@ -2,9 +2,10 @@ package com.cloud99.invest.domain;
 
 import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.repo.extensions.CascadeSave;
-import com.cloud99.invest.validation.PasswordMatches;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -27,7 +28,6 @@ import java.util.Locale;
 import lombok.Getter;
 import lombok.Setter;
 
-@PasswordMatches
 @Document
 public class User extends Person implements Authentication {
 	private static final long serialVersionUID = 1445414593887068772L;
@@ -45,18 +45,10 @@ public class User extends Person implements Authentication {
 	@Setter
 	private String email;
 
-	@NotNull(message = "password.required")
-	@NotEmpty(message = "password.required")
+	@JsonIgnore
 	@Getter
 	@Setter
 	private String password;
-
-	@NotNull(message = "password.required")
-	@NotEmpty(message = "password.required")
-	@Transient
-	@Getter
-	@Setter
-	private String matchingPassword;
 
 	@Getter
 	@Setter
@@ -66,10 +58,11 @@ public class User extends Person implements Authentication {
 	@Setter
 	private boolean enabled;
 
+	@Transient
 	@Getter
 	@Setter
 	@JsonIgnore
-	private boolean isAuthenticated;
+	private boolean authenticated;
 
 	@Getter
 	@Setter
@@ -110,11 +103,6 @@ public class User extends Person implements Authentication {
 		return authorities;
 	}
 
-	@Override
-	public String toString() {
-		return toJsonString();
-	}
-
 	@Transient
 	public void addUserRole(UserRole role) {
 		if (this.userRoles == null) {
@@ -147,6 +135,11 @@ public class User extends Person implements Authentication {
 	@JsonIgnore
 	public Object getPrincipal() {
 		return this;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.DEFAULT_STYLE);
 	}
 
 }

@@ -1,6 +1,5 @@
 package com.cloud99.invest.integration.zillow.messageConverters;
 
-import com.cloud99.invest.domain.Address;
 import com.cloud99.invest.domain.financial.TaxAssessment;
 import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.domain.property.PropertyType;
@@ -18,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ZillowPropertyConverter implements MessageConverter<Property, ZillowResult> {
 
-	@SuppressWarnings("boxing")
 	@Override
 	public Property convert(ZillowResult incomingResult) {
 

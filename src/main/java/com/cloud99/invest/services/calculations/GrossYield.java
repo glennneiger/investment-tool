@@ -16,7 +16,6 @@ import java.util.Map;
 public class GrossYield implements Calculation<Double> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(GrossYield.class);
 
-	@SuppressWarnings("boxing")
 	@Override
 	public Double calculate(PropertyFinances propertyFinances, Map<CalculationType, Calculation<?>> allCalculations) {
 
@@ -26,8 +25,7 @@ public class GrossYield implements Calculation<Double> {
 		Money rent = propertyFinances.getIncome().getAnnualRentalIncome(propertyFinances.getCurrency());
 		LOGGER.debug("Annual Gross Rent: " + rent);
 		
-		BigDecimal yield = rent.getAmount().divide(purchase).multiply(new BigDecimal(100));
-		yield.setScale(2, RoundingMode.HALF_EVEN);
+		BigDecimal yield = rent.getAmount().divide(purchase).multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_EVEN);
 		LOGGER.debug("Gross Yield: " + yield);
 
 		return yield.doubleValue();

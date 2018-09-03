@@ -4,6 +4,7 @@ import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.account.Account;
 import com.cloud99.invest.domain.redis.AuthToken;
 import com.cloud99.invest.dto.requests.AccountCreationRequest;
+import com.cloud99.invest.services.SecurityService;
 import com.cloud99.invest.services.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ import lombok.extern.slf4j.Slf4j;
 public class SecurityController implements Controller {
 
 	@Autowired
+	private SecurityService securityService;
+
+	@Autowired
 	private UserService userService;
 
 	@PostMapping(path = "/login", produces = JSON)
@@ -37,7 +41,7 @@ public class SecurityController implements Controller {
 	@ResponseStatus(HttpStatus.OK)
 	public AuthToken login(@RequestParam String userEmail, @RequestParam String password) {
 
-		return userService.loginUser(userEmail, password);
+		return securityService.loginUser(userEmail, password);
 	}
 
 	@PostMapping(path = "/logout")
@@ -52,7 +56,7 @@ public class SecurityController implements Controller {
 		} catch (ServletException e) {
 			log.error("Error occurred while logging out user from the HttpServletRequest: " + e.getMessage(), e);
 		}
-		userService.logoutUser(token);
+		securityService.logoutUser(token);
 	}
 
 	@PostMapping(path = "/registration", produces = JSON, consumes = JSON)
@@ -67,8 +71,8 @@ public class SecurityController implements Controller {
 	@ResponseStatus(HttpStatus.CREATED)
 	public User registrationConfirmation(@RequestParam String token) {
 
-		User user = userService.confirmUserRegistration(token);
-		userService.createAuthToken(user.getId());
+		User user = securityService.confirmUserRegistration(token);
+		securityService.createAuthToken(user.getId());
 		return user;
 	}
 }

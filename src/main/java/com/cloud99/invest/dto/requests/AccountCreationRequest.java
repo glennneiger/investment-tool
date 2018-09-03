@@ -1,14 +1,11 @@
 package com.cloud99.invest.dto.requests;
 
 import com.cloud99.invest.domain.Person.Gender;
-import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.account.SubscriptionType;
+import com.cloud99.invest.validation.PasswordMatches;
 
 import org.joda.time.LocalDate;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.index.Indexed;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -18,6 +15,7 @@ import java.util.Locale;
 import lombok.Getter;
 import lombok.Setter;
 
+@PasswordMatches
 public class AccountCreationRequest {
 
 	@Getter

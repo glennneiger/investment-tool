@@ -8,6 +8,8 @@ import org.joda.time.LocalDate;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,7 +19,7 @@ import lombok.Setter;
  */
 @SuppressWarnings("serial")
 @NoArgsConstructor
-public class Person extends BaseDomainObject {
+public abstract class Person implements Serializable {
 
 	/**
 	 * Enum for setting the gender on a person

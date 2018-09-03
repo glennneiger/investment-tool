@@ -44,7 +44,7 @@ import java.util.TimeZone;
 @Order(1)
 public class AppConfig {
 
-	public final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS’Z");
+	public static final SimpleDateFormat UTC_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS’Z");
 
 	@SuppressWarnings("serial")
 	@Bean
@@ -53,11 +53,12 @@ public class AppConfig {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-		df.setTimeZone(TimeZone.getTimeZone("UTC"));
-		mapper.setDateFormat(df);
+		UTC_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+		mapper.setDateFormat(UTC_DATE_FORMAT);
 
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
+		mapper.registerModule(jodaModule());
+		mapper.registerModule(jsonComponentModule());
 		mapper.registerModule(new SimpleModule() {
 			{
 				addDeserializer(ObjectId.class, new JsonDeserializer<ObjectId>() {

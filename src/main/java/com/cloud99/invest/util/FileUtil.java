@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -23,15 +24,14 @@ public class FileUtil {
 			String contents = null;
 			if (f.exists()) {
 				try (InputStream is = new FileInputStream(f)) {
-					contents = IOUtils.toString(is, "UTF-8");
+					contents = IOUtils.toString(is, StandardCharsets.UTF_8);
 				}
 			} else {
 				throw new FileNotFoundException("File not found: " + filePath);
 			}
 
 			return contents;
-		} else {
-			return null;
 		}
+		return null;
 	}
 }

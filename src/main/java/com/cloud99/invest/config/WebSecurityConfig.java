@@ -4,6 +4,7 @@ import com.cloud99.invest.security.Cloud99BasicAuthEntryPoint;
 import com.cloud99.invest.security.Cloud99SimpleUrlAuthenticationSuccessHandler;
 import com.cloud99.invest.security.TokenAuthenticationFilter;
 import com.cloud99.invest.security.TokenAuthenticationProvider;
+import com.cloud99.invest.services.SecurityService;
 import com.cloud99.invest.services.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private UserService userService;
 
 	@Autowired
+	private SecurityService securityService;
+
+	@Autowired
 	private Cloud99SimpleUrlAuthenticationSuccessHandler successHandler;
 
 	@Bean
@@ -61,8 +65,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(AuthenticationManagerBuilder builder) throws Exception {
-
-		builder.userDetailsService(userService);
+		builder.userDetailsService(securityService);
 		builder.authenticationProvider(tokenAuthenticationProvider());
 	}
 
@@ -105,7 +108,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	public TokenAuthenticationFilter restAuthenticationFilter() throws Exception {
-		final TokenAuthenticationFilter filter = new TokenAuthenticationFilter(PROTECTED_URLS, userService);
+		final TokenAuthenticationFilter filter = new TokenAuthenticationFilter(PROTECTED_URLS, securityService);
 		filter.setAuthenticationManager(authenticationManager(tokenAuthenticationProvider()));
 		filter.setAuthenticationSuccessHandler(successHandler);
 		return filter;
@@ -130,7 +133,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	public AuthenticationProvider tokenAuthenticationProvider() {
-		return new TokenAuthenticationProvider(userService);
+		return new TokenAuthenticationProvider(securityService);
 	}
 	
 	@Bean

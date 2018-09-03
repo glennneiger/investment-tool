@@ -1,18 +1,11 @@
 package com.cloud99.invest.integration.zillow.messageConverters;
 
 import com.cloud99.invest.domain.property.Property;
-import com.cloud99.invest.domain.property.PropertyType;
-import com.cloud99.invest.domain.property.SingleFamilyProperty;
 import com.cloud99.invest.dto.responses.PropertySearchResult;
 import com.cloud99.invest.integration.MessageConverter;
 import com.cloud99.invest.integration.ProviderInfo;
 import com.cloud99.invest.integration.zillow.results.ZillowResult;
 import com.cloud99.invest.integration.zillow.results.ZillowSearchResults;
-import com.cloud99.invest.util.Util;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 

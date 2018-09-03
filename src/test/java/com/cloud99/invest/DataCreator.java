@@ -1,5 +1,6 @@
 package com.cloud99.invest;
 
+import com.cloud99.invest.config.AppConfig;
 import com.cloud99.invest.domain.Address;
 import com.cloud99.invest.domain.Frequency;
 import com.cloud99.invest.domain.Name;
@@ -18,15 +19,21 @@ import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.domain.property.SingleFamilyProperty;
 import com.cloud99.invest.dto.requests.AccountCreationRequest;
 import com.cloud99.invest.dto.requests.PropertySearchRequest;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 import org.joda.money.CurrencyUnit;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.TimeZone;
 
 @Component
 public class DataCreator {
@@ -35,27 +42,33 @@ public class DataCreator {
 		// User user = buildUser();
 		// Property p = buildProperty();
 		ObjectMapper mapper = new ObjectMapper();
+		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-		// try {
-			// System.out.println(mapper.writeValueAsString(buildPropertySearchRequest()));
-		// } catch (JsonProcessingException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
+		AppConfig.UTC_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+		mapper.setDateFormat(AppConfig.UTC_DATE_FORMAT);
+		mapper.registerModule(new JodaModule());
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		try {
+			System.out.println(mapper.writeValueAsString(buildAccountCreationRequest()));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	public AccountCreationRequest buildAccountCreationRequest() {
+	public static AccountCreationRequest buildAccountCreationRequest() {
 		AccountCreationRequest r = new AccountCreationRequest();
 		r.setAccountName("Test account name");
 		r.setBirthDate(DateTime.now().toLocalDate());
 		r.setGender(Gender.FEMALE);
 		r.setEmail("test.user@cloud99.com");
 		r.setFirstName("FirstName");
+		r.setMiddleName("MiddleName");
 		r.setLastName("LastName");
 		r.setPassword("password");
 		r.setMatchingPassword("password");
-		r.setMiddleName("MiddleName");
 		r.setSubscription(SubscriptionType.FREE);
+		r.setBirthDate(new LocalDate("1980-03-23"));
 		return r;
 	}
 
@@ -106,7 +119,6 @@ public class DataCreator {
 		return p;
 	}
 
-	@SuppressWarnings("boxing")
 	public FinancingDetails buildFinancingDetails() {
 		FinancingDetails f = new FinancingDetails();
 		f.setDownPayment(new BigDecimal(20000));
@@ -138,14 +150,12 @@ public class DataCreator {
 		user.setUserRoles(Arrays.asList(UserRole.CUSTOMER));
 		user.setEmail("nickgilas@gmail.com");
 		user.setPassword("password");
-		user.setMatchingPassword("password");
 		user.setPersonName(buildName("Nick", "Gilas"));
 		user.setBirthDate(org.joda.time.LocalDate.now().withYear(1980).withMonthOfYear(3).withDayOfMonth(23));
 		user.setGender(Gender.MALE);
 		return user;
 	}
 
-	@SuppressWarnings("boxing")
 	public Property buildProperty() {
 		SingleFamilyProperty p = new SingleFamilyProperty();
 		p.setAddress(buildAddress());

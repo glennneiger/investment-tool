@@ -5,6 +5,7 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 
+// TODO - NG - need to test this out to see if it really works
 public class DbRefFieldCallback implements ReflectionUtils.FieldCallback {
 
 	private boolean idFound;

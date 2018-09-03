@@ -14,7 +14,6 @@ import com.cloud99.invest.integration.zillow.results.ValueChange;
 import com.cloud99.invest.integration.zillow.results.ZillowAddress;
 import com.cloud99.invest.integration.zillow.results.ZillowEstimate;
 import com.cloud99.invest.integration.zillow.results.ZillowResult;
-import com.cloud99.invest.integration.zillow.results.ZillowResults;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -29,14 +28,11 @@ public class ZillowPropertyConverterTest extends BaseMockitoTest {
 	@InjectMocks
 	private ZillowPropertyConverter converter = new ZillowPropertyConverter();
 
-	private ZillowEstimate zestimate;
-
 	@Before
 	public void setup() {
 		super.setup();
 	}
 
-	@SuppressWarnings("boxing")
 	@Test
 	public void test_convert() {
 
@@ -55,7 +51,6 @@ public class ZillowPropertyConverterTest extends BaseMockitoTest {
 
 	}
 
-	@SuppressWarnings("boxing")
 	private ZillowResult buildResult() {
 
 		ZillowResult r = new ZillowResult();
@@ -76,7 +71,6 @@ public class ZillowPropertyConverterTest extends BaseMockitoTest {
 		return r;
 	}
 
-	@SuppressWarnings("boxing")
 	private ZillowEstimate buildZestimate() {
 
 		ZillowEstimate z = new ZillowEstimate();
@@ -86,11 +80,9 @@ public class ZillowPropertyConverterTest extends BaseMockitoTest {
 		z.setValuationRange(buildValuationRange(350000, 300000));
 		z.setValueChange(buildValueChange(8000));
 
-		this.zestimate = z;
 		return z;
 	}
 
-	@SuppressWarnings("boxing")
 	private ValueChange buildValueChange(double amt) {
 
 		ValueChange c = new ValueChange();
@@ -109,7 +101,6 @@ public class ZillowPropertyConverterTest extends BaseMockitoTest {
 		return r;
 	}
 
-	@SuppressWarnings("boxing")
 	private Low buildLow(double i) {
 
 		Low l = new Low();
@@ -118,7 +109,6 @@ public class ZillowPropertyConverterTest extends BaseMockitoTest {
 		return l;
 	}
 
-	@SuppressWarnings("boxing")
 	private High buildHigh(double amt) {
 
 		High h = new High();
@@ -127,7 +117,6 @@ public class ZillowPropertyConverterTest extends BaseMockitoTest {
 		return h;
 	}
 
-	@SuppressWarnings("boxing")
 	private Amount buildAmount(double amount) {
 
 		Amount a = new Amount();

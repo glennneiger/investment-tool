@@ -1,11 +1,12 @@
 package com.cloud99.invest.domain.financial;
 
 import com.cloud99.invest.domain.Frequency;
+import com.cloud99.invest.domain.MongoDocument;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.springframework.data.annotation.Id;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
@@ -19,9 +20,13 @@ import lombok.Setter;
  * frequency of the cost or expense
  */
 @NoArgsConstructor
-@AllArgsConstructor
-public class ItemizedCost implements Serializable {
+public class ItemizedCost implements MongoDocument {
 	private static final long serialVersionUID = 5407793684155600984L;
+
+	@Id
+	@Getter
+	@Setter
+	private String id;
 
 	@Getter
 	@Setter
@@ -34,6 +39,13 @@ public class ItemizedCost implements Serializable {
 	@Getter
 	@Setter
 	private Frequency numberOfPeriodsAnnually;
+
+	public ItemizedCost(String name, BigDecimal cost, Frequency numberOfPeriodsAnnually) {
+		super();
+		this.name = name;
+		this.cost = cost;
+		this.numberOfPeriodsAnnually = numberOfPeriodsAnnually;
+	}
 
 	@Override
 	public String toString() {

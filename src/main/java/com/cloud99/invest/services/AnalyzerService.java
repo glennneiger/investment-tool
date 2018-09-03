@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collection;
 
-import de.flapdoodle.embed.process.io.file.FileAlreadyExistsException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,6 @@ public class AnalyzerService {
 	@Setter
 	private Util util;
 
-	@SuppressWarnings("boxing")
 	public FlipAnalysisResults analyzeFlip(FlipAnalysisRequest flipAssumptions) {
 
 		log.debug("CalculateFile with assumptions: " + flipAssumptions);

@@ -1,6 +1,10 @@
 package com.cloud99.invest.dto.requests;
 
+import com.cloud99.invest.converters.json.CurrencyUnitDeserializer;
+import com.cloud99.invest.converters.json.CurrencyUnitSerializer;
 import com.cloud99.invest.domain.financial.ItemizedCost;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -19,6 +23,8 @@ import lombok.Setter;
 public class FlipAnalysisRequest implements Serializable {
 	private static final long serialVersionUID = 7794122319234661351L;
 
+	@JsonSerialize(using = CurrencyUnitSerializer.class)
+	@JsonDeserialize(using = CurrencyUnitDeserializer.class)
 	@Getter
 	@Setter
 	private CurrencyUnit currencyUnit = CurrencyUnit.USD;

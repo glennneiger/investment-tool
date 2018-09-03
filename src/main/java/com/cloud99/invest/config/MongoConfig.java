@@ -97,7 +97,6 @@ public class MongoConfig extends AbstractMongoConfiguration {
 		return clientOptionsBuilder.build();
 	}
 
-	@SuppressWarnings("boxing")
 	public static void printConnectionOptions(MongoClientOptions options) {
 		StringBuffer msg = new StringBuffer();
 		msg.append("MongoDB Connection Options ---\n" + LINE + "\n");
