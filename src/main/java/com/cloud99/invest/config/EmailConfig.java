@@ -7,6 +7,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import java.util.Properties;
 
@@ -55,5 +57,19 @@ public class EmailConfig {
 		return mailSender;
 
 	}
+
+//	@Bean
+//	public VelocityEngine velocityEngine() {
+//		VelocityEngine e = new VelocityEngine("src/main/resources/application.properties");
+//
+//		return e;
+//	}
+	
+	@Bean
+	public FreeMarkerConfigurationFactoryBean freeMarkerConfiguration() {
+        FreeMarkerConfigurationFactoryBean bean = new FreeMarkerConfigurationFactoryBean();
+		bean.setTemplateLoaderPath("templates/");
+        return bean;
+    }
 
 }

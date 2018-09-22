@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import com.cloud99.invest.BaseMockitoTest;
 import com.cloud99.invest.dto.responses.PropertyValuationResult;
 import com.cloud99.invest.integration.zillow.results.ZillowAddress;
-import com.cloud99.invest.integration.zillow.messageConverters.ZillowValuationConverter;
+import com.cloud99.invest.integration.zillow.messageConverters.ZillowZestimateConverter;
 import com.cloud99.invest.integration.zillow.results.Amount;
 import com.cloud99.invest.integration.zillow.results.High;
 import com.cloud99.invest.integration.zillow.results.Low;
@@ -26,17 +26,17 @@ import org.mockito.InjectMocks;
 
 public class ZillowValuationConverterTest extends BaseMockitoTest {
 
-	@InjectMocks
-	private ZillowValuationConverter converter = new ZillowValuationConverter();
 	
 	private ZillowEstimate zestimate;
 
 	private Util util = new Util();
 
+	@InjectMocks
+	private ZillowZestimateConverter converter = new ZillowZestimateConverter(util);
+
 	@Before
 	public void setup() {
 		super.setup();
-		converter.setUtil(util);
 	}
 
 	@Test

@@ -1,10 +1,7 @@
 package com.cloud99.invest.repo;
 
 import com.cloud99.invest.domain.MongoDocument;
-import com.cloud99.invest.domain.financial.ItemizedCost;
-import com.mongodb.client.MongoCollection;
 
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
@@ -21,6 +18,7 @@ public class GenericRepo {
 	public static final String HOLDING_COSTS_COLLECTION_NAME = "holdingCostsRefData";
 	public static final String EXPENCES_COSTS_COLLECTION_NAME = "expenseCostsRefData";
 	public static final String CLOSING_COSTS_COLLECTION_NAME = "closingCostsRefData";
+	public static final String SELLING_COSTS_COLLECTION_NAME = "sellingCostsRefData";
 
 	@Autowired
 	private MongoTemplate mongoTemplate;

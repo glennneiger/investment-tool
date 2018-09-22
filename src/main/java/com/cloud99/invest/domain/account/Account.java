@@ -62,7 +62,7 @@ public class Account implements MongoDocument {
 
 	@Setter
 	@Getter
-	private GeneralSettings accountOptions;
+	private GeneralSettings generalSettings;
 
 	@Getter
 	@Setter

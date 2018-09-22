@@ -11,10 +11,10 @@ import java.util.Collection;
 @Service
 public interface ServiceProvider {
 
-	public PropertySearchResult propertySearch(PropertySearchRequest request) throws Exception;
+	public PropertySearchResult propertySearch(PropertySearchRequest request);
 
-	public PropertyValuationResult propertyValuation(PropertySearchRequest request) throws Exception;
+	public PropertyValuationResult propertyValuation(PropertySearchRequest request);
 
-	public Collection<PropertyValuationResult> propertyCompLookup(PropertySearchRequest request);
+	public Collection<PropertyValuationResult> propertyCompLookup(String providerPropertyId, Integer numOfCompsToLookup);
 
 }

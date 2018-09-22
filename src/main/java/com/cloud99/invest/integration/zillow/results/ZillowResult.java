@@ -1,7 +1,9 @@
 package com.cloud99.invest.integration.zillow.results;
 
+import com.cloud99.invest.integration.zillow.deserializers.AmountJsonDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -51,7 +53,7 @@ public class ZillowResult {
 
 	@Getter
 	@Setter
-	private Double taxAssessment;
+	private Long taxAssessment;
 
 	@Getter
 	@Setter
@@ -67,7 +69,7 @@ public class ZillowResult {
 
 	@Getter
 	@Setter
-	private float bathrooms;
+	private Double bathrooms;
 
 	@Getter
 	@Setter
@@ -78,6 +80,7 @@ public class ZillowResult {
 
 	@Getter
 	@Setter
+	@JsonDeserialize(using = AmountJsonDeserializer.class)
 	private Amount lastSoldPrice;
 
 	public DateTime getLastSoldDate() {

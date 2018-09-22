@@ -35,24 +35,10 @@ public class SecurityControllerIT extends BaseIntegrationTest {
 	@Autowired
 	private UserService userService;
 
-	@Autowired
-	private UserRepo userRepo;
-
-	@BeforeAll
-	public void beforeClass() {
-		super.beforeAll();
-	}
-
 	@Test
 	public void loginTest() throws Exception {
 
-		User user = super.dataCreator.buildUser();
-
 		try {
-
-			userService.createUser(user, UserRole.CUSTOMER);
-			user.setEnabled(true);
-			userRepo.save(user);
 
 			MvcResult result = invokeLoginEndpoint(user, HttpStatus.OK);
 					

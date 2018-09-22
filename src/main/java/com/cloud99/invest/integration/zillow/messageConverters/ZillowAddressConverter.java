@@ -6,10 +6,11 @@ import com.cloud99.invest.integration.zillow.results.ZillowAddress;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class ZillowAddressConverter implements MessageConverter<Address, ZillowAddress> {
+public class ZillowAddressConverter implements MessageConverter<ZillowAddress, Address> {
 
 	@Override
-	public Address convert(ZillowAddress zAddress) {
+	public Address convert(ZillowAddress zAddress, Class<Address> returnType) {
+
 		Address address = new Address();
 		address.setAddress1(zAddress.getStreet());
 		address.setCity(zAddress.getCity());

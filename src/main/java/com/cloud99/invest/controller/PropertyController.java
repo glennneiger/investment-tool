@@ -7,6 +7,7 @@ import com.cloud99.invest.dto.responses.PropertyValuationResult;
 import com.cloud99.invest.integration.ProviderInfo;
 import com.cloud99.invest.integration.ServiceProvider;
 import com.cloud99.invest.integration.ServiceProviderFactory;
+import com.cloud99.invest.services.AccountService;
 import com.cloud99.invest.services.PropertyService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.StreamUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,9 +30,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 import java.io.IOException;
+import java.util.Collection;
 
 @RestController
 @RequestMapping(path = "/v1")
@@ -44,6 +46,9 @@ public class PropertyController implements Controller {
 
 	@Autowired
 	private ServiceProvider serviceProvider;
+
+	@Autowired
+	private AccountService accountService;
 
 	@PostConstruct
 	public void init() {
@@ -60,45 +65,53 @@ public class PropertyController implements Controller {
 		StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
 	}
 
-	@PostMapping(path = "/properties/search", consumes = JSON, produces = JSON)
+	@PostMapping(path = "/properties/search", consumes = JSON_MEDIA_TYPE, produces = JSON_MEDIA_TYPE)
 	@ResponseBody
-	public PropertySearchResult propertySearch(@RequestBody @Valid PropertySearchRequest request) throws Exception {
+	public PropertySearchResult propertySearch(@RequestBody @Validated PropertySearchRequest request) throws Exception {
 
 		return serviceProvider.propertySearch(request);
 
 	}
 
-	@PostMapping(path = "/properties/valuation", consumes = JSON, produces = JSON)
+	@PostMapping(path = "/properties/valuation", consumes = JSON_MEDIA_TYPE, produces = JSON_MEDIA_TYPE)
 	@ResponseBody
-	public PropertyValuationResult propertyValuation(@RequestBody @Valid PropertySearchRequest request) throws Exception {
+	public PropertyValuationResult propertyValuation(@RequestBody @Validated PropertySearchRequest request) throws Exception {
 
 		return serviceProvider.propertyValuation(request);
 
 	}
 
-	@GetMapping(path = "/users/properties", consumes = JSON, produces = JSON)
+	@GetMapping(path = "/properties/comps", consumes = TEXT_PLAIN_TYPE, produces = JSON_MEDIA_TYPE)
+	@ResponseBody
+	public Collection<PropertyValuationResult> propertyCompLookup(String providerPropertyId) throws Exception {
+
+		return serviceProvider.propertyCompLookup(providerPropertyId, accountService.getAccountsGeneralSettingForCurrentUser().getNumOfCompsToLookup());
+
+	}
+
+	@GetMapping(path = "/users/properties", consumes = JSON_MEDIA_TYPE, produces = JSON_MEDIA_TYPE)
 	@ResponseBody
 	public Iterable<Property> getPropertiesByUser(@RequestParam String userEmail) throws Exception {
 
 		return propertyService.getPropertyDetails(userEmail);
 	}
 	
-	@PostMapping(path = "/users/properties", consumes = JSON, produces = JSON)
+	@PostMapping(path = "/users/properties", consumes = JSON_MEDIA_TYPE, produces = JSON_MEDIA_TYPE)
 	@ResponseStatus(code = HttpStatus.CREATED)
-	public <T extends Property> T createProperty(@RequestBody @Valid T property, @RequestParam String userEmail) {
+	public <T extends Property> T createProperty(@RequestBody @Validated T property, @RequestParam String userEmail) {
 
 		return propertyService.createProperty(userEmail, property);
 	}
 
-	@PutMapping(path = "/users/properties/{propertyId}", consumes = JSON, produces = JSON)
+	@PutMapping(path = "/users/properties/{propertyId}", consumes = JSON_MEDIA_TYPE, produces = JSON_MEDIA_TYPE)
 	@ResponseStatus(code = HttpStatus.ACCEPTED)
-	public Property updateProperties(@PathVariable String userEmail, @RequestParam String propertyId, @Valid Property property) {
+	public Property updateProperties(@PathVariable String userEmail, @RequestParam String propertyId, @Validated Property property) {
 
 		property.setId(propertyId);
 		return propertyService.updateProperty(userEmail, property);
 	}
 
-	@DeleteMapping(path = "/users/properties/{propertyId}", consumes = JSON)
+	@DeleteMapping(path = "/users/properties/{propertyId}", consumes = JSON_MEDIA_TYPE)
 	public void deleteProperty(@RequestParam String userEmail, @PathVariable String propertyId) {
 
 		propertyService.deleteProperty(userEmail, propertyId);

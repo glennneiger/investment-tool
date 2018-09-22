@@ -2,7 +2,7 @@ package com.cloud99.invest.domain.property;
 
 import com.cloud99.invest.domain.Address;
 import com.cloud99.invest.domain.ParkingType;
-import com.cloud99.invest.domain.financial.FinancialAssumptions;
+import com.cloud99.invest.domain.financial.RentalAssumptions;
 import com.cloud99.invest.domain.financial.FinancingDetails;
 import com.cloud99.invest.domain.financial.PropertyFinances;
 import com.cloud99.invest.domain.financial.TaxAssessment;
@@ -80,13 +80,13 @@ public class BaseMultiFamilyProperty implements Property {
 	}
 
 	@Override
-	public float getBathRooms() {
+	public Double getBathRooms() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0D;
 	}
 
 	@Override
-	public void setBathRooms(float bathRooms) {
+	public void setBathRooms(Double bathRooms) {
 		// TODO Auto-generated method stub
 
 	}
@@ -164,7 +164,7 @@ public class BaseMultiFamilyProperty implements Property {
 	}
 
 	@Override
-	public FinancialAssumptions getFinancialAssumptions() {
+	public RentalAssumptions getFinancialAssumptions() {
 		// TODO Auto-generated method stub
 		return null;
 	}

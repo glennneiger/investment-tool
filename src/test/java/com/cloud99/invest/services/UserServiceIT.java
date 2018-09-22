@@ -18,12 +18,10 @@ import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.dto.requests.AccountCreationRequest;
 import com.cloud99.invest.events.EventHandlingService;
 import com.cloud99.invest.events.OnRegistrationRequestEvent;
-import com.cloud99.invest.repo.AccountRepo;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -38,26 +36,25 @@ public class UserServiceIT extends BaseIntegrationTest {
 	private UserService userService;
 
 	@Autowired
-	private AccountRepo acctRepo;
-
-	@MockBean
 	private EventHandlingService eventHandlingMock;
-
-	@MockBean
-	private ApplicationEventPublisher eventPublisher;
 
 	@BeforeAll
 	public void beforeAll() {
 		super.beforeAll();
-		userService.setApplicationEventPublisher(eventPublisher);
 	}
 
 	@Test
 	public void testRegistration() {
 
+		// delete user and account created from the parents "beforeAll" method
+		userRepo.delete(user);
+		acctRepo.delete(account);
+		user = null;
+		account = null;
+
 		AccountCreationRequest request = dataCreator.buildAccountCreationRequest();
 
-		Account account = userService.registerUserAndAccount(request, "callbackUrl");
+		account = userService.registerUserAndAccount(request, "callbackUrl");
 
 		// assert user attributes
 		Optional<User> userOpt = userService.findUserById(account.getOwnerId());
@@ -79,19 +76,17 @@ public class UserServiceIT extends BaseIntegrationTest {
 		assertEquals(returnUser.getId(), account.getOwnerId());
 		assertEquals(Status.PENDING, account.getStatus());
 		assertNotNull(account.getCreateDate());
-		assertNotNull(account.getAccountOptions());
-		assertNotNull(account.getAccountOptions().getTotalDocsAllowed());
+		assertNotNull(account.getGeneralSettings());
+		assertNotNull(account.getGeneralSettings().getTotalDocsAllowed());
 		List<Account> accts = acctRepo.findAll();
 		assertEquals(1, accts.size());
 
-		verify(eventPublisher, times(1)).publishEvent(any(OnRegistrationRequestEvent.class));
 	}
 
 	@Test
 	public void testUnauthorized() throws Exception {
 		MvcResult result = mvc.perform(get("/v1/accounts/").header("authorization", "123456789").with(user("testUser"))).andReturn();
 
-		System.out.println(result.getResponse().getContentAsString());
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), result.getResponse().getStatus());
 	}
 }

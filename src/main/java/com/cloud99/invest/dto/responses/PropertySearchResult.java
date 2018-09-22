@@ -19,6 +19,10 @@ public class PropertySearchResult {
 	@Getter
 	private ProviderInfo providerInfo;
 
+	@Setter
+	@Getter
+	private String providerId;
+
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
 	}

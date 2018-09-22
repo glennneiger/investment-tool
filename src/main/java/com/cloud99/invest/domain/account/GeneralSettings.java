@@ -2,12 +2,14 @@ package com.cloud99.invest.domain.account;
 
 import com.cloud99.invest.converters.json.CurrencyUnitDeserializer;
 import com.cloud99.invest.converters.json.CurrencyUnitSerializer;
+import com.cloud99.invest.domain.financial.ItemizedCost;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import org.joda.money.CurrencyUnit;
 
 import java.io.Serializable;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -34,5 +36,7 @@ public class GeneralSettings implements Serializable {
 	@Getter
 	private CurrencyUnit defaultCurrency = CurrencyUnit.USD;
 
-
+	@Getter
+	@Setter
+	private Integer numOfCompsToLookup = 3;
 }

@@ -3,6 +3,7 @@ package com.cloud99.invest.dto.requests;
 import com.cloud99.invest.converters.json.CurrencyUnitDeserializer;
 import com.cloud99.invest.converters.json.CurrencyUnitSerializer;
 import com.cloud99.invest.domain.financial.ItemizedCost;
+import com.cloud99.invest.validation.GreaterThanZero;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -30,11 +31,13 @@ public class FlipAnalysisRequest implements Serializable {
 	private CurrencyUnit currencyUnit = CurrencyUnit.USD;
 
 	@NotNull(message = "after.repair.value.required")
+	@GreaterThanZero
 	@Getter
 	@Setter
 	private BigDecimal afterRepairValue = BigDecimal.valueOf(0);
 
 	@NotNull(message = "desired.profit.required")
+	@GreaterThanZero
 	@Getter
 	@Setter
 	private BigDecimal desiredProfit = BigDecimal.valueOf(0);

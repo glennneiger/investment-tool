@@ -15,7 +15,7 @@ public abstract class SingleUnit extends BaseProperty {
 
 	@Getter
 	@Setter
-	private float bathRooms;
+	private Double bathRooms;
 
 	public SingleUnit(PropertyType propertyType) {
 		super(propertyType);

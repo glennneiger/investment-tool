@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
@@ -34,6 +35,7 @@ import java.util.List;
 @PropertySource("classpath:application.properties")
 @Order(15)
 @EnableTransactionManagement
+@Profile("production")
 public class MongoConfig extends AbstractMongoConfiguration {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MongoConfig.class);
 

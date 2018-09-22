@@ -10,6 +10,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.money.CurrencyUnit;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,11 +39,15 @@ public class PropertyFinances implements Serializable {
 
 	@Getter
 	@Setter
-	private FinancialAssumptions assumptions;
+	private RentalAssumptions assumptions;
 
 	@Getter
 	@Setter
 	private PurchaseDetails purchaseDetails;
+
+	@Getter
+	@Setter
+	private Collection<ItemizedCost> holdingCosts = new ArrayList<>(0);
 
 	public PropertyFinances(Expences expences, Income income, PurchaseDetails purchaseDetails, CurrencyUnit currency) {
 		super();

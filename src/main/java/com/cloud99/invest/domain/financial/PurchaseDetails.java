@@ -18,7 +18,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Document
-public class PurchaseDetails extends BaseDomainObject implements MongoDocument {
+public class PurchaseDetails extends BaseDomainObject {
 	private static final long serialVersionUID = -5837071805268532820L;
 
 	@Getter
@@ -36,6 +36,10 @@ public class PurchaseDetails extends BaseDomainObject implements MongoDocument {
 	@Getter
 	@Setter
 	private Collection<ItemizedCost> closingCosts = new ArrayList<>(0);
+
+	@Getter
+	@Setter
+	private boolean isFinanced;
 
 	@Getter
 	@Setter

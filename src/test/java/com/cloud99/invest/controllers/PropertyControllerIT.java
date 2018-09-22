@@ -1,26 +1,28 @@
 package com.cloud99.invest.controllers;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.cloud99.invest.BaseIntegrationTest;
+import com.cloud99.invest.DataCreator;
 import com.cloud99.invest.domain.User;
-import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.domain.property.PropertyType;
 import com.cloud99.invest.domain.redis.AuthToken;
 import com.cloud99.invest.dto.requests.PropertySearchRequest;
 import com.cloud99.invest.dto.responses.PropertySearchResult;
 import com.cloud99.invest.integration.ProviderInfo;
-import com.cloud99.invest.repo.UserRepo;
-import com.cloud99.invest.services.UserService;
+import com.cloud99.invest.repo.redis.AuthTokenRepo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -34,12 +36,10 @@ import java.util.Optional;
 public class PropertyControllerIT extends BaseIntegrationTest {
 
 	@Autowired
-	private UserService userService;
-	
-	@Autowired
-	private UserRepo userRepo;
-	
-	private User user = dataCreator.buildUser();
+	private ObjectMapper objectMapper;
+
+	@Mock
+	private AuthTokenRepo authTokenRepo;
 
 	@Test
 	public void testPropertySearch() throws Exception {
@@ -115,15 +115,11 @@ public class PropertyControllerIT extends BaseIntegrationTest {
 	}
 	
 	private String loginUser() throws Exception {
-		userService.createUser(user, UserRole.CUSTOMER);
-		user.setEnabled(true);
-		userRepo.save(user);
 	
 		MvcResult result = invokeLoginEndpoint(user.getEmail(), HttpStatus.OK);
 				
 		String authTokenJson = result.getResponse().getContentAsString();
 		AuthToken authToken = objectMapper.readValue(authTokenJson, AuthToken.class);
-		
 	
 		Mockito.when(authTokenRepo.findById(authToken.getToken())).thenReturn(Optional.of(authToken));
 		return authToken.getToken();

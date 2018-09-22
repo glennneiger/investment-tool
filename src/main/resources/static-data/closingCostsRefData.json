@@ -1,17 +1,14 @@
 [
-{"name":"Loan Origination Fee","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
-{"name":"Discount Fee","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
-{"name":"Processing Fee","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
-{"name":"Underwriting Fee","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
-{"name":"Wire Transfer","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
+{"name":"Agent Commission","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
+{"name":"Inspection Fee","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
+{"name":"Attorney Fee","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
 {"name":"Credit Report","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
-{"name":"Tax Service","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
 {"name":"Flood Certification","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
-{"name":"Title Insurance","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
+{"name":"Owner's Title Insurance","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
+{"name":"Lender's Title Insurance","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
 {"name":"Escrow","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
-{"name":"Courier Fee","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
+{"name":"Title Search","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
 {"name":"Appraisal","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
 {"name":"Recording Fee","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
-{"name":"Homeowner’s Insurance first year premium","cost":0,"numberOfPeriodsAnnually":"SINGLE"},
 {"name":"6 Months’ Property Tax Reserves","cost":0,"numberOfPeriodsAnnually":"SINGLE"}
 ]

@@ -14,7 +14,7 @@ public class CurrencyUnitSerializer extends JsonSerializer<CurrencyUnit> {
 	public void serialize(CurrencyUnit value, JsonGenerator jgen, SerializerProvider serializers) throws IOException {
 
 		jgen.writeStartObject();
-		jgen.writeStringField("currency", value.getCurrencyCode());
+		jgen.writeStringField("currencyCode", value.getCurrencyCode());
 		jgen.writeEndObject();
 	}
 

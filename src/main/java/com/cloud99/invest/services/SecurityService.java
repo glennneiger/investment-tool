@@ -1,10 +1,10 @@
 package com.cloud99.invest.services;
 
-import com.cloud99.invest.domain.Status;
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.VerificationToken;
 import com.cloud99.invest.domain.account.Account;
 import com.cloud99.invest.domain.redis.AuthToken;
+import com.cloud99.invest.dto.requests.AccountCreationRequest;
 import com.cloud99.invest.exceptions.EntityNotFoundException;
 import com.cloud99.invest.exceptions.ServiceException;
 import com.cloud99.invest.repo.VerificationTokenRepo;
@@ -23,7 +23,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -54,6 +53,7 @@ public class SecurityService implements UserDetailsService {
 	@Autowired
 	private VerificationTokenRepo tokenRepo;
 
+	// NG - this feature is slated for a future release
 	public User confirmUserRegistration(String token) {
 		VerificationToken tokenObj = tokenRepo.findByToken(token);
 
@@ -91,11 +91,8 @@ public class SecurityService implements UserDetailsService {
 
 		Account acct = acctService.getOwnersAccountAndValidate(user.getId());
 
-		if (!Status.ACTIVE.equals(acct.getStatus())) {
-			String msg = "Account is not active for user: " + email + " acct#: " + acct.getId();
-			throw new ServiceException("account.not.active", msg);
-		}
-		log.debug("Logged in user {}", user.getId());
+		log.debug("Logged in user: {}, account: {}", user.getId(), acct.getId());
+		
 		return createAuthToken(user.getId());
 	}
 
@@ -134,7 +131,8 @@ public class SecurityService implements UserDetailsService {
 
 	public User getCurrentSessionUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		return (User) authentication.getPrincipal();
+		org.springframework.security.core.userdetails.User userDetails = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+		return userService.findUserByEmailAndValidate(userDetails.getUsername());
 	}
 
 	public void updateUserForSuccessfulAuthentication(String tokenId) {
@@ -208,6 +206,12 @@ public class SecurityService implements UserDetailsService {
 	}
 	private Optional<AuthToken> findAuthTokenById(String id) {
 		return authTokenRepo.findById(id);
+	}
+
+	public AuthToken registerUserAndAccount(AccountCreationRequest accountRequest, String contextPath) {
+		Account acct = userService.registerUserAndAccount(accountRequest, contextPath);
+		User newUser = userService.findUserByIdAndValidate(acct.getOwnerId());
+		return createAuthToken(newUser.getId());
 	}
 
 }

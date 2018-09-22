@@ -19,12 +19,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "/v1/accounts")
-public class AccountController {
+public class AccountController implements Controller {
 
 	@Autowired
 	private AccountService acctService;
 
-	@PostMapping("/")
+	@PostMapping(path = "/{accountId}", consumes = JSON_MEDIA_TYPE, produces = JSON_MEDIA_TYPE)
+	@ResponseBody
+	public Account updateAccount() {// @RequestBody Account account) {
+
+		return acctService.updateAccount(null);
+	}
+
+	@PostMapping(path = "/", consumes = JSON_MEDIA_TYPE, produces = JSON_MEDIA_TYPE)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	public Account createAccount(@RequestBody AccountCreationRequest request, Authentication auth) {
@@ -32,8 +39,8 @@ public class AccountController {
 		return acctService.createAccount(request, (User) auth.getPrincipal());
 	}
 
-	@DeleteMapping
-	public Long deleteByName(@RequestParam String name) {
-		return acctService.deleteAccountByName(name);
+	@DeleteMapping(path = "/{accoutName}", consumes = TEXT_PLAIN_TYPE)
+	public Long deleteByName(@RequestParam String accountName) {
+		return acctService.deleteAccountByName(accountName);
 	}
 }

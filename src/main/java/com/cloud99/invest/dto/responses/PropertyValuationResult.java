@@ -45,6 +45,14 @@ public class PropertyValuationResult {
 		propertyValuation.setValueChange(valueChange);
 	}
 
+	public void setDuration(Integer duration) {
+		propertyValuation.setDuration(duration);
+	}
+
+	public Integer getDuration() {
+		return propertyValuation.getDuration();
+	}
+
 	public Money getHighValue() {
 		return propertyValuation.getHighValue();
 	}
@@ -61,11 +69,11 @@ public class PropertyValuationResult {
 		propertyValuation.setLowValue(lowValue);
 	}
 
-	public Float getPercentileChange() {
+	public Double getPercentileChange() {
 		return propertyValuation.getPercentileChange();
 	}
 
-	public void setPercentileChange(Float percentileChange) {
+	public void setPercentileChange(Double percentileChange) {
 		propertyValuation.setPercentileChange(percentileChange);
 	}
 

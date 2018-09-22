@@ -3,9 +3,10 @@ package com.cloud99.invest.services;
 import com.cloud99.invest.domain.Name;
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.account.Account;
+import com.cloud99.invest.domain.account.SubscriptionType;
 import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.dto.requests.AccountCreationRequest;
-import com.cloud99.invest.events.OnRegistrationRequestEvent;
+import com.cloud99.invest.exceptions.AccountAlreadyExistsException;
 import com.cloud99.invest.exceptions.EntityNotFoundException;
 import com.cloud99.invest.exceptions.ServiceException;
 import com.cloud99.invest.repo.UserRepo;
@@ -33,20 +34,36 @@ public class UserService {
 	@Autowired
 	private AccountService acctService;
 
-	@Autowired
-	private ApplicationEventPublisher eventPublisher;
-
 	public Account registerUserAndAccount(AccountCreationRequest accountRequest, String callbackUrl) {
+
 		LOGGER.debug("Starting to create new user and account: {}, callback url: {}", accountRequest, callbackUrl);
 
 		User newUser = copyRequestUserAttributes(accountRequest);
+
+		// does this user already have an account?
 		newUser = createUser(newUser, UserRole.CUSTOMER);
+
+		newUser.setSubscriptionType(SubscriptionType.FREE);
 
 		// TODO - NG - need to integrate credit card payment and provide inputs to
 		// process card
-		Account acct = acctService.createAccount(accountRequest, newUser);
 
-		eventPublisher.publishEvent(new OnRegistrationRequestEvent(newUser.getEmail(), callbackUrl, acct));
+		// TODO - NG - need to see if credit cards processing was successful and then
+		// add the PAID subscriptionType
+
+		Account acct = null;
+		try {
+			acct = acctService.createAccount(accountRequest, newUser);
+		} catch (AccountAlreadyExistsException e) {
+			if (newUser != null) {
+				deleteUser(newUser.getId());
+				throw e;
+			}
+		}
+
+		// NG - this is slated for a future release
+		// eventPublisher.publishEvent(new
+		// OnRegistrationRequestEvent(newUser.getEmail(), callbackUrl, acct));
 
 		return acct;
 	}
@@ -108,7 +125,7 @@ public class UserService {
 		return userRepo.findById(id);
 	}
 
-	// @Cacheable(key = "'userId.' + #email", unless = "#result == null")
+	@Cacheable(key = "'userId.' + #email", unless = "#result == null")
 	public User findUserByEmailAndValidate(String email) {
 		User user = findUserByEmail(email);
 		if (user == null) {
@@ -135,10 +152,6 @@ public class UserService {
 			return true;
 		}
 		return false;
-	}
-
-	public void setApplicationEventPublisher(ApplicationEventPublisher eventPublisher) {
-		this.eventPublisher = eventPublisher;
 	}
 
 	private User copyRequestUserAttributes(AccountCreationRequest accountRequest) {

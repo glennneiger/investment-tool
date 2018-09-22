@@ -1,16 +1,16 @@
 package com.cloud99.invest.domain.financial;
 
-import com.cloud99.invest.domain.Frequency;
 import com.cloud99.invest.domain.MongoDocument;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.Id;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +23,7 @@ import lombok.Setter;
 public class ItemizedCost implements MongoDocument {
 	private static final long serialVersionUID = 5407793684155600984L;
 
+	@JsonIgnore
 	@Id
 	@Getter
 	@Setter
@@ -36,15 +37,14 @@ public class ItemizedCost implements MongoDocument {
 	@Setter
 	private BigDecimal cost = new BigDecimal(0, new MathContext(2));
 
-	@Getter
-	@Setter
-	private Frequency numberOfPeriodsAnnually;
+	public ItemizedCost(String name, double cost) {
+		this(name, BigDecimal.valueOf(cost));
+	}
 
-	public ItemizedCost(String name, BigDecimal cost, Frequency numberOfPeriodsAnnually) {
+	public ItemizedCost(String name, BigDecimal cost) {
 		super();
 		this.name = name;
 		this.cost = cost;
-		this.numberOfPeriodsAnnually = numberOfPeriodsAnnually;
 	}
 
 	@Override

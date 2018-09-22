@@ -69,7 +69,8 @@ public class EventHandlingService {
 	 * @param event
 	 *            that was generated from a new account registration
 	 */
-	@EventListener
+	// This feature is slated for a future release
+	// @EventListener
 	public void registrationRequestListener(OnRegistrationRequestEvent event) {
 
 		registrationRequestHandler(event);

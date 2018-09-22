@@ -5,10 +5,10 @@ import com.cloud99.invest.security.Cloud99SimpleUrlAuthenticationSuccessHandler;
 import com.cloud99.invest.security.TokenAuthenticationFilter;
 import com.cloud99.invest.security.TokenAuthenticationProvider;
 import com.cloud99.invest.services.SecurityService;
-import com.cloud99.invest.services.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -39,6 +39,9 @@ import java.util.Arrays;
 
 @EnableGlobalAuthentication
 @Configuration
+// TODO - NG - should change this to include "config" so we don't scan
+// everything
+@ComponentScan(basePackages = { "com.cloud99.invest" })
 @EnableWebSecurity
 @Order(2)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -48,9 +51,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private Cloud99BasicAuthEntryPoint authenticationEntryPoint;
-
-	@Autowired
-	private UserService userService;
 
 	@Autowired
 	private SecurityService securityService;

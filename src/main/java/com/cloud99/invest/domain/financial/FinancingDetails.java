@@ -1,7 +1,7 @@
 package com.cloud99.invest.domain.financial;
 
-import com.cloud99.invest.services.validationGroups.AmortizingGroup;
-import com.cloud99.invest.services.validationGroups.InterestOnlyGroup;
+import com.cloud99.invest.validation.groups.AmortizingGroup;
+import com.cloud99.invest.validation.groups.InterestOnlyGroup;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -46,10 +46,6 @@ public class FinancingDetails {
 	@Setter
 	@NotNull(message = "loan.term.required", groups = { AmortizingGroup.class, InterestOnlyGroup.class })
 	private Double loanTermYears = 30D;
-
-	@Getter
-	@Setter
-	private BigDecimal mortgageInsuranceAmount = new BigDecimal(0, new MathContext(2, RoundingMode.HALF_EVEN));
 
 	@Override
 	public String toString() {

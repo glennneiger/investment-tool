@@ -1,6 +1,8 @@
 package com.cloud99.invest.domain.financial;
 
+import com.cloud99.invest.converters.json.MoneySerializer;
 import com.cloud99.invest.domain.BaseDomainObject;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import org.joda.money.Money;
 
@@ -19,6 +21,7 @@ public class PropertyValuation extends BaseDomainObject {
 	@Setter
 	private String id;
 
+	@JsonSerialize(using = MoneySerializer.class)
 	@Getter
 	@Setter
 	private Money currentEstimate;
@@ -26,6 +29,14 @@ public class PropertyValuation extends BaseDomainObject {
 	@Getter
 	@Setter
 	private Money valueChange;
+
+	@Getter
+	@Setter
+	private Integer durationDays;
+
+	@Getter
+	@Setter
+	private Integer duration;
 
 	@Getter
 	@Setter
@@ -37,13 +48,6 @@ public class PropertyValuation extends BaseDomainObject {
 
 	@Getter
 	@Setter
-	private Float percentileChange;
-
-	/**
-	 * Optional financial attributes used when forecasting scenarios
-	 */
-	@Getter
-	@Setter
-	private FinancialAssumptions assumptions;
+	private Double percentileChange;
 
 }

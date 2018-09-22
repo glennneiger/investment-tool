@@ -1,8 +1,8 @@
 package com.cloud99.invest.domain.financial;
 
 import com.cloud99.invest.domain.BaseDomainObject;
-import com.cloud99.invest.domain.MongoDocument;
 import com.cloud99.invest.domain.Frequency;
+import com.cloud99.invest.domain.MongoDocument;
 
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;

@@ -1,7 +1,6 @@
 package com.cloud99.invest.domain.financial;
 
 import com.cloud99.invest.domain.BaseDomainObject;
-import com.cloud99.invest.domain.MongoDocument;
 
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
@@ -20,7 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Document
-public class Expences extends BaseDomainObject implements MongoDocument {
+public class Expences extends BaseDomainObject {
 	private static final long serialVersionUID = -4305901713759899401L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(Expences.class);
 
@@ -34,8 +33,10 @@ public class Expences extends BaseDomainObject implements MongoDocument {
 
 	@Getter
 	@Setter
-	private Collection<ItemizedCost> operatingExpences = new ArrayList<>(0);
+	private Collection<ReoccuringExpense> operatingExpences = new ArrayList<>(0);
 
+	// TODO - NG - I think this can be moved to the Util class and reused by all,
+	// just need to inject an instance of Util in this class
 	@Transient
 	public Money getTotalAnnualOperatingExpences(CurrencyUnit currency) {
 
@@ -43,7 +44,7 @@ public class Expences extends BaseDomainObject implements MongoDocument {
 
 		if (operatingExpences != null) {
 
-			for (ItemizedCost cost : operatingExpences) {
+			for (ReoccuringExpense cost : operatingExpences) {
 				BigDecimal annual = cost.getCost().multiply(new BigDecimal(cost.getNumberOfPeriodsAnnually().getAnnualPeriods(), new MathContext(2, RoundingMode.HALF_EVEN)));
 				total = total.plus(annual, RoundingMode.CEILING);
 			}

@@ -7,6 +7,7 @@ import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 
 @Component
@@ -24,12 +25,17 @@ public class Util {
 		}
 	}
 
-	public Money convertToMoney(String currency, Double amount) {
-		return convertToMoney(amount, currency);
-	}
-
 	public String removeSpecialCharacters(String str) {
 		return str.replaceAll("[^\\w\\s]", "");
+	}
+
+	public BigDecimal summerizeItemizedCosts(Collection<ItemizedCost> costs, int period) {
+
+		BigDecimal total = BigDecimal.valueOf(0);
+		for (ItemizedCost cost : costs) {
+			total.add(cost.getCost().multiply(BigDecimal.valueOf(period)));
+		}
+		return total;
 	}
 
 	public Money summerizeItemizedCosts(CurrencyUnit currency, Collection<ItemizedCost> costs) {
@@ -41,7 +47,7 @@ public class Util {
 		return total;
 	}
 
-	public Money convertToMoney(Double amount, String currency) {
+	public Money convertToMoney(BigDecimal amount, String currency) {
 
 		CurrencyUnit unit = null;
 		if ("US".equalsIgnoreCase(currency)) {
@@ -52,6 +58,13 @@ public class Util {
 				unit = CurrencyUnit.USD;
 			}
 		}
+		if (amount == null) {
+			return Money.of(unit, 0);
+		}
 		return Money.of(unit, amount);
+	}
+
+	public Money convertToMoney(Double amount, String currency) {
+		return convertToMoney(BigDecimal.valueOf(amount), currency);
 	}
 }

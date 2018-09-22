@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 public class ValueChangeDeserializer extends JsonDeserializer<ValueChange> {
 
@@ -24,7 +25,7 @@ public class ValueChangeDeserializer extends JsonDeserializer<ValueChange> {
 		if (content == null) {
 			return obj;
 		}
-		obj.setContent(Double.valueOf(content.asText()));
+		obj.setContent(new BigDecimal(content.asText()));
 		obj.setCurrency(node.get("currency").asText());
 		obj.setDuration(node.get("duration").asInt());
 		return obj;

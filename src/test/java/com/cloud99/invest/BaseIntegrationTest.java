@@ -2,12 +2,15 @@ package com.cloud99.invest;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
-import com.cloud99.invest.config.AppConfig;
 import com.cloud99.invest.config.EmailConfig;
 import com.cloud99.invest.config.MessageConfig;
 import com.cloud99.invest.config.TestAppConfig;
 import com.cloud99.invest.config.TestMongoConfig;
 import com.cloud99.invest.config.WebSecurityConfig;
+import com.cloud99.invest.domain.User;
+import com.cloud99.invest.domain.account.Account;
+import com.cloud99.invest.repo.AccountRepo;
+import com.cloud99.invest.repo.UserRepo;
 import com.cloud99.invest.repo.redis.AuthTokenRepo;
 import com.cloud99.invest.security.GlobalMethodSecurityConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +21,11 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.annotation.Order;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -29,23 +36,23 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.text.SimpleDateFormat;
+
 @ActiveProfiles("test")
 @EnableMongoRepositories(basePackages = { "com.cloud99.invest.repo", "com.cloud99.invest.domain" })
-// @RunWith(SpringJUnit4ClassRunner.class)
 @RunWith(JUnitPlatform.class)
-@ContextConfiguration(classes = { AppConfig.class, GlobalMethodSecurityConfig.class, MessageConfig.class, WebSecurityConfig.class, EmailConfig.class, TestAppConfig.class, TestMongoConfig.class })
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = { WebSecurityConfig.class, GlobalMethodSecurityConfig.class, MessageConfig.class, EmailConfig.class, TestAppConfig.class })
 @WebAppConfiguration
 @TestPropertySource("classpath:application.properties")
 @TestInstance(Lifecycle.PER_CLASS)
-@ExtendWith(SpringExtension.class)
-@ExtendWith(MockitoExtension.class)
-public class BaseIntegrationTest {
+@Order(1)
+public abstract class BaseIntegrationTest {
+
+	public static final SimpleDateFormat UTC_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS’Z");
 
 	@Autowired
 	protected ObjectMapper objectMapper;
-
-	@Autowired
-	protected AuthTokenRepo authTokenRepo;
 
 	@Autowired
 	protected WebApplicationContext context;
@@ -53,9 +60,29 @@ public class BaseIntegrationTest {
 	protected DataCreator dataCreator = new DataCreator();
 	protected MockMvc mvc;
 
+	@Autowired
+	protected UserRepo userRepo;
+
+	@Autowired
+	protected AccountRepo acctRepo;
+
+	@Autowired
+	protected AuthTokenRepo authTokenRepo;
+
+	protected User user;
+	protected Account account;
+
 	@BeforeAll
 	public void beforeAll() {
 		mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
+
+		user = dataCreator.buildUser();
+		user = userRepo.save(user);
+
+		account = dataCreator.buildAccount(user.getId());
+		account = acctRepo.save(account);
+
+		Mockito.when(authTokenRepo.findAuthTokenByUserId(Mockito.anyString())).thenReturn(dataCreator.buildAuthToken(user.getId()));
 	}
 
 }

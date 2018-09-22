@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -23,10 +24,24 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class ApplicationInitializer implements ApplicationListener<ContextRefreshedEvent> {
 
-	public static final String HOLDING_COSTS_JSON = "/static-data/holdingCostsRefData.json";
-	public static final String EXPENCES_JSON = "/static-data/expensesCostsRefData.json";
-	public static final String CLOSING_COSTS_JSON = "/static-data/closingCostsRefData.json";
-
+	public static enum RegDataTypes {
+		HOLDING_COSTS_JSON("/static-data/holdingCostsRefData.json", GenericRepo.HOLDING_COSTS_COLLECTION_NAME),
+		EXPENCES_JSON("/static-data/expensesCostsRefData.json", GenericRepo.EXPENCES_COSTS_COLLECTION_NAME),
+		CLOSING_COSTS_JSON("/static-data/closingCostsRefData.json", GenericRepo.CLOSING_COSTS_COLLECTION_NAME),
+		SELLING_COSTS_JSON("/static-data/sellingCostsRefData.json", GenericRepo.SELLING_COSTS_COLLECTION_NAME);
+		
+		@Getter
+		private String jsonFileName;
+		
+		@Getter
+		private String dbCollectionName;
+		
+		private RegDataTypes(String jsonFileName, String dbCollectionName) {
+			this.jsonFileName = jsonFileName;
+			this.dbCollectionName = dbCollectionName;
+		}
+	}
+	
 	@Autowired
 	private FileUtil fileUtil;
 
@@ -39,19 +54,12 @@ public class ApplicationInitializer implements ApplicationListener<ContextRefres
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 
-		if (!collectionExists(GenericRepo.HOLDING_COSTS_COLLECTION_NAME)) {
-			log.info("Loading data for ref data collection: " + GenericRepo.HOLDING_COSTS_COLLECTION_NAME);
-			loadRefData(HOLDING_COSTS_JSON, GenericRepo.HOLDING_COSTS_COLLECTION_NAME);
-		}
+		for (RegDataTypes type : RegDataTypes.values()) {
 
-		if (!collectionExists(GenericRepo.EXPENCES_COSTS_COLLECTION_NAME)) {
-			log.info("Loading data for ref data collection: " + GenericRepo.EXPENCES_COSTS_COLLECTION_NAME);
-			loadRefData(EXPENCES_JSON, GenericRepo.EXPENCES_COSTS_COLLECTION_NAME);
-		}
-
-		if (!collectionExists(GenericRepo.CLOSING_COSTS_COLLECTION_NAME)) {
-			log.info("Loading data for ref data collection: " + GenericRepo.CLOSING_COSTS_COLLECTION_NAME);
-			loadRefData(CLOSING_COSTS_JSON, GenericRepo.CLOSING_COSTS_COLLECTION_NAME);
+			if (!collectionExists(type.getDbCollectionName())) {
+				log.info("Loading data for ref data collection: " + type.getDbCollectionName());
+				loadRefData(type.getJsonFileName(), type.getDbCollectionName());
+			}
 		}
 	}
 

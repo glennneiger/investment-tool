@@ -19,7 +19,7 @@ public class FlipAnalysisResults {
 	@Setter
 	private Double returnOnInvestment;
 
-	// value = number of days -> profile amount
+	// value = number of days -> profit amount
 	@Getter
 	@Setter
 	private Map<Integer, Money> hypotheticalForecast;
@@ -32,6 +32,4 @@ public class FlipAnalysisResults {
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
-	// Flip Hypothetical Profit If Held For...
-	// 45, 90, 270 days
 }

@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 
@@ -63,12 +64,12 @@ public class PropertyService {
 		propertyRepo.delete(property);
 	}
 
-	public Property updateProperty(String userEmail, @Valid Property property) {
+	public Property updateProperty(String userEmail, @Validated Property property) {
 		userService.findUserByEmailAndValidate(userEmail);
 		return propertyRepo.save(property);
 	}
 
-	public PropertyFinances createPropertyFinances(String propertyId, @Valid PropertyFinances propFinances) {
+	public PropertyFinances createPropertyFinances(String propertyId, @Validated PropertyFinances propFinances) {
 
 		Optional<Property> prop = propertyRepo.findById(propertyId);
 		if (!prop.isPresent()) {

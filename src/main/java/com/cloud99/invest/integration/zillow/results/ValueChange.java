@@ -2,6 +2,8 @@ package com.cloud99.invest.integration.zillow.results;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.math.BigDecimal;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +12,7 @@ public class ValueChange {
 
 	@Getter
 	@Setter
-	private Double content;
+	private BigDecimal content;
 
 	@Getter
 	@Setter

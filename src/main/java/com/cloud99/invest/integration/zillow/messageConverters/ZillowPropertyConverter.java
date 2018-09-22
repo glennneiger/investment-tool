@@ -15,14 +15,20 @@ import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ZillowPropertyConverter implements MessageConverter<Property, ZillowResult> {
+public class ZillowPropertyConverter<T extends Property> implements MessageConverter<ZillowResult, T> {
 
+	/*
+	 * (non-Javadoc) Not that this method doesn't use the Class<T> returnVal since
+	 * properties are dynamically created
+	 * 
+	 * @see
+	 * com.cloud99.invest.integration.MessageConverter#convert(java.lang.Object,
+	 * java.lang.Class)
+	 */
 	@Override
-	public Property convert(ZillowResult incomingResult) {
+	public T convert(ZillowResult incomingResult, Class<T> returnVal) {
 
-		// determine property type by the UseCode value from Zillow
-
-		Property p = mapProperty(incomingResult);
+		T p = mapProperty(incomingResult);
 		
 		p.setBathRooms(incomingResult.getBathrooms());
 		p.setBedRooms(incomingResult.getBedrooms());
@@ -36,19 +42,22 @@ public class ZillowPropertyConverter implements MessageConverter<Property, Zillo
 		return p;
 	}
 
-	private Property mapProperty(ZillowResult incomingResult) {
-		Property p = null;
+	@SuppressWarnings("unchecked")
+	private T mapProperty(ZillowResult incomingResult) {
+
+		T p = null;
 		if (StringUtils.isBlank(incomingResult.getUseCode())) {
-			p = new SingleFamilyProperty();
+			// default to single family property if not specified in returned provider data
+			p = (T) new SingleFamilyProperty();
 		} else {
 			PropertyType ourPropertyType = mapPropertyType(incomingResult.getUseCode());
 
 			try {
-				p = ourPropertyType.getPropertyClassType().newInstance();
+				p = (T) ourPropertyType.getPropertyClassType().newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
 				log.error("Error occurred creating a new property type instance for zillow useCode: " + incomingResult.getUseCode() + ", error is: " + e.getMessage(), e);
 				// default to single family if any exceptions are encountered
-				p = new SingleFamilyProperty();
+				p = (T) new SingleFamilyProperty();
 			}
 		}
 
@@ -83,4 +92,5 @@ public class ZillowPropertyConverter implements MessageConverter<Property, Zillo
 	private boolean isValueInList(String useCode, String... list) {
 		return Arrays.stream(list).anyMatch(item -> item.equalsIgnoreCase(useCode));
 	}
+
 }

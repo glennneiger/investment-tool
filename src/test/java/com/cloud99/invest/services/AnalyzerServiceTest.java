@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 
 public class AnalyzerServiceTest extends BaseMockitoTest {
 
-	@Autowired
 	private AnalyzerService analyzerService = new AnalyzerService();
 
 	@BeforeEach
@@ -33,13 +32,19 @@ public class AnalyzerServiceTest extends BaseMockitoTest {
 
 	private FlipAnalysisRequest buildFinancials() {
 		FlipAnalysisRequest c = new FlipAnalysisRequest();
-		c.setAfterRepairValue(BigDecimal.valueOf(450000.00));
 		c.setCurrencyUnit(CurrencyUnit.USD);
+
+		c.setAfterRepairValue(BigDecimal.valueOf(450000.00));
+
 		c.setDesiredProfit(BigDecimal.valueOf(20000.00));
+
 		c.setRepairCosts(BigDecimal.valueOf(20000.00));
-		c.setClosingCosts(dataCreator.buildCosts(16600));
+
+		c.setClosingCosts(dataCreator.buildCosts(16600)); // was 16000 - agent: 12,600 = 14,600
+
 		c.setHoldingCosts(dataCreator.buildCosts(2000));
 		c.setHoldingDays(60);
+
 		return c;
 	}
 }

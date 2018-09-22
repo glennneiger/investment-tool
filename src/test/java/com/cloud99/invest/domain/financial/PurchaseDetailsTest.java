@@ -25,7 +25,7 @@ class PurchaseDetailsTest extends BaseFinancialTest {
 		double closingCost2 = 12475;
 		purchaseDetails.setPurchasePrice(new BigDecimal(loanAmt));
 		purchaseDetails.setFinancingDetails(buildFinancingDetails(loanAmt, downPayment, 4.5f));
-		purchaseDetails.setClosingCosts(buildMonthlyItemizedCost(closingCost1, closingCost2));
+		purchaseDetails.setClosingCosts(buildItemizedCost(closingCost1, closingCost2));
 		purchaseDetails.setRehabCosts(buildItemizedCost(rehabCosts));
 		BigDecimal expected = new BigDecimal(loanAmt + closingCost1 + closingCost2 + rehabCosts + downPayment).setScale(2, RoundingMode.HALF_EVEN);
 		assertEquals(expected, purchaseDetails.getTotalPurchaseCost(CURRENCY).getAmount());

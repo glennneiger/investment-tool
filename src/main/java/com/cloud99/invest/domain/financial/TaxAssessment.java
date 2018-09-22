@@ -18,5 +18,5 @@ public class TaxAssessment implements Serializable {
 
 	@Getter
 	@Setter
-	private Double taxAssessment;
+	private Long taxAssessment;
 }

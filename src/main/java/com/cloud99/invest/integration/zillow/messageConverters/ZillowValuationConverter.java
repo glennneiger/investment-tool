@@ -12,13 +12,14 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@NoArgsConstructor
-@AllArgsConstructor
-public class ZillowValuationConverter implements MessageConverter<PropertyValuationResult, ZillowEstimate> {
+public class ZillowValuationConverter implements MessageConverter<ZillowEstimate, PropertyValuationResult> {
 
 	@Setter
 	private Util util;
 
+	public ZillowValuationConverter(Util util) {
+		this.util = util;
+	}
 	/* (non-Javadoc)
 	 * @see com.cloud99.invest.investmenttool.integration.providers.Message#convert(com.cloud99.invest.investmenttool.integration.zillow.results.SearchResults)
 	 */

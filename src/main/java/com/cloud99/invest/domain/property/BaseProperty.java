@@ -3,7 +3,7 @@ package com.cloud99.invest.domain.property;
 import com.cloud99.invest.domain.Address;
 import com.cloud99.invest.domain.BaseDomainObject;
 import com.cloud99.invest.domain.ParkingType;
-import com.cloud99.invest.domain.financial.FinancialAssumptions;
+import com.cloud99.invest.domain.financial.RentalAssumptions;
 import com.cloud99.invest.domain.financial.FinancingDetails;
 import com.cloud99.invest.domain.financial.PropertyFinances;
 import com.cloud99.invest.domain.financial.TaxAssessment;
@@ -73,7 +73,7 @@ public abstract class BaseProperty extends BaseDomainObject implements Property 
 	@CascadeSave
 	@Getter
 	@Setter
-	private FinancialAssumptions financialAssumptions;
+	private RentalAssumptions financialAssumptions;
 
 	@Getter
 	@Setter

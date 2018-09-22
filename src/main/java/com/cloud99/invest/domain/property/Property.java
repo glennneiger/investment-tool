@@ -3,7 +3,7 @@ package com.cloud99.invest.domain.property;
 import com.cloud99.invest.domain.Address;
 import com.cloud99.invest.domain.MongoDocument;
 import com.cloud99.invest.domain.ParkingType;
-import com.cloud99.invest.domain.financial.FinancialAssumptions;
+import com.cloud99.invest.domain.financial.RentalAssumptions;
 import com.cloud99.invest.domain.financial.FinancingDetails;
 import com.cloud99.invest.domain.financial.PropertyFinances;
 import com.cloud99.invest.domain.financial.TaxAssessment;
@@ -46,9 +46,9 @@ public interface Property extends MongoDocument {
 
 	public void setBedRooms(Integer bedRooms);
 
-	public float getBathRooms();
+	public Double getBathRooms();
 
-	public void setBathRooms(float bathRooms);
+	public void setBathRooms(Double bathRooms);
 
 	public Integer getFinishedSqFt();
 
@@ -78,7 +78,7 @@ public interface Property extends MongoDocument {
 
 	public void setTaxAssessment(TaxAssessment assesment);
 
-	public FinancialAssumptions getFinancialAssumptions();
+	public RentalAssumptions getFinancialAssumptions();
 
 	public FinancingDetails getFinancingDetails();
 

@@ -1,5 +1,8 @@
 package com.cloud99.invest.config;
 
+import com.cloud99.invest.converters.json.CurrencyUnitDeserializer;
+import com.cloud99.invest.converters.json.CurrencyUnitSerializer;
+import com.cloud99.invest.converters.json.MoneySerializer;
 import com.cloud99.invest.util.LoggingRequestInterceptor;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,6 +17,9 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 import org.bson.types.ObjectId;
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.jackson.JsonComponentModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -27,6 +33,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -42,15 +49,30 @@ import java.util.TimeZone;
 @PropertySource("classpath:application.properties")
 @EnableWebMvc
 @Order(1)
-public class AppConfig {
+public class AppConfig extends WebMvcAutoConfiguration {
 
 	public static final SimpleDateFormat UTC_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS’Z");
+
+	@Bean
+	public Jackson2ObjectMapperBuilder jacksonBuilder() {
+		Jackson2ObjectMapperBuilder b = new Jackson2ObjectMapperBuilder();
+		b.indentOutput(true);
+		b.configure(objectMapper());
+		return b;
+	}
 
 	@SuppressWarnings("serial")
 	@Bean
 	public ObjectMapper objectMapper() {
 
 		ObjectMapper mapper = new ObjectMapper();
+
+		SimpleModule module = new SimpleModule();
+		module.addSerializer(CurrencyUnit.class, new CurrencyUnitSerializer());
+		module.addSerializer(Money.class, new MoneySerializer());
+		module.addDeserializer(CurrencyUnit.class, new CurrencyUnitDeserializer());
+		mapper.registerModule(module);
+
 		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
 		UTC_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));

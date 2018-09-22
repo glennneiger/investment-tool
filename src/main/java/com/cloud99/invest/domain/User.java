@@ -1,5 +1,6 @@
 package com.cloud99.invest.domain;
 
+import com.cloud99.invest.domain.account.SubscriptionType;
 import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.repo.extensions.CascadeSave;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -74,6 +75,10 @@ public class User extends Person implements Authentication {
 	@Setter
 	@JsonIgnore
 	private List<UserRole> userRoles;
+
+	@Getter
+	@Setter
+	private SubscriptionType subscriptionType;
 
 	// mongo objectId references to all properties user has access to
 	@CascadeSave

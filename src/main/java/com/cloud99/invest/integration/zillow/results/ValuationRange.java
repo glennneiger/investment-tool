@@ -1,32 +1,31 @@
 package com.cloud99.invest.integration.zillow.results;
 
+import com.cloud99.invest.integration.zillow.deserializers.HighPriceDeserializer;
+import com.cloud99.invest.integration.zillow.deserializers.LowPriceDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ValuationRange {
 
+	@JsonDeserialize(using = HighPriceDeserializer.class)
+	@Setter
+	@Getter
 	private High high;
 
+	@JsonDeserialize(using = LowPriceDeserializer.class)
+	@Setter
+	@Getter
 	private Low low;
-
-	public High getHigh() {
-		return high;
-	}
-
-	public void setHigh(High high) {
-		this.high = high;
-	}
-
-	public Low getLow() {
-		return low;
-	}
-
-	public void setLow(Low low) {
-		this.low = low;
-	}
 
 	@Override
 	public String toString() {
-		return "ClassPojo [high = " + high + ", low = " + low + "]";
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 }

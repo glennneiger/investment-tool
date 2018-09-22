@@ -21,21 +21,21 @@ public class PropertyFinancialController implements Controller {
 	@Autowired
 	private PropertyService propertyService;
 
-	@GetMapping(path = "/{propertyId}/financials", consumes = JSON, produces = JSON)
+	@GetMapping(path = "/{propertyId}/financials", consumes = JSON_MEDIA_TYPE, produces = JSON_MEDIA_TYPE)
 	@ResponseBody
 	public PropertyFinances getPropertyFinances(@PathVariable String propertyId) throws Exception {
 
 		return propertyService.getPropertyFinancials(propertyId);
 	}
 
-	@PostMapping(path = "/{propertyId}/financials", consumes = JSON, produces = JSON)
+	@PostMapping(path = "/{propertyId}/financials", consumes = JSON_MEDIA_TYPE, produces = JSON_MEDIA_TYPE)
 	@ResponseStatus(code = HttpStatus.CREATED)
 	public PropertyFinances createPropertyFinances(@PathVariable String propertyId, @RequestBody PropertyFinances propFinances) {
 
 		return propertyService.createPropertyFinances(propertyId, propFinances);
 	}
 
-	@GetMapping(path = "/{propertyId}/", produces = JSON)
+	@GetMapping(path = "/{propertyId}/", produces = JSON_MEDIA_TYPE)
 	public void calcualteFlip() {
 		// TODO - NG - implement me!
 	}

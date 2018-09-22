@@ -8,6 +8,7 @@ import com.cloud99.invest.domain.financial.Income;
 import com.cloud99.invest.domain.financial.ItemizedCost;
 import com.cloud99.invest.domain.financial.PropertyFinances;
 import com.cloud99.invest.domain.financial.PurchaseDetails;
+import com.cloud99.invest.domain.financial.ReoccuringExpense;
 
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
@@ -23,9 +24,8 @@ public abstract class BaseFinancialTest extends BaseMockitoTest {
 		// 20% Down, 4.5% Interest rate
 		FinancingDetails details = buildFinancingDetails(purchasePrice, 0.20D * purchasePrice, 4.5F);
 
-		// rehab: $50k
 
-		// annual operating expenses: $3000 - monthly: $20K - annually
+		// annual operating expenses: $3000 - monthly, $20K - annually
 		Expences expences = buildExpences(0F, 1666.666);
 
 		// annual income: $45K - annually
@@ -33,6 +33,8 @@ public abstract class BaseFinancialTest extends BaseMockitoTest {
 
 		// After repair value (ARV) - 315000
 		PurchaseDetails purchaseDetails = buildPurchaseDetails(purchasePrice, 315000D);
+		// rehab: $10k
+		purchaseDetails.setRehabCosts(Arrays.asList(new ItemizedCost("Rehab costs", new BigDecimal(10000D))));
 		purchaseDetails.setFinancingDetails(details);
 
 		PropertyFinances cash = new PropertyFinances(expences, income, purchaseDetails, CURRENCY);
@@ -61,14 +63,22 @@ public abstract class BaseFinancialTest extends BaseMockitoTest {
 	public Expences buildExpences(float vacancyRate, double operatingExpence) {
 
 		Expences e = new Expences();
-		e.setOperatingExpences(buildItemizedCost(operatingExpence));
+		e.setOperatingExpences(buildReoccuringCost(operatingExpence));
 		e.setVacancyRate(vacancyRate);
 
 		return e;
 	}
 
-	public Collection<ItemizedCost> buildItemizedCost(double Cost) {
-		return Arrays.asList(new ItemizedCost("Expence1", new BigDecimal(Cost), Frequency.MONTHY));
+	public Collection<ItemizedCost> buildItemizedCost(double cost) {
+		return Arrays.asList(new ItemizedCost("Cost", cost));
+	}
+
+	public Collection<ItemizedCost> buildItemizedCost(double cost1, double cost2) {
+		return Arrays.asList(new ItemizedCost("Cost1", cost1), new ItemizedCost("Cost2", cost2));
+	}
+
+	public Collection<ReoccuringExpense> buildReoccuringCost(double cost) {
+		return Arrays.asList(new ReoccuringExpense("Expence1", new BigDecimal(cost), Frequency.MONTHY));
 	}
 
 	public PurchaseDetails buildPurchaseDetails(double purchasePrice, double arv) {
@@ -91,16 +101,13 @@ public abstract class BaseFinancialTest extends BaseMockitoTest {
 		return i;
 	}
 
-	public Collection<ItemizedCost> buildMonthlyOperatingExpences(int cost1, int cost2, int cost3) {
+	public Collection<ReoccuringExpense> buildMonthlyOperatingExpences(int cost1, int cost2, int cost3) {
 		return Arrays.asList(
-				new ItemizedCost("Cost1", new BigDecimal(cost1), Frequency.MONTHY), 
-				new ItemizedCost("Cost2", new BigDecimal(cost2), Frequency.MONTHY), 
-				new ItemizedCost("Cost3", new BigDecimal(cost3), Frequency.MONTHY));
+				new ReoccuringExpense("Cost1", new BigDecimal(cost1), Frequency.MONTHY), new ReoccuringExpense("Cost2", new BigDecimal(cost2), Frequency.MONTHY), new ReoccuringExpense("Cost3", new BigDecimal(cost3), Frequency.MONTHY));
 	}
 
-	public Collection<ItemizedCost> buildMonthlyItemizedCost(double expense1, double expense2) {
+	public Collection<ReoccuringExpense> buildMonthlyExpenses(double expense1, double expense2) {
 		return Arrays.asList(
-				new ItemizedCost("Expence1", new BigDecimal(expense1), Frequency.MONTHY),
-				new ItemizedCost("Expence2", new BigDecimal(expense2), Frequency.MONTHY));
+				new ReoccuringExpense("Expence1", new BigDecimal(expense1), Frequency.MONTHY), new ReoccuringExpense("Expence2", new BigDecimal(expense2), Frequency.MONTHY));
 	}
 }

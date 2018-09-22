@@ -4,8 +4,10 @@ import com.cloud99.invest.config.AppConfig;
 import com.cloud99.invest.domain.Address;
 import com.cloud99.invest.domain.Frequency;
 import com.cloud99.invest.domain.Name;
+import com.cloud99.invest.domain.Status;
 import com.cloud99.invest.domain.Person.Gender;
 import com.cloud99.invest.domain.User;
+import com.cloud99.invest.domain.account.Account;
 import com.cloud99.invest.domain.account.SubscriptionType;
 import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.domain.financial.Expences;
@@ -15,15 +17,18 @@ import com.cloud99.invest.domain.financial.Income;
 import com.cloud99.invest.domain.financial.ItemizedCost;
 import com.cloud99.invest.domain.financial.PropertyFinances;
 import com.cloud99.invest.domain.financial.PurchaseDetails;
+import com.cloud99.invest.domain.financial.ReoccuringExpense;
 import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.domain.property.SingleFamilyProperty;
+import com.cloud99.invest.domain.redis.AuthToken;
 import com.cloud99.invest.dto.requests.AccountCreationRequest;
+import com.cloud99.invest.dto.requests.FlipAnalysisRequest;
 import com.cloud99.invest.dto.requests.PropertySearchRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.sun.jna.platform.win32.OaIdl.DATE;
 
 import org.joda.money.CurrencyUnit;
 import org.joda.time.DateTime;
@@ -33,12 +38,14 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.TimeZone;
+import java.util.UUID;
 
 @Component
 public class DataCreator {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		// User user = buildUser();
 		// Property p = buildProperty();
 		ObjectMapper mapper = new ObjectMapper();
@@ -48,15 +55,20 @@ public class DataCreator {
 		mapper.setDateFormat(AppConfig.UTC_DATE_FORMAT);
 		mapper.registerModule(new JodaModule());
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		try {
-			System.out.println(mapper.writeValueAsString(buildAccountCreationRequest()));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		DataCreator dataCreator = new DataCreator();
+
+		System.out.println(mapper.writeValueAsString(dataCreator.buildFlipAnalysisRequest()));
+
 	}
 
-	public static AccountCreationRequest buildAccountCreationRequest() {
+	public FlipAnalysisRequest buildFlipAnalysisRequest() {
+		FlipAnalysisRequest r = new FlipAnalysisRequest();
+		r.setAfterRepairValue(new BigDecimal(400000));
+
+		return r;
+	}
+
+	public AccountCreationRequest buildAccountCreationRequest() {
 		AccountCreationRequest r = new AccountCreationRequest();
 		r.setAccountName("Test account name");
 		r.setBirthDate(DateTime.now().toLocalDate());
@@ -72,8 +84,8 @@ public class DataCreator {
 		return r;
 	}
 
-	public Collection<ItemizedCost> buildCosts(int amount) {
-		return Arrays.asList(new ItemizedCost("Cost", BigDecimal.valueOf(amount), Frequency.MONTHY));
+	public Collection<ItemizedCost> buildCosts(double amount) {
+		return Arrays.asList(new ItemizedCost("Cost", amount));
 	}
 
 	public PropertySearchRequest buildPropertySearchRequest() {
@@ -91,7 +103,7 @@ public class DataCreator {
 				"Homeowner’s Insurance first year premium", "6 Months’ Property Tax Reserves" };
 
 		for (String item : items) {
-			System.out.println(m.writeValueAsString(new ItemizedCost(item, new BigDecimal(0), Frequency.SINGLE)) + ",");
+			System.out.println(m.writeValueAsString(new ItemizedCost(item, 0)) + ",");
 		}
 	}
 
@@ -101,7 +113,7 @@ public class DataCreator {
 				"Salary and Wages" };
 
 		for (String item : items) {
-			System.out.println(m.writeValueAsString(new ItemizedCost(item, new BigDecimal(0), Frequency.MONTHY)) + ",");
+			System.out.println(m.writeValueAsString(new ItemizedCost(item, 0)) + ",");
 		}
 	}
 
@@ -126,7 +138,6 @@ public class DataCreator {
 		f.setLoanAmount(new BigDecimal(350000));
 		f.setLoanTermYears(30D);
 		f.setLoanType(LoanType.AMORTIZING);
-		f.setMortgageInsuranceAmount(new BigDecimal(300));
 
 		return f;
 	}
@@ -141,18 +152,21 @@ public class DataCreator {
 
 	public Expences buildExpences() {
 		Expences e = new Expences();
-		e.setOperatingExpences(Arrays.asList(new ItemizedCost("Closing costs", new BigDecimal(500), Frequency.ANNUALLY)));
+		e.setOperatingExpences(Arrays.asList(new ReoccuringExpense("Closing costs", new BigDecimal(500), Frequency.ANNUALLY)));
 		return e;
 	}
 
 	public User buildUser() {
 		User user = new User();
 		user.setUserRoles(Arrays.asList(UserRole.CUSTOMER));
+
+		// TODO - NG - setup test email so it's not mine
 		user.setEmail("nickgilas@gmail.com");
 		user.setPassword("password");
-		user.setPersonName(buildName("Nick", "Gilas"));
+		user.setPersonName(buildName("TestFirstName", "TestLastName"));
 		user.setBirthDate(org.joda.time.LocalDate.now().withYear(1980).withMonthOfYear(3).withDayOfMonth(23));
 		user.setGender(Gender.MALE);
+		user.setEnabled(true);
 		return user;
 	}
 
@@ -181,6 +195,24 @@ public class DataCreator {
 		name.setFirstName(first);
 		name.setLastName(last);
 		return name;
+	}
+
+	public Account buildAccount(String ownerId) {
+		Account a = new Account();
+		a.setName("Test Account");
+		a.setCreateDate(DateTime.now());
+		a.setOwnerId(ownerId);
+		a.setStatus(Status.ACTIVE);
+		return a;
+	}
+
+	public AuthToken buildAuthToken(String userId) {
+		AuthToken a = new AuthToken();
+		a.setCreateTime(DateTime.now().toDate());
+		a.setTimeToLiveSeconds(5000);
+		a.setToken(UUID.randomUUID().toString());
+		a.setUserId(userId);
+		return a;
 	}
 
 }

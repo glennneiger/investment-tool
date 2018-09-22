@@ -1,6 +1,12 @@
 package com.cloud99.invest.integration.zillow.results;
 
+import com.cloud99.invest.integration.zillow.deserializers.AmountJsonDeserializer;
+import com.cloud99.invest.integration.zillow.deserializers.ValueChangeDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,14 +14,16 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ZillowEstimate {
 
+	@JsonDeserialize(using = AmountJsonDeserializer.class)
 	@Getter
 	@Setter
 	private Amount amount;
 
 	@Getter
 	@Setter
-	private Float percentile;
+	private Double percentile;
 
+	@JsonDeserialize(using = ValueChangeDeserializer.class)
 	@Getter
 	@Setter
 	private ValueChange durationChange;
@@ -28,14 +36,13 @@ public class ZillowEstimate {
 	@Setter
 	private ValuationRange valuationRange;
 
+	@JsonDeserialize(using = ValueChangeDeserializer.class)
 	@Getter
 	@Setter
 	private ValueChange valueChange;
 
 	@Override
 	public String toString() {
-		return "ClassPojo [amount = " + amount + ", percentile = " + percentile + ", oneWeekChange = " + durationChange
-				+ ", last-updated = " + lastUpdated + ", valuationRange = " + valuationRange + ", valueChange = "
-				+ valueChange + "]";
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 }
