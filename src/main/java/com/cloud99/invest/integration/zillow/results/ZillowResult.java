@@ -11,6 +11,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.springframework.data.annotation.Transient;
+
+import java.math.BigDecimal;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -43,6 +46,7 @@ public class ZillowResult {
 	@Setter
 	private String zpid;
 
+	// this value is only in the search results, not comps
 	@Getter
 	@Setter
 	private String useCode;
@@ -53,7 +57,7 @@ public class ZillowResult {
 
 	@Getter
 	@Setter
-	private Long taxAssessment;
+	private BigDecimal taxAssessment;
 
 	@Getter
 	@Setter
@@ -83,9 +87,10 @@ public class ZillowResult {
 	@JsonDeserialize(using = AmountJsonDeserializer.class)
 	private Amount lastSoldPrice;
 
+	@Transient
 	public DateTime getLastSoldDate() {
 		if (!StringUtils.isEmpty(lastSoldDate)) {
-			DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
+			DateTimeFormatter formatter = DateTimeFormat.forPattern("MM/dd/yyyy");
 			return formatter.parseDateTime(lastSoldDate);
 		}
 		return null;

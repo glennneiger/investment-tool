@@ -174,7 +174,7 @@ public class DataCreator {
 		SingleFamilyProperty p = new SingleFamilyProperty();
 		p.setAddress(buildAddress());
 		p.setName("My single family home");
-		p.setBathRooms(2.5f);
+		p.setBathRooms(2.5D);
 		p.setBedRooms(3);
 		p.setFinishedSqFt(2700);
 		return p;

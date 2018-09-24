@@ -4,12 +4,17 @@ import com.cloud99.invest.domain.Frequency;
 import com.cloud99.invest.domain.financial.ItemizedCost;
 import com.cloud99.invest.dto.requests.FlipAnalysisRequest;
 import com.cloud99.invest.dto.responses.FlipAnalysisResults;
+import com.cloud99.invest.integration.ProviderInfo;
+import com.cloud99.invest.integration.ServiceProvider;
+import com.cloud99.invest.integration.ServiceProviderFactory;
 import com.cloud99.invest.util.Util;
 
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -24,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class AnalyzerService {
 
-	@Autowired
 	@Getter
 	@Setter
 	private Util util;

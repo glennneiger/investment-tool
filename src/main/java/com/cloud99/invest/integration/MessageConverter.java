@@ -5,6 +5,6 @@ package com.cloud99.invest.integration;
  */
 public interface MessageConverter<INPUT_VAL, RETURN_VAL> {
 
-	public RETURN_VAL convert(INPUT_VAL incoming, Class<RETURN_VAL> returnVal);
+	public RETURN_VAL convert(INPUT_VAL incoming);
 
 }

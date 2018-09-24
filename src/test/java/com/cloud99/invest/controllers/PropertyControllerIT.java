@@ -75,7 +75,7 @@ public class PropertyControllerIT extends BaseIntegrationTest {
 		assertNotNull(response.getProperty().getAddress().getLongitude());
 
 		Property property = response.getProperty();
-		assertEquals(3.0, property.getBathRooms(), "Incorrect number of bathrooms received");
+		assertEquals(Double.valueOf(3.0), property.getBathRooms(), "Incorrect number of bathrooms received");
 		assertEquals(new Integer(3), property.getBedRooms(), "Incorrect number of bedrooms received");
 
 		assertNotNull(property.getFinishedSqFt(), "No finished square feet received");
@@ -92,7 +92,7 @@ public class PropertyControllerIT extends BaseIntegrationTest {
 		assertEquals(PropertyType.SINGLE_FAMILY, property.getPropertyType());
 
 		assertNotNull(property.getTaxAssessment(), "No tax assessment received");
-		assertTrue(property.getTaxAssessment().getTaxAssessment() > 0, "Tax assessment amount is zero or less");
+		assertTrue(property.getTaxAssessment().getTaxAssessment().doubleValue() > 0, "Tax assessment amount is zero or less");
 
 		assertTrue(property.getTaxAssessment().getTaxYear() > 2000, "Tax year is less then 2000");
 

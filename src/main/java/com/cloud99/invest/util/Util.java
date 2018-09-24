@@ -67,4 +67,8 @@ public class Util {
 	public Money convertToMoney(Double amount, String currency) {
 		return convertToMoney(BigDecimal.valueOf(amount), currency);
 	}
+
+	public Money initializeNewMoney(CurrencyUnit currencyUnit) {
+		return Money.of(currencyUnit, 0);
+	}
 }

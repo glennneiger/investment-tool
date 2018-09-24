@@ -15,8 +15,10 @@ import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ZillowPropertyConverter<T extends Property> implements MessageConverter<ZillowResult, T> {
+public class ZillowResultPropertyConverter implements MessageConverter<ZillowResult, Property> {
 
+	public static final String SINGLE_FAMILY = "SingleFamily";
+	private ZillowAddressConverter addressConverter = new ZillowAddressConverter();
 	/*
 	 * (non-Javadoc) Not that this method doesn't use the Class<T> returnVal since
 	 * properties are dynamically created
@@ -26,9 +28,9 @@ public class ZillowPropertyConverter<T extends Property> implements MessageConve
 	 * java.lang.Class)
 	 */
 	@Override
-	public T convert(ZillowResult incomingResult, Class<T> returnVal) {
+	public Property convert(ZillowResult incomingResult) {
 
-		T p = mapProperty(incomingResult);
+		Property p = mapProperty(incomingResult);
 		
 		p.setBathRooms(incomingResult.getBathrooms());
 		p.setBedRooms(incomingResult.getBedrooms());
@@ -36,28 +38,32 @@ public class ZillowPropertyConverter<T extends Property> implements MessageConve
 		p.setLotSizeSqFt(incomingResult.getLotSizeSqFt());
 		p.setYearBuilt(incomingResult.getYearBuilt());
 		p.setTaxAssessment(new TaxAssessment(incomingResult.getTaxAssessmentYear(), incomingResult.getTaxAssessment()));
+
 		p.setLastSoldDate(incomingResult.getLastSoldDate());
-		p.setLastSoldPrice(new BigDecimal(incomingResult.getLastSoldPrice().getContent()));
+
+		if (incomingResult.getLastSoldPrice() != null) {
+			p.setLastSoldPrice(new BigDecimal(incomingResult.getLastSoldPrice().getContent()));
+		}
+		p.setAddress(addressConverter.convert(incomingResult.getAddress()));
 
 		return p;
 	}
 
-	@SuppressWarnings("unchecked")
-	private T mapProperty(ZillowResult incomingResult) {
+	private Property mapProperty(ZillowResult incomingResult) {
 
-		T p = null;
+		Property p = null;
 		if (StringUtils.isBlank(incomingResult.getUseCode())) {
 			// default to single family property if not specified in returned provider data
-			p = (T) new SingleFamilyProperty();
+			p = new SingleFamilyProperty();
 		} else {
 			PropertyType ourPropertyType = mapPropertyType(incomingResult.getUseCode());
 
 			try {
-				p = (T) ourPropertyType.getPropertyClassType().newInstance();
+				p = ourPropertyType.getPropertyClassType().newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
 				log.error("Error occurred creating a new property type instance for zillow useCode: " + incomingResult.getUseCode() + ", error is: " + e.getMessage(), e);
 				// default to single family if any exceptions are encountered
-				p = (T) new SingleFamilyProperty();
+				p = new SingleFamilyProperty();
 			}
 		}
 
@@ -78,7 +84,7 @@ public class ZillowPropertyConverter<T extends Property> implements MessageConve
 
 		if ("Unknown".equalsIgnoreCase(useCode)) {
 			return PropertyType.SINGLE_FAMILY;
-		} else if ("SingleFamily".equalsIgnoreCase(useCode)) {
+		} else if (SINGLE_FAMILY.equalsIgnoreCase(useCode)) {
 			return PropertyType.SINGLE_FAMILY;
 		} else if (isValueInList(useCode, "Duplex", "Triplex", "Quadruplex", "MultiFamily2To4", "MultiFamily5Plus")) {
 			return PropertyType.MULTI_FAMILY;
@@ -92,5 +98,6 @@ public class ZillowPropertyConverter<T extends Property> implements MessageConve
 	private boolean isValueInList(String useCode, String... list) {
 		return Arrays.stream(list).anyMatch(item -> item.equalsIgnoreCase(useCode));
 	}
+
 
 }

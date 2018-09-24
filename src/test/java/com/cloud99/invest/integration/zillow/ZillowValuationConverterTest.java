@@ -5,24 +5,26 @@ import static org.junit.Assert.assertNotNull;
 
 import com.cloud99.invest.BaseMockitoTest;
 import com.cloud99.invest.dto.responses.PropertyValuationResult;
-import com.cloud99.invest.integration.zillow.results.ZillowAddress;
 import com.cloud99.invest.integration.zillow.messageConverters.ZillowZestimateConverter;
 import com.cloud99.invest.integration.zillow.results.Amount;
 import com.cloud99.invest.integration.zillow.results.High;
 import com.cloud99.invest.integration.zillow.results.Low;
+import com.cloud99.invest.integration.zillow.results.ValuationRange;
+import com.cloud99.invest.integration.zillow.results.ValueChange;
+import com.cloud99.invest.integration.zillow.results.ZillowAddress;
+import com.cloud99.invest.integration.zillow.results.ZillowEstimate;
 import com.cloud99.invest.integration.zillow.results.ZillowResponse;
 import com.cloud99.invest.integration.zillow.results.ZillowResult;
 import com.cloud99.invest.integration.zillow.results.ZillowResults;
 import com.cloud99.invest.integration.zillow.results.ZillowSearchResults;
-import com.cloud99.invest.integration.zillow.results.ValuationRange;
-import com.cloud99.invest.integration.zillow.results.ValueChange;
-import com.cloud99.invest.integration.zillow.results.ZillowEstimate;
 import com.cloud99.invest.util.Util;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.InjectMocks;
+
+import java.math.BigDecimal;
 
 public class ZillowValuationConverterTest extends BaseMockitoTest {
 
@@ -32,7 +34,7 @@ public class ZillowValuationConverterTest extends BaseMockitoTest {
 	private Util util = new Util();
 
 	@InjectMocks
-	private ZillowZestimateConverter converter = new ZillowZestimateConverter(util);
+	private ZillowZestimateConverter converter = new ZillowZestimateConverter();
 
 	@Before
 	public void setup() {
@@ -47,7 +49,7 @@ public class ZillowValuationConverterTest extends BaseMockitoTest {
 		searchResults.getResponse().getResults().setZillowResult(null);
 
 		Assertions.assertThrows(RuntimeException.class, () -> {
-			converter.convert(searchResults.getResponse().getResults().getZillowResult().getZestimate());
+			converter.convert(searchResults.getResponse().getResults().getZillowResult().getZestimate(), PropertyValuationResult.class);
 		});
 	}
 	
@@ -58,7 +60,7 @@ public class ZillowValuationConverterTest extends BaseMockitoTest {
 		ZillowSearchResults searchResults = new ZillowSearchResults();
 		searchResults.setResponse(buildResponse());
 
-		PropertyValuationResult result = converter.convert(searchResults.getResponse().getResults().getZillowResult().getZestimate());
+		PropertyValuationResult result = converter.convert(searchResults.getResponse().getResults().getZillowResult().getZestimate(), PropertyValuationResult.class);
 		assertNotNull(result);
 		
 		// Zestimate
@@ -75,7 +77,7 @@ public class ZillowValuationConverterTest extends BaseMockitoTest {
 				(Double) result.getLowValue().getAmount().doubleValue());
 		
 		assertEquals(
-				(Double) zestimate.getValueChange().getContent(), 
+				(BigDecimal) zestimate.getValueChange().getContent(),
 				(Double) result.getValueChange().getAmount().doubleValue());
 		
 		assertEquals(
@@ -104,7 +106,7 @@ public class ZillowValuationConverterTest extends BaseMockitoTest {
 		ZillowResult r = new ZillowResult();
 		r.setAddress(buildAddress());
 		r.setZestimate(buildZestimate());
-		r.setBathrooms(3);
+		r.setBathrooms(3D);
 		r.setBedrooms(4);
 		r.setFinishedSqFt(2050);
 		r.setLastSoldDate("01/11/2018");
@@ -112,7 +114,7 @@ public class ZillowValuationConverterTest extends BaseMockitoTest {
 		lastSoldPrice.setContent(350000D);
 		r.setLastSoldPrice(lastSoldPrice);
 		r.setRentzestimate(buildZestimate());
-		r.setTaxAssessment(200000.00);
+		r.setTaxAssessment(BigDecimal.valueOf(200000));
 		r.setTaxAssessmentYear(2018);
 		r.setYearBuilt(2010);
 		r.setUseCode("SingleFamily");
@@ -124,7 +126,7 @@ public class ZillowValuationConverterTest extends BaseMockitoTest {
 		ZillowEstimate z = new ZillowEstimate();
 		z.setAmount(buildAmount(350000));
 		z.setValueChange(buildValueChange(3500D));
-		z.setPercentile(.05F);
+		z.setPercentile(.05);
 		z.setValuationRange(buildValuationRange(350000, 300000));
 		z.setValueChange(buildValueChange(8000));
 		
@@ -135,7 +137,7 @@ public class ZillowValuationConverterTest extends BaseMockitoTest {
 	private ValueChange buildValueChange(double amt) {
 
 		ValueChange c = new ValueChange();
-		c.setContent(amt);
+		c.setContent(BigDecimal.valueOf(amt));
 		c.setCurrency("USD");
 		c.setDuration(2);
 		return c;

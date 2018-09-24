@@ -1,52 +1,52 @@
 package com.cloud99.invest.integration.zillow.messageConverters;
 
 import com.cloud99.invest.domain.property.Property;
-import com.cloud99.invest.dto.responses.PropertyCompResult;
-import com.cloud99.invest.dto.responses.PropertyValuationResult;
-import com.cloud99.invest.integration.MessageConverter;
+import com.cloud99.invest.dto.responses.PropertyCompSearchResult;
+import com.cloud99.invest.dto.responses.PropertyCompValuationResult;
 import com.cloud99.invest.integration.ProviderInfo;
 import com.cloud99.invest.integration.zillow.results.comps.Comp;
 import com.cloud99.invest.integration.zillow.results.comps.ZillowComparables;
-import com.cloud99.invest.util.Util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
 
 // TODO - NG - add the creation of this object to a factory class
+@Slf4j
 public class ZillowCompSearchResultsConverterManager {
 
-	private Util util;
-
-	private ZillowPropertyConverter propertyConverter = new ZillowPropertyConverter();
 	private ZillowCompConverter compConverter = new ZillowCompConverter();
+	private ZillowResultPropertyConverter propertyConverter = new ZillowResultPropertyConverter();
 
-	public ZillowCompSearchResultsConverterManager(Util util) {
-		this.util = util;
-	}
+	public PropertyCompSearchResult convert(ZillowComparables incoming) {
+		log.debug("Converting Zillow comp results to domain response");
 
-	public Collection<PropertyCompResult> convert(ZillowComparables result) {
-		PropertyCompResult resultVal = new PropertyCompResult();
-		Collection<PropertyCompResult> returnList = new ArrayList<>();
+		PropertyCompSearchResult result = new PropertyCompSearchResult();
 
-		PropertyCompResult returnVal = new PropertyCompResult();
-		returnVal.setProviderInfo(ProviderInfo.ZILLOW);
-		returnVal.setProviderId(result.getRequest().getZpid());
+		Collection<PropertyCompValuationResult> results = new ArrayList<>(incoming.getResponse().getProperties().getComparables().getComp().size());
+		List<Comp> comps = incoming.getResponse().getProperties().getComparables().getComp();
 
-		Collection<PropertyCompResult> results = new ArrayList<>(result.getResponse().getProperties().getComparables().getComp().size());
+		// set the subject property on the result
+		result.setSubjectProperty(propertyConverter.convert(incoming.getResponse().getProperties().getPrincipal()));
 
-		for (Comp comp : result.getResponse().getProperties().getComparables().getComp()) {
-			PropertyCompResult propertyValuationResult = compConverter.convert(comp.getZestimate());
-			propertyValuationResult.setProviderId(comp.getZpid());
-			propertyValuationResult.setProviderInfo(ProviderInfo.ZILLOW);
-			propertyValuationResult.setProviderMatchingPercent(comp.getScore());
-			results.add(propertyValuationResult);
+		for (Comp comp : comps) {
+			
+			// convert the valuation
+			PropertyCompValuationResult propertyCompResult = compConverter.convert(comp);
+			propertyCompResult.setProviderId(comp.getZpid());
+			propertyCompResult.setProviderInfo(ProviderInfo.ZILLOW);
 
-			Property subjectProperty = compConverter.convert(comp);
-			propertyValuationResult.setSubjectProperty(subjectProperty);
+			// convert the property
+			Property property = propertyConverter.convert(comp);
+			propertyCompResult.setProperty(property);
+			results.add(propertyCompResult);
 
 		}
 
-		return results;
+		result.setPropertyValuations(results);
+		return result;
 	}
 
 }

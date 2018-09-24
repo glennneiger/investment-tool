@@ -1,10 +1,11 @@
 package com.cloud99.invest.integration.zillow;
 
 import com.cloud99.invest.dto.requests.PropertySearchRequest;
-import com.cloud99.invest.dto.responses.PropertyCompResult;
+import com.cloud99.invest.dto.responses.PropertyCompSearchResult;
 import com.cloud99.invest.dto.responses.PropertySearchResult;
 import com.cloud99.invest.dto.responses.PropertyValuationResult;
 import com.cloud99.invest.integration.DataProviderException;
+import com.cloud99.invest.integration.GenericMessageConverter;
 import com.cloud99.invest.integration.MessageConverter;
 import com.cloud99.invest.integration.ServiceProvider;
 import com.cloud99.invest.integration.zillow.deserializers.AmountJsonDeserializer;
@@ -21,13 +22,12 @@ import com.cloud99.invest.integration.zillow.results.ValueChange;
 import com.cloud99.invest.integration.zillow.results.ZillowEstimate;
 import com.cloud99.invest.integration.zillow.results.ZillowSearchResults;
 import com.cloud99.invest.integration.zillow.results.comps.ZillowComparables;
-import com.cloud99.invest.util.Util;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -37,31 +37,25 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.PostConstruct;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
 
+// FIXME - NG this classes 3 zillow api call methods can be refactored for reuse
 @Service
 @PropertySource("classpath:application.properties")
 @Slf4j
 public class ZillowServiceProvider implements ServiceProvider {
 
-	private static final String PROPERTY_SEARCH_URL = "http://www.zillow.com/webservice/GetDeepSearchResults.htm?zws-id={zws-id}&address={address}&citystatezip={citystatezip}&rentzestimate={rentzestimate}";
-	private static final String GET_COMPS_URL = "http://www.zillow.com/webservice/GetDeepComps.htm?zws-id={zws-id}&zpid={zpid}&count={count}&rentzestimate={rentzestimate}";
+	public static final String PROPERTY_SEARCH_URL = "http://www.zillow.com/webservice/GetDeepSearchResults.htm?zws-id={zws-id}&address={address}&citystatezip={citystatezip}&rentzestimate={rentzestimate}";
+	public static final String GET_COMPS_URL = "http://www.zillow.com/webservice/GetDeepComps.htm?zws-id={zws-id}&zpid={zpid}&count={count}&rentzestimate={rentzestimate}";
 
 	@Value("${zillow.id}")
 	private String zillowId;
 
 	@Autowired
 	private RestTemplate restTemplate;
-
-	@Autowired
-	private Util util;
-
-	@Autowired
-	private ObjectMapper mapper;
 
 	private XmlMapper xmlMapper;
 
@@ -88,22 +82,23 @@ public class ZillowServiceProvider implements ServiceProvider {
 		xmlMapper.enable(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT);
 	}
 
-	private Object executeApiCall(Map<String, Object> params, String url) {
-
-		return new Object();
-	}
 	@Override
-	public Collection<PropertyValuationResult> propertyCompLookup(String providerPropertyId, Integer numOfCompsToLookup) {
+	public PropertyCompSearchResult propertyCompLookup(String providerPropertyId, Integer numOfCompsToLookup) {
 		
 		ZillowComparables response = null;
 
 		String returnXml = getCompResults(providerPropertyId, numOfCompsToLookup, true);
+		if (StringUtils.isEmpty(returnXml)) {
+			return null;
+		}
 		try {
 			response = xmlMapper.readValue(returnXml, ZillowComparables.class);
 			if ("0".equals(response.getMessage().getCode())) {
-				MessageConverter<ZillowComparables, Collection<PropertyCompResult>> manager = new ZillowCompSearchResultsConverterManager(util);
-				Collection<PropertyCompResult> comps = manager.convert(response);
-				return comps;
+				ZillowCompSearchResultsConverterManager manager = new ZillowCompSearchResultsConverterManager();
+				PropertyCompSearchResult compResult = manager.convert(response);
+				log.debug("Comp conversion result: {}", compResult);
+				return compResult;
+
 			}
 			throw new DataProviderException("zillow.failed.service.call", response.getMessage().getText(), "zillow call failed");
 
@@ -118,7 +113,9 @@ public class ZillowServiceProvider implements ServiceProvider {
 		log.trace("PropertySearchRequest: " + request.toString());
 
 		String returnXml = getSearchResults(request);
-
+		if (StringUtils.isEmpty(returnXml)) {
+			return null;
+		}
 		ZillowSearchResults response;
 		try {
 			response = xmlMapper.readValue(returnXml, ZillowSearchResults.class);
@@ -137,21 +134,22 @@ public class ZillowServiceProvider implements ServiceProvider {
 	public PropertyValuationResult propertyValuation(PropertySearchRequest request) {
 		log.debug("PropertyValuationRequest: " + request.toString());
 
-		String returnJson = getSearchResults(request);
-
-		MessageConverter<ZillowEstimate, PropertyValuationResult> adaptor = new ZillowZestimateConverter(util);
+		String returnXml = getSearchResults(request);
+		if (StringUtils.isEmpty(returnXml)) {
+			return null;
+		}
+		GenericMessageConverter<ZillowEstimate> converter = new ZillowZestimateConverter();
 
 		// convert json to object
 		ZillowSearchResults response;
 		try {
-			response = xmlMapper.readValue(returnJson, ZillowSearchResults.class);
+			response = xmlMapper.readValue(returnXml, ZillowSearchResults.class);
 			if ("0".equals(response.getMessage().getCode())) {
-				return adaptor.convert(response.getResponse().getResults().getZillowResult().getZestimate());
+				return converter.convert(response.getResponse().getResults().getZillowResult().getZestimate(), PropertyValuationResult.class);
 			}
 			throw new DataProviderException("zillow.failed.service.call", response.getMessage().getText(), "zillow call failed");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Error looking up property valuation: " + e.getMessage(), e);
 		}
 		return null;
 	}
@@ -182,6 +180,10 @@ public class ZillowServiceProvider implements ServiceProvider {
 
 		log.debug("Zillow get comps result: " + str);
 		return str;
+	}
+
+	protected void setRestTemplate(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
 	}
 
 }

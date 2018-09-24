@@ -2,12 +2,15 @@ package com.cloud99.invest.controller;
 
 import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.dto.requests.PropertySearchRequest;
+import com.cloud99.invest.dto.responses.CompAnalysisResult;
+import com.cloud99.invest.dto.responses.PropertyCompSearchResult;
 import com.cloud99.invest.dto.responses.PropertySearchResult;
 import com.cloud99.invest.dto.responses.PropertyValuationResult;
 import com.cloud99.invest.integration.ProviderInfo;
 import com.cloud99.invest.integration.ServiceProvider;
 import com.cloud99.invest.integration.ServiceProviderFactory;
 import com.cloud99.invest.services.AccountService;
+import com.cloud99.invest.services.CompAnalyzerService;
 import com.cloud99.invest.services.PropertyService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +35,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.Collection;
 
 @RestController
 @RequestMapping(path = "/v1")
@@ -44,25 +46,17 @@ public class PropertyController implements Controller {
 	@Autowired
 	private ServiceProviderFactory providerFactory;
 
-	@Autowired
 	private ServiceProvider serviceProvider;
 
 	@Autowired
 	private AccountService accountService;
 
+	@Autowired
+	private CompAnalyzerService compAnalyzerService;
+
 	@PostConstruct
 	public void init() {
 		serviceProvider = providerFactory.getServiceProvider(ProviderInfo.ZILLOW);
-	}
-
-	// TODO - NG - this needs to be moved to a resource controller or something
-	@GetMapping(path = "/image", produces = MediaType.IMAGE_JPEG_VALUE)
-	public void getImage(HttpServletResponse response) throws IOException {
-
-		ClassPathResource imgFile = new ClassPathResource("image/Zillowlogo_200x50.gif");
-
-		response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-		StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
 	}
 
 	@PostMapping(path = "/properties/search", consumes = JSON_MEDIA_TYPE, produces = JSON_MEDIA_TYPE)
@@ -81,12 +75,12 @@ public class PropertyController implements Controller {
 
 	}
 
-	@GetMapping(path = "/properties/comps", consumes = TEXT_PLAIN_TYPE, produces = JSON_MEDIA_TYPE)
+	@GetMapping(path = "/properties/comps", produces = JSON_MEDIA_TYPE)
 	@ResponseBody
-	public Collection<PropertyValuationResult> propertyCompLookup(String providerPropertyId) throws Exception {
+	public CompAnalysisResult propertyCompLookup(String providerPropertyId) throws Exception {
 
-		return serviceProvider.propertyCompLookup(providerPropertyId, accountService.getAccountsGeneralSettingForCurrentUser().getNumOfCompsToLookup());
-
+		PropertyCompSearchResult result = serviceProvider.propertyCompLookup(providerPropertyId, accountService.getAccountsGeneralSettingForCurrentUser().getNumOfCompsToLookup());
+		return compAnalyzerService.compAnalysisResult(result);
 	}
 
 	@GetMapping(path = "/users/properties", consumes = JSON_MEDIA_TYPE, produces = JSON_MEDIA_TYPE)
@@ -115,6 +109,16 @@ public class PropertyController implements Controller {
 	public void deleteProperty(@RequestParam String userEmail, @PathVariable String propertyId) {
 
 		propertyService.deleteProperty(userEmail, propertyId);
+	}
+
+	// TODO - NG - this needs to be moved to a resource controller or something
+	@GetMapping(path = "/image", produces = MediaType.IMAGE_JPEG_VALUE)
+	public void getImage(HttpServletResponse response) throws IOException {
+
+		ClassPathResource imgFile = new ClassPathResource("image/Zillowlogo_200x50.gif");
+
+		response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+		StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
 	}
 
 }

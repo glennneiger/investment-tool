@@ -1,7 +1,6 @@
 package com.cloud99.invest.integration.zillow.messageConverters;
 
 import com.cloud99.invest.domain.property.Property;
-import com.cloud99.invest.domain.property.SingleFamilyProperty;
 import com.cloud99.invest.dto.responses.PropertySearchResult;
 import com.cloud99.invest.integration.MessageConverter;
 import com.cloud99.invest.integration.ProviderInfo;
@@ -20,30 +19,25 @@ import lombok.extern.slf4j.Slf4j;
 public class ZillowSearchResultsMessageConverterManager implements MessageConverter<ZillowSearchResults, PropertySearchResult> {
 
 	private ZillowAddressConverter addressConverter = new ZillowAddressConverter();
-	private ZillowPropertyConverter<? extends Property> propertyConverter = new ZillowPropertyConverter();
+	private ZillowResultPropertyConverter propertyConverter = new ZillowResultPropertyConverter();
 
 	@Override
-	public PropertySearchResult convert(ZillowSearchResults result, Class<PropertySearchResult> returnClass) {
+	public PropertySearchResult convert(ZillowSearchResults incoming) {
 		log.trace("Converting Zillow PropertySearchResult");
 
-		PropertySearchResult returnVal = null;
-		try {
-			returnVal = returnClass.newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
-			log.error("Error creating new instance of class: {}", returnClass.getName());
-			return null;
-		}
+		ZillowResult zillowResult = incoming.getResponse().getResults().getZillowResult();
+
+		PropertySearchResult returnVal = new PropertySearchResult();
+		returnVal.setProviderId(zillowResult.getZpid());
 		returnVal.setProviderInfo(ProviderInfo.ZILLOW);
 
-		ZillowResult zillowResult = result.getResponse().getResults().getZillowResult();
-		returnVal.setProviderId(zillowResult.getZpid());
-
-		Property property = propertyConverter.convert(zillowResult, null);
+		Property property = propertyConverter.convert(zillowResult);
 		returnVal.setProperty(property);
 
 		property.setAddress(addressConverter.convert(zillowResult.getAddress()));
 
 		return returnVal;
 	}
+
 
 }

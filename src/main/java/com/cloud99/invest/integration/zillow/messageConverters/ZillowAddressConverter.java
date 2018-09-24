@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 public class ZillowAddressConverter implements MessageConverter<ZillowAddress, Address> {
 
 	@Override
-	public Address convert(ZillowAddress zAddress, Class<Address> returnType) {
+	public Address convert(ZillowAddress zAddress) {
 
 		Address address = new Address();
 		address.setAddress1(zAddress.getStreet());

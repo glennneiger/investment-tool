@@ -1,6 +1,7 @@
 package com.cloud99.invest.domain.financial;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,5 +19,5 @@ public class TaxAssessment implements Serializable {
 
 	@Getter
 	@Setter
-	private Long taxAssessment;
+	private BigDecimal taxAssessment;
 }

@@ -1,7 +1,7 @@
 package com.cloud99.invest.integration.zillow.messageConverters;
 
 import com.cloud99.invest.dto.responses.PropertyValuationResult;
-import com.cloud99.invest.integration.MessageConverter;
+import com.cloud99.invest.integration.GenericMessageConverter;
 import com.cloud99.invest.integration.ProviderInfo;
 import com.cloud99.invest.integration.zillow.results.ZillowEstimate;
 import com.cloud99.invest.util.Util;
@@ -10,27 +10,24 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ZillowZestimateConverter<T extends PropertyValuationResult> implements MessageConverter<ZillowEstimate, T> {
+public class ZillowZestimateConverter implements GenericMessageConverter<ZillowEstimate> {
 
 	@Setter
-	private Util util;
+	private Util util = new Util();
 
-	public ZillowZestimateConverter(Util util) {
-		this.util = util;
-	}
 	/* (non-Javadoc)
 	 * @see com.cloud99.invest.investmenttool.integration.providers.Message#convert(com.cloud99.invest.investmenttool.integration.zillow.results.SearchResults)
 	 */
 	@Override
-	public T convert(ZillowEstimate zest, Class<T> returnVal) {
-		log.trace("Converting Zillow PropertyValuationResult");
+	public <T extends PropertyValuationResult> T convert(ZillowEstimate zest, Class<T> returnClassType) {
+		log.trace("Converting Zillow zestimate of type: {}", returnClassType.getName());
 
 		T result = null;
 		try {
-			result = returnVal.newInstance();
+			result = returnClassType.newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
-			log.error("Error creating new instance of class: {}", returnVal.getName());
-			return null;
+			log.error("Error occurred while trying to create a new instance of property valuation result: {}, msg: {}", returnClassType.getName(), e.getMessage(), e);
+			result = (T) new PropertyValuationResult();
 		}
 		result.setProviderInfo(ProviderInfo.ZILLOW);
 
