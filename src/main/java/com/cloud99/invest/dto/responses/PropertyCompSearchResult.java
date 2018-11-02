@@ -4,12 +4,14 @@ import com.cloud99.invest.domain.property.Property;
 
 import org.joda.money.CurrencyUnit;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class PropertyCompSearchResult {
+public class PropertyCompSearchResult implements Serializable {
+	private static final long serialVersionUID = 5298328655988759158L;
 
 	@Getter
 	@Setter

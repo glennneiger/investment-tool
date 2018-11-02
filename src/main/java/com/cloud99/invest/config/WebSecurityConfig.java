@@ -39,8 +39,6 @@ import java.util.Arrays;
 
 @EnableGlobalAuthentication
 @Configuration
-// TODO - NG - should change this to include "config" so we don't scan
-// everything
 @ComponentScan(basePackages = { "com.cloud99.invest" })
 @EnableWebSecurity
 @Order(2)
@@ -76,21 +74,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.and()
 		.authorizeRequests()
 		.antMatchers(PUBLIC_URLS).permitAll()
+				// .antMatchers("/v1/admin/**").access("hasRole('ROLE_ADMIN')")
         .and()
 		.authenticationProvider(tokenAuthenticationProvider())
 		.addFilterBefore(restAuthenticationFilter(), AnonymousAuthenticationFilter.class)
 				.exceptionHandling().defaultAuthenticationEntryPointFor(forbiddenEntryPoint(), PROTECTED_URLS)
-		// TODO - NG - might want to create a custom AccessDeniedHandler and return a json payload instead of just a 403 status
-		.accessDeniedHandler(new AccessDeniedHandlerImpl() {
-
-			@Override
-			public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-				// TODO Auto-generated method stub
-				super.handle(request, response, accessDeniedException);
-			}
-			
-		})
-		.and()
+				.and()
 		.authorizeRequests().anyRequest().authenticated()
 		.and().formLogin().disable()
 		.httpBasic()

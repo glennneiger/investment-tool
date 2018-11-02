@@ -3,7 +3,7 @@ package com.cloud99.invest.services;
 import com.cloud99.invest.domain.Name;
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.account.Account;
-import com.cloud99.invest.domain.account.SubscriptionType;
+import com.cloud99.invest.domain.account.MembershipType;
 import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.dto.requests.AccountCreationRequest;
 import com.cloud99.invest.exceptions.AccountAlreadyExistsException;
@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -43,14 +42,12 @@ public class UserService {
 		// does this user already have an account?
 		newUser = createUser(newUser, UserRole.CUSTOMER);
 
-		newUser.setSubscriptionType(SubscriptionType.FREE);
-
-		// TODO - NG - need to integrate credit card payment and provide inputs to
-		// process card
-
-		// TODO - NG - need to see if credit cards processing was successful and then
-		// add the PAID subscriptionType
-
+		if (MembershipType.PAID.equals(accountRequest.getMembershipType())) {
+			// TODO - NG - need to see if credit cards processing was successful and then
+			// add the PAID subscriptionType
+			// processPayment();
+		}
+		
 		Account acct = null;
 		try {
 			acct = acctService.createAccount(accountRequest, newUser);
@@ -159,10 +156,8 @@ public class UserService {
 		user.setPersonName(new Name(accountRequest.getFirstName(), accountRequest.getMiddleName(), accountRequest.getLastName()));
 		user.setBirthDate(accountRequest.getBirthDate());
 		user.setEmail(accountRequest.getEmail());
-		user.setLocale(accountRequest.getLocale());
 		user.setGender(accountRequest.getGender());
 		user.setPassword((accountRequest.getPassword()));
-		user.setLocale(accountRequest.getLocale());
 
 		return user;
 	}

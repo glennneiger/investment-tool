@@ -9,14 +9,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.cloud99.invest.BaseIntegrationTest;
-import com.cloud99.invest.DataCreator;
-import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.domain.property.PropertyType;
 import com.cloud99.invest.domain.redis.AuthToken;
 import com.cloud99.invest.dto.requests.PropertySearchRequest;
 import com.cloud99.invest.dto.responses.PropertySearchResult;
-import com.cloud99.invest.integration.ProviderInfo;
+import com.cloud99.invest.integration.data.ProviderInfo;
 import com.cloud99.invest.repo.redis.AuthTokenRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

@@ -3,9 +3,6 @@ package com.cloud99.invest.domain.property;
 import com.cloud99.invest.domain.Address;
 import com.cloud99.invest.domain.MongoDocument;
 import com.cloud99.invest.domain.ParkingType;
-import com.cloud99.invest.domain.financial.RentalAssumptions;
-import com.cloud99.invest.domain.financial.FinancingDetails;
-import com.cloud99.invest.domain.financial.PropertyFinances;
 import com.cloud99.invest.domain.financial.TaxAssessment;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -78,13 +75,4 @@ public interface Property extends MongoDocument {
 
 	public void setTaxAssessment(TaxAssessment assesment);
 
-	public RentalAssumptions getFinancialAssumptions();
-
-	public FinancingDetails getFinancingDetails();
-
-	public void setFinancingDetails(FinancingDetails details);
-
-	public PropertyFinances getPropertyFinances();
-
-	public void setPropertyFinances(PropertyFinances finances);
 }

@@ -14,11 +14,11 @@ public class GreaterThanZeroValidator implements ConstraintValidator<GreaterThan
 			return false;
 		}
 
-		if (value.doubleValue() <= 0) {
-			return false;
+		if (value.compareTo(BigDecimal.valueOf(0)) >= 0) {
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 }

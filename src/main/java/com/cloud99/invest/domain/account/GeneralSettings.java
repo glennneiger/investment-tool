@@ -8,8 +8,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import org.joda.money.CurrencyUnit;
 
+import javax.validation.constraints.Max;
+
 import java.io.Serializable;
 import java.util.List;
+import java.util.Locale;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,22 +24,45 @@ import lombok.Setter;
 public class GeneralSettings implements Serializable {
 	private static final long serialVersionUID = -2336061599993466226L;
 
-	// tracks how many documents an individual account has associated with it
-	@Getter
-	@Setter
-	private Integer storedDocumentCount = 0;
-
 	@Setter
 	@Getter
-	private Integer totalDocsAllowed = 5; // -1 means infinity
+	private boolean allowedToStoreDocuments = false;
 	
+	// -1 = infinity, no limit on the number of properties the user can store
+	@Getter
+	@Setter
+	private Integer numberOfPropertiesUserCanStore;
+
+	@Getter
+	@Setter
+	private MembershipType membershipType;
+
+	// The default value is 3 for FREE account, up to 6 for PAID accounts
+	@Getter
+	@Setter
+	@Max(value = 6, message = "number.of.comps.exceded")
+	private Integer numOfCompsToLookup = 3;
+
 	@JsonSerialize(using = CurrencyUnitSerializer.class)
 	@JsonDeserialize(using = CurrencyUnitDeserializer.class)
 	@Setter
 	@Getter
-	private CurrencyUnit defaultCurrency = CurrencyUnit.USD;
+	private CurrencyUnit currency = CurrencyUnit.USD;
+
 
 	@Getter
 	@Setter
-	private Integer numOfCompsToLookup = 3;
+	private List<ItemizedCost> holdingCostList;
+
+	@Getter
+	@Setter
+	private List<ItemizedCost> expencesList;
+
+	@Getter
+	@Setter
+	private List<ItemizedCost> closingCostsList;
+
+	@Setter
+	@Getter
+	private Locale locale;
 }

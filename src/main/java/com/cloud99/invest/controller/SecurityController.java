@@ -1,10 +1,8 @@
 package com.cloud99.invest.controller;
 
-import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.redis.AuthToken;
 import com.cloud99.invest.dto.requests.AccountCreationRequest;
 import com.cloud99.invest.services.SecurityService;
-import com.cloud99.invest.services.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -13,11 +13,9 @@ import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.domain.redis.AuthToken;
 import com.cloud99.invest.exceptions.ServiceException;
-import com.cloud99.invest.repo.UserRepo;
 import com.cloud99.invest.services.UserService;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;

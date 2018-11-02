@@ -3,6 +3,7 @@ package com.cloud99.invest;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 import com.cloud99.invest.config.EmailConfig;
+import com.cloud99.invest.config.GlobalMethodSecurityConfig;
 import com.cloud99.invest.config.MessageConfig;
 import com.cloud99.invest.config.TestAppConfig;
 import com.cloud99.invest.config.TestMongoConfig;
@@ -12,7 +13,6 @@ import com.cloud99.invest.domain.account.Account;
 import com.cloud99.invest.repo.AccountRepo;
 import com.cloud99.invest.repo.UserRepo;
 import com.cloud99.invest.repo.redis.AuthTokenRepo;
-import com.cloud99.invest.security.GlobalMethodSecurityConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.BeforeAll;

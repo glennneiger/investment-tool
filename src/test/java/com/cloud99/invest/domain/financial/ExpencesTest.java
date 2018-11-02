@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.cloud99.invest.BaseFinancialTest;
 import com.cloud99.invest.domain.Frequency;
+import com.cloud99.invest.domain.financial.rental.RentalExpences;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import org.mockito.InjectMocks;
 public class ExpencesTest extends BaseFinancialTest {
 
 	@InjectMocks
-	private Expences expences;
+	private RentalExpences expences;
 
 	@BeforeEach
 	void setUp() throws Exception {

@@ -2,9 +2,6 @@ package com.cloud99.invest.domain.property;
 
 import com.cloud99.invest.domain.Address;
 import com.cloud99.invest.domain.ParkingType;
-import com.cloud99.invest.domain.financial.RentalAssumptions;
-import com.cloud99.invest.domain.financial.FinancingDetails;
-import com.cloud99.invest.domain.financial.PropertyFinances;
 import com.cloud99.invest.domain.financial.TaxAssessment;
 
 import org.joda.time.DateTime;
@@ -15,6 +12,7 @@ import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.Setter;
 
+// TODO - NG - finish implementing multifamily data model
 @Document(collection = "multiFamily")
 public class BaseMultiFamilyProperty implements Property {
 	private static final long serialVersionUID = -4617469255664886831L;
@@ -159,36 +157,6 @@ public class BaseMultiFamilyProperty implements Property {
 
 	@Override
 	public void setTaxAssessment(TaxAssessment assesment) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public RentalAssumptions getFinancialAssumptions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public FinancingDetails getFinancingDetails() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setFinancingDetails(FinancingDetails details) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public PropertyFinances getPropertyFinances() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setPropertyFinances(PropertyFinances finances) {
 		// TODO Auto-generated method stub
 
 	}

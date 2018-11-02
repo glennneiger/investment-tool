@@ -3,21 +3,18 @@ package com.cloud99.invest.domain.financial;
 import com.cloud99.invest.domain.MongoDocument;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.Id;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * This domain object represents a generic cost or expense with an associated
- * frequency of the cost or expense
+ * This domain object represents a generic, one time, cost or expense
  */
 @NoArgsConstructor
 public class ItemizedCost implements MongoDocument {
@@ -33,9 +30,8 @@ public class ItemizedCost implements MongoDocument {
 	@Setter
 	private String name;
 
-	@Getter
 	@Setter
-	private BigDecimal cost = new BigDecimal(0, new MathContext(2));
+	private BigDecimal cost = BigDecimal.valueOf(0);
 
 	public ItemizedCost(String name, double cost) {
 		this(name, BigDecimal.valueOf(cost));
@@ -47,9 +43,12 @@ public class ItemizedCost implements MongoDocument {
 		this.cost = cost;
 	}
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
+	public BigDecimal getCost() {
+		return cost.setScale(2, RoundingMode.HALF_EVEN);
 	}
 
+	@Override
+	public String toString() {
+		return "ItemizedCost= name:" + getName() + ", cost:" + getCost();
+	}
 }

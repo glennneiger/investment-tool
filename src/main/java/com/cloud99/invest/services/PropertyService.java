@@ -1,11 +1,10 @@
 package com.cloud99.invest.services;
 
 import com.cloud99.invest.domain.User;
-import com.cloud99.invest.domain.financial.PropertyFinances;
+import com.cloud99.invest.domain.account.GeneralSettings;
 import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.exceptions.EntityNotFoundException;
 import com.cloud99.invest.exceptions.ServiceException;
-import com.cloud99.invest.repo.PropertyFinancesRepo;
 import com.cloud99.invest.repo.PropertyRepo;
 
 import org.slf4j.Logger;
@@ -14,12 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class PropertyService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PropertyService.class);
@@ -31,14 +31,21 @@ public class PropertyService {
 	private PropertyRepo propertyRepo;
 	
 	@Autowired
-	private PropertyFinancesRepo financesRepo;
+	private AccountService accountService;
 
 	public <T extends Property> T createProperty(String userEmail, T property) {
 		LOGGER.debug("Starting to create a new property: " + property.toJsonString());
 
 		// validate user
 		User user = userService.findUserByEmailAndValidate(userEmail);
-
+		
+		// does the user have the ability to add more documents?
+		// get count of users documents
+		if (!canUserAddProperty(user)) {
+			log.warn("User cannot add any more properties");
+			throw new ServiceException("user.too.many.properties");
+		}
+		
 		Property dbProperty = propertyRepo.save(property);
 
 		if (user.getPropertyRefs() == null) {
@@ -50,7 +57,16 @@ public class PropertyService {
 		return property;
 	}
 
-	public Iterable<Property> getPropertyDetails(String userEmail) {
+	private boolean canUserAddProperty(User user) {
+		GeneralSettings acctSettings = accountService.getAccountsGeneralSettingForCurrentUser();
+		if (acctSettings.getNumberOfPropertiesUserCanStore() >= user.getPropertyRefs().size()) {
+			return false;
+		}
+		return true;
+
+	}
+
+	public Iterable<Property> getAllUsersPropertyDetails(String userEmail) {
 		LOGGER.trace("getProperty() : " + userEmail);
 
 		User user = userService.findUserByEmailAndValidate(userEmail);
@@ -69,28 +85,6 @@ public class PropertyService {
 		return propertyRepo.save(property);
 	}
 
-	public PropertyFinances createPropertyFinances(String propertyId, @Validated PropertyFinances propFinances) {
-
-		Optional<Property> prop = propertyRepo.findById(propertyId);
-		if (!prop.isPresent()) {
-			throw new EntityNotFoundException("Property ID", propertyId);
-		}
-		Property property = prop.get();
-		property.setPropertyFinances(propFinances);
-		propertyRepo.save(property);
-		return property.getPropertyFinances();
-
-	}
-
-	public PropertyFinances getPropertyFinancials(String propertyId) {
-
-		Optional<PropertyFinances> optional = financesRepo.findById(propertyId);
-		if (!optional.isPresent()) {
-			throw new EntityNotFoundException("Property Finances", propertyId);
-		}
-		return optional.get();
-	}
-
 	public void deleteProperty(String userEmail, String propertyId) {
 		User user = userService.findUserByEmailAndValidate(userEmail);
 
@@ -101,7 +95,7 @@ public class PropertyService {
 		}
 	}
 
-	public Property getProperty(String propertyId) {
+	public Property getAndValidateProperty(String propertyId) {
 
 		Optional<Property> optional = propertyRepo.findById(propertyId);
 		if (!optional.isPresent()) {

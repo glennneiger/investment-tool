@@ -33,7 +33,7 @@ public class Util {
 
 		BigDecimal total = BigDecimal.valueOf(0);
 		for (ItemizedCost cost : costs) {
-			total.add(cost.getCost().multiply(BigDecimal.valueOf(period)));
+			total = total.add(cost.getCost().multiply(BigDecimal.valueOf(period)));
 		}
 		return total;
 	}

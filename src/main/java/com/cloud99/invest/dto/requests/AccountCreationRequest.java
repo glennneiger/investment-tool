@@ -1,9 +1,10 @@
 package com.cloud99.invest.dto.requests;
 
 import com.cloud99.invest.domain.Person.Gender;
-import com.cloud99.invest.domain.account.SubscriptionType;
+import com.cloud99.invest.domain.account.MembershipType;
 import com.cloud99.invest.validation.PasswordMatches;
 
+import org.joda.money.CurrencyUnit;
 import org.joda.time.LocalDate;
 
 import javax.validation.constraints.Email;
@@ -21,7 +22,7 @@ public class AccountCreationRequest {
 	@Getter
 	@Setter
 	@NotNull(message = "subscription.type.required")
-	private SubscriptionType subscription = SubscriptionType.FREE;
+	private MembershipType membershipType = MembershipType.FREE;
 
 	@Getter
 	@Setter
@@ -49,7 +50,7 @@ public class AccountCreationRequest {
 
 	@Getter
 	@Setter
-	private Locale locale = Locale.getDefault();
+	private Locale locale;
 
 	@NotNull(message = "name.first.required")
 	@Getter
@@ -72,4 +73,9 @@ public class AccountCreationRequest {
 	@Getter
 	@Setter
 	private LocalDate birthDate;
+
+	@Getter
+	@Setter
+	private CurrencyUnit currency;
+
 }

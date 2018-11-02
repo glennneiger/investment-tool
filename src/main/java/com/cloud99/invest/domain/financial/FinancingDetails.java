@@ -5,6 +5,9 @@ import com.cloud99.invest.validation.groups.InterestOnlyGroup;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
@@ -22,6 +25,11 @@ public class FinancingDetails {
 	public enum LoanType {
 		AMORTIZING, INTEREST_ONLY, CASH
 	}
+
+	// Percent of the total loan amount
+	@Getter
+	@Setter
+	private Double loanOriginationPoints = 0D;
 
 	@Getter
 	@Setter
@@ -46,6 +54,17 @@ public class FinancingDetails {
 	@Setter
 	@NotNull(message = "loan.term.required", groups = { AmortizingGroup.class, InterestOnlyGroup.class })
 	private Double loanTermYears = 30D;
+
+	@Transient
+	public Money getTotalUpfrontMoney(CurrencyUnit currency) {
+		Money total = Money.of(currency, 0);
+		if (getLoanOriginationPoints() != null && getLoanOriginationPoints() > 0) {
+			BigDecimal loanPoints = getLoanAmount().multiply(BigDecimal.valueOf(getLoanOriginationPoints()));
+			total = total.plus(loanPoints);
+		}
+		total = total.plus(getDownPayment());
+		return total;
+	}
 
 	@Override
 	public String toString() {

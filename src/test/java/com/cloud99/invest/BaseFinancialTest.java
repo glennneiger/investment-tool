@@ -1,14 +1,15 @@
 package com.cloud99.invest;
 
 import com.cloud99.invest.domain.Frequency;
-import com.cloud99.invest.domain.financial.Expences;
 import com.cloud99.invest.domain.financial.FinancingDetails;
 import com.cloud99.invest.domain.financial.FinancingDetails.LoanType;
-import com.cloud99.invest.domain.financial.Income;
+import com.cloud99.invest.domain.financial.rental.RentalExpences;
+import com.cloud99.invest.domain.financial.rental.RentalIncome;
+import com.cloud99.invest.domain.financial.rental.RentalPropertyFinances;
+import com.cloud99.invest.domain.financial.rental.ReoccuringExpense;
 import com.cloud99.invest.domain.financial.ItemizedCost;
-import com.cloud99.invest.domain.financial.PropertyFinances;
 import com.cloud99.invest.domain.financial.PurchaseDetails;
-import com.cloud99.invest.domain.financial.ReoccuringExpense;
+import com.cloud99.invest.domain.financial.flip.FlipPropertyFinances;
 
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
@@ -19,17 +20,35 @@ import java.util.Collection;
 
 public abstract class BaseFinancialTest extends BaseMockitoTest {
 
-	public PropertyFinances buildPropertyFinances(double purchasePrice) {
+	public FlipPropertyFinances buildFlipPropertyFinances(
+			double arv, 
+			double desiredProfit, 
+			Collection<ItemizedCost> holdingCosts, 
+			int holdingDays, 
+			PurchaseDetails purchaseDetails, 
+			Collection<ItemizedCost> saleClosingCosts) {
+		
+		FlipPropertyFinances f = new FlipPropertyFinances();
+		f.setAfterRepairValue(BigDecimal.valueOf(arv));
+		f.setDesiredProfit(BigDecimal.valueOf(desiredProfit));
+		f.setHoldingCosts(holdingCosts);
+		f.setHoldingDays(holdingDays);
+		f.setPurchaseDetails(purchaseDetails);
+		f.setSaleClosingCosts(saleClosingCosts);
+		return f;
+	}
+
+	public RentalPropertyFinances buildRentalPropertyFinances(double purchasePrice) {
 
 		// 20% Down, 4.5% Interest rate
 		FinancingDetails details = buildFinancingDetails(purchasePrice, 0.20D * purchasePrice, 4.5F);
 
 
 		// annual operating expenses: $3000 - monthly, $20K - annually
-		Expences expences = buildExpences(0F, 1666.666);
+		RentalExpences expences = buildExpences(0F, 1666.67);
 
 		// annual income: $45K - annually
-		Income income = buildMonthlyIncome(0, 3750, 0);
+		RentalIncome income = buildMonthlyIncome(0, 3750, 0);
 
 		// After repair value (ARV) - 315000
 		PurchaseDetails purchaseDetails = buildPurchaseDetails(purchasePrice, 315000D);
@@ -37,7 +56,7 @@ public abstract class BaseFinancialTest extends BaseMockitoTest {
 		purchaseDetails.setRehabCosts(Arrays.asList(new ItemizedCost("Rehab costs", new BigDecimal(10000D))));
 		purchaseDetails.setFinancingDetails(details);
 
-		PropertyFinances cash = new PropertyFinances(expences, income, purchaseDetails, CURRENCY);
+		RentalPropertyFinances cash = new RentalPropertyFinances(expences, income, purchaseDetails);
 
 		return cash;
 	}
@@ -60,9 +79,9 @@ public abstract class BaseFinancialTest extends BaseMockitoTest {
 		return d;
 	}
 
-	public Expences buildExpences(float vacancyRate, double operatingExpence) {
+	public RentalExpences buildExpences(float vacancyRate, double operatingExpence) {
 
-		Expences e = new Expences();
+		RentalExpences e = new RentalExpences();
 		e.setOperatingExpences(buildReoccuringCost(operatingExpence));
 		e.setVacancyRate(vacancyRate);
 
@@ -84,15 +103,14 @@ public abstract class BaseFinancialTest extends BaseMockitoTest {
 	public PurchaseDetails buildPurchaseDetails(double purchasePrice, double arv) {
 
 		PurchaseDetails d = new PurchaseDetails();
-		d.setAfterRepairValue(new BigDecimal(arv));
 		d.setPurchasePrice(new BigDecimal(purchasePrice));
 
 		return d;
 	}
 
-	public Income buildMonthlyIncome(double deposit, double rent, double otherIncome) {
+	public RentalIncome buildMonthlyIncome(double deposit, double rent, double otherIncome) {
 
-		Income i = new Income();
+		RentalIncome i = new RentalIncome();
 		i.setDeposit(new BigDecimal(deposit));
 		i.setGrossRent(new BigDecimal(rent));
 		i.setOtherIncome(new BigDecimal(otherIncome));

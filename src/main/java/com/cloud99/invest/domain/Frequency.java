@@ -1,9 +1,9 @@
 package com.cloud99.invest.domain;
 
 /**
- * Represents a frequency or period of time as it associates to either an
- * reoccurring transaction. For each period, it also stores the number of
- * periods in a year to help calculate annual amounts.
+ * Represents a frequency or period of time as it associates to a recurring
+ * transaction. For each period, it also stores the number of periods in a year
+ * to help calculate annual amounts.
  */
 public enum Frequency {
 
@@ -17,5 +17,10 @@ public enum Frequency {
 
 	public int getAnnualPeriods() {
 		return annualPeriods;
+	}
+
+	@Override
+	public String toString() {
+		return "Frequency=" + name() + ", annualPeriods=" + getAnnualPeriods();
 	}
 }

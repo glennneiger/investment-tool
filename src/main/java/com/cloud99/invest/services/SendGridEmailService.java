@@ -1,6 +1,7 @@
 package com.cloud99.invest.services;
 
 import com.cloud99.invest.domain.User;
+import com.cloud99.invest.domain.account.GeneralSettings;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -11,10 +12,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -42,17 +41,24 @@ public class SendGridEmailService implements EmailService {
 	@Autowired
 	private Configuration freemarkerConfig;
 
+	@Autowired
+	private AccountService accountService;
+
+	@Autowired
+	private UserService userService;
+
 	/* (non-Javadoc)
 	 * @see com.cloud99.invest.services.EmailServiceInterface#sentUserRegistrationConfirmationEmail(java.lang.String, java.lang.String, java.util.Locale)
 	 */
 	@Override
 	public void sentUserRegistrationConfirmationEmail(User user, String appUrl) {
 
+		GeneralSettings settings = accountService.getUsersAccountSettings(user.getId());
 		// TODO - NG - add configuration property to specify base URL and then tack on
 		// the appUrl
 		SimpleMailMessage email = new SimpleMailMessage();
 		email.setTo(user.getEmail());
-		email.setSubject(messages.getMessage("user.registration.request.subject", null, user.getLocale()));
+		email.setSubject(messages.getMessage("user.registration.request.subject", null, settings.getLocale()));
 //		String body = messages.getMessage("user.registration.request.body", null, user.getLocale());
 //		email.setText(body + "\n <a href=\"" + appUrl + " class=\"button\">Confirm Email Address</a>");
 

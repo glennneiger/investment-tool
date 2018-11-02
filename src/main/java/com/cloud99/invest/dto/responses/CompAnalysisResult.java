@@ -26,18 +26,6 @@ public class CompAnalysisResult implements Serializable {
 
 	@Getter
 	@Setter
-	private Money averagePricePerSqFt;
-
-	@Getter
-	@Setter
-	private Money subjectHomeValuationPricePerSqFt;
-
-	@Getter
-	@Setter
-	private Integer averageSqFt;
-
-	@Getter
-	@Setter
 	private PropertyCompSearchResult searchResults;
 
 	@Override

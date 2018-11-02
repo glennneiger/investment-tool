@@ -2,13 +2,13 @@ package com.cloud99.invest.services;
 
 import com.cloud99.invest.DataCreator;
 import com.cloud99.invest.config.EmailConfig;
+import com.cloud99.invest.config.GlobalMethodSecurityConfig;
 import com.cloud99.invest.config.MessageConfig;
 import com.cloud99.invest.config.MongoConfig;
 import com.cloud99.invest.config.TestAppConfig;
 import com.cloud99.invest.config.TestMongoConfig;
 import com.cloud99.invest.config.WebSecurityConfig;
 import com.cloud99.invest.domain.User;
-import com.cloud99.invest.security.GlobalMethodSecurityConfig;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

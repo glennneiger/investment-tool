@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.cloud99.invest.BaseFinancialTest;
 import com.cloud99.invest.domain.Frequency;
+import com.cloud99.invest.domain.financial.rental.RentalIncome;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ import java.math.BigDecimal;
 class IncomeTest extends BaseFinancialTest {
 
 	@InjectMocks
-	private Income income;
+	private RentalIncome income;
 
 	@BeforeEach
 	void setUp() throws Exception {

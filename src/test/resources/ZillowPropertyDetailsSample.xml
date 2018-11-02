@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UpdatedPropertyDetails:updatedPropertyDetails xmlns:UpdatedPropertyDetails="http://www.zillow.com/static/xsd/UpdatedPropertyDetails.xsd" xsi:schemaLocation="http://www.zillow.com/static/xsd/UpdatedPropertyDetails.xsd https://www.zillowstatic.com/vstatic/18f7df5/static/xsd/UpdatedPropertyDetails.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <request>
+        <zpid>13719607</zpid>
+    </request>
+    <message>
+        <text>Request successfully processed</text>
+        <code>0</code>
+    </message>
+    <response>
+        <zpid>13719607</zpid>
+        <pageViewCount>
+            <currentMonth>1</currentMonth>
+            <total>1</total>
+        </pageViewCount>
+        <address>
+            <street>13060 W 64th Pl</street>
+            <zipcode>80004</zipcode>
+            <city>ARVADA</city>
+            <state>CO</state>
+            <latitude>39.814116</latitude>
+            <longitude>-105.145324</longitude>
+        </address>
+        <links>
+            <homeDetails>https://www.zillow.com/homedetails/13060-W-64th-Pl-Arvada-CO-80004/13719607_zpid/</homeDetails>
+            <photoGallery>https://www.zillow.com/homedetails/13060-W-64th-Pl-Arvada-CO-80004/13719607_zpid/#image=lightbox%3Dtrue</photoGallery>
+            <homeInfo>https://www.zillow.com/homedetails/13060-W-64th-Pl-Arvada-CO-80004/13719607_zpid/</homeInfo>
+        </links>
+        <images>
+            <count>16</count>
+            <image>
+                <url>https://photos.zillowstatic.com/p_d/ISe8ra9fheq60g1000000000.jpg</url>
+                <url>https://photos.zillowstatic.com/p_d/IS27qn5lww9h3i1000000000.jpg</url>
+                <url>https://photos.zillowstatic.com/p_d/ISe8zsgb0j5swh1000000000.jpg</url>
+                <url>https://photos.zillowstatic.com/p_d/ISu0obneso1k3i1000000000.jpg</url>
+                <url>https://photos.zillowstatic.com/p_d/IS62xgy4waxuwh1000000000.jpg</url>
+            </image>
+        </images>
+        <editedFacts>
+            <useCode>SingleFamily</useCode>
+            <bedrooms>3</bedrooms>
+            <bathrooms>3.0</bathrooms>
+            <finishedSqFt>2200</finishedSqFt>
+            <lotSizeSqFt>7840</lotSizeSqFt>
+            <yearBuilt>1977</yearBuilt>
+            <roof>Composition, Shake / Shingle</roof>
+            <exteriorMaterial>Vinyl</exteriorMaterial>
+            <coveredParkingSpaces>3</coveredParkingSpaces>
+            <heatingSources>Gas</heatingSources>
+            <heatingSystem>Forced air</heatingSystem>
+            <coolingSystem>Central</coolingSystem>
+            <appliances>Microwave, Range / Oven, Refrigerator, Dishwasher, Dryer, Freezer</appliances>
+            <floorCovering>Tile, Carpet</floorCovering>
+            <rooms>Dining room, Family room, Laundry room</rooms>
+            <architecture>Other</architecture>
+        </editedFacts>
+        <homeDescription>Charming 3 bed 3 bath - This charming and spacious 3 bedroom, 3 bath home includes an upstairs loft area as well as a non-conforming bedroom, or large bonus room, in the basement.  This home boasts a lovely flag stone patio in the front yard and a large covered patio and gazebo in the fenced backyard.  There is a huge laundry room in the basement with an abundance of storage. The two car garage  has lots of shelving for additional storage. This home will have the carpet replaced and a newly painted interior before move in.  It is located in a very quiet residential community with mature trees, close to parks, walking trails and stores.  This one wont last long!  Showings start 9-27.
+
+We require:
+550 minimum credit score
+No smoking
+Background check
+Credit check
+References
+Income of tenants needs to be a minimum of 2.5 times the monthly rent amount.
+Utilities are not included and are the tenants responsibility.
+
+(RLNE3565242)</homeDescription>
+        <schoolDistrict>Jefferson County R-1</schoolDistrict>
+        <elementarySchool>Stott</elementarySchool>
+        <middleSchool>Oberon</middleSchool>
+        <highSchool>Arvada West</highSchool>
+    </response>
+</UpdatedPropertyDetails:updatedPropertyDetails>

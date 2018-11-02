@@ -1,12 +1,13 @@
 package com.cloud99.invest.domain.financial;
 
 import com.cloud99.invest.domain.BaseDomainObject;
-import com.cloud99.invest.domain.MongoDocument;
 
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -27,12 +28,11 @@ public class PurchaseDetails extends BaseDomainObject {
 
 	@Getter
 	@Setter
-	private BigDecimal afterRepairValue = new BigDecimal(0, new MathContext(2, RoundingMode.HALF_EVEN));
-
-	@Getter
-	@Setter
 	private Collection<ItemizedCost> rehabCosts = new ArrayList<>(0);
 
+	// Should not include any financing details like down payment, that should be
+	// captured in the FinancingDetails object
+	@NotNull(message = "closing.costs.required")
 	@Getter
 	@Setter
 	private Collection<ItemizedCost> closingCosts = new ArrayList<>(0);
@@ -48,9 +48,15 @@ public class PurchaseDetails extends BaseDomainObject {
 	@Transient
 	public Money getTotalMoneyInDeal(CurrencyUnit currency) {
 
-		return getTotalRehabCosts(currency)
-				.plus(financingDetails.getDownPayment(), RoundingMode.HALF_EVEN)
-				.plus(getTotalClosingCosts(currency));
+		Money total = Money.of(currency, 0);
+		if (isFinanced) {
+			total = total.plus(getTotalClosingCosts(currency));
+			total = total.plus(financingDetails.getTotalUpfrontMoney(currency));
+		} else {
+			// cash purchase
+			total = getTotalRehabCosts(currency).plus(purchasePrice);
+		}
+		return total;
 	}
 
 	@Transient

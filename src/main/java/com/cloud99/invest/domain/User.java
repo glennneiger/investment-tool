@@ -1,6 +1,5 @@
 package com.cloud99.invest.domain;
 
-import com.cloud99.invest.domain.account.SubscriptionType;
 import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.repo.extensions.CascadeSave;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,10 +10,12 @@ import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -24,13 +25,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Document
-public class User extends Person implements Authentication {
+public class User extends Person implements Authentication, UserDetails {
 	private static final long serialVersionUID = 1445414593887068772L;
 
 	@Id
@@ -53,10 +53,6 @@ public class User extends Person implements Authentication {
 
 	@Getter
 	@Setter
-	private Locale locale = Locale.getDefault();
-
-	@Getter
-	@Setter
 	private boolean enabled;
 
 	@Transient
@@ -76,11 +72,8 @@ public class User extends Person implements Authentication {
 	@JsonIgnore
 	private List<UserRole> userRoles;
 
-	@Getter
-	@Setter
-	private SubscriptionType subscriptionType;
-
-	// mongo objectId references to all properties user has access to
+	// mongo objectId references to all properties user has access to\
+	@DBRef
 	@CascadeSave
 	@Getter
 	@Setter
@@ -145,6 +138,26 @@ public class User extends Person implements Authentication {
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.DEFAULT_STYLE);
+	}
+
+	@Override
+	public String getUsername() {
+		return getEmail();
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
 	}
 
 }

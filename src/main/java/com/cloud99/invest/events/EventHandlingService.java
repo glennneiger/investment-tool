@@ -54,11 +54,13 @@ public class EventHandlingService {
 
 		Account acct = event.getAccount();
 
-		acct.setClosingCostsList(genericRepo.getCollectionList(ItemizedCost.class, GenericRepo.CLOSING_COSTS_COLLECTION_NAME));
-		acct.setExpencesList(genericRepo.getCollectionList(ItemizedCost.class, GenericRepo.EXPENCES_COSTS_COLLECTION_NAME));
-		acct.setHoldingCostList(genericRepo.getCollectionList(ItemizedCost.class, GenericRepo.HOLDING_COSTS_COLLECTION_NAME));
+		acct.getGeneralSettings().setClosingCostsList(genericRepo.getCollectionList(ItemizedCost.class, GenericRepo.CLOSING_COSTS_COLLECTION_NAME));
+		acct.getGeneralSettings().setExpencesList(genericRepo.getCollectionList(ItemizedCost.class, GenericRepo.EXPENCES_COSTS_COLLECTION_NAME));
+		acct.getGeneralSettings().setHoldingCostList(genericRepo.getCollectionList(ItemizedCost.class, GenericRepo.HOLDING_COSTS_COLLECTION_NAME));
 
 		accountService.save(acct);
+
+		// TODO - NG - send welcome email
 		log.debug("Finished loading account itemized costs ref data");
 	}
 

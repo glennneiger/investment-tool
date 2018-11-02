@@ -68,7 +68,6 @@ public class UserServiceIT extends BaseIntegrationTest {
 		assertEquals(request.getMiddleName(), returnUser.getPersonName().getMiddleName());
 		assertEquals(request.getEmail(), returnUser.getEmail());
 		assertEquals(request.getGender(), returnUser.getGender());
-		assertEquals(request.getLocale(), returnUser.getLocale());
 		assertNotEquals(request.getPassword(), returnUser.getPassword());
 
 		// assert account attributes
@@ -77,7 +76,8 @@ public class UserServiceIT extends BaseIntegrationTest {
 		assertEquals(Status.PENDING, account.getStatus());
 		assertNotNull(account.getCreateDate());
 		assertNotNull(account.getGeneralSettings());
-		assertNotNull(account.getGeneralSettings().getTotalDocsAllowed());
+		assertNotNull(account.getGeneralSettings().getNumberOfPropertiesUserCanStore());
+		assertEquals(request.getLocale(), account.getGeneralSettings().getLocale());
 		List<Account> accts = acctRepo.findAll();
 		assertEquals(1, accts.size());
 

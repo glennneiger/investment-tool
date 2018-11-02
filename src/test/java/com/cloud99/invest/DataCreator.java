@@ -4,41 +4,45 @@ import com.cloud99.invest.config.AppConfig;
 import com.cloud99.invest.domain.Address;
 import com.cloud99.invest.domain.Frequency;
 import com.cloud99.invest.domain.Name;
-import com.cloud99.invest.domain.Status;
 import com.cloud99.invest.domain.Person.Gender;
+import com.cloud99.invest.domain.Status;
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.account.Account;
-import com.cloud99.invest.domain.account.SubscriptionType;
+import com.cloud99.invest.domain.account.GeneralSettings;
+import com.cloud99.invest.domain.account.MembershipType;
 import com.cloud99.invest.domain.account.UserRole;
-import com.cloud99.invest.domain.financial.Expences;
 import com.cloud99.invest.domain.financial.FinancingDetails;
 import com.cloud99.invest.domain.financial.FinancingDetails.LoanType;
-import com.cloud99.invest.domain.financial.Income;
 import com.cloud99.invest.domain.financial.ItemizedCost;
-import com.cloud99.invest.domain.financial.PropertyFinances;
 import com.cloud99.invest.domain.financial.PurchaseDetails;
-import com.cloud99.invest.domain.financial.ReoccuringExpense;
+import com.cloud99.invest.domain.financial.rental.RentalExpences;
+import com.cloud99.invest.domain.financial.rental.RentalIncome;
+import com.cloud99.invest.domain.financial.rental.RentalPropertyFinances;
+import com.cloud99.invest.domain.financial.rental.ReoccuringExpense;
 import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.domain.property.SingleFamilyProperty;
 import com.cloud99.invest.domain.redis.AuthToken;
 import com.cloud99.invest.dto.requests.AccountCreationRequest;
-import com.cloud99.invest.dto.requests.FlipAnalysisRequest;
 import com.cloud99.invest.dto.requests.PropertySearchRequest;
+import com.cloud99.invest.dto.responses.PropertyCompSearchResult;
+import com.cloud99.invest.dto.responses.PropertyCompValuationResult;
+import com.cloud99.invest.dto.responses.PropertyValuationResult;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.sun.jna.platform.win32.OaIdl.DATE;
 
 import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -57,14 +61,40 @@ public class DataCreator {
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		DataCreator dataCreator = new DataCreator();
 
-		System.out.println(mapper.writeValueAsString(dataCreator.buildFlipAnalysisRequest()));
+		System.out.println(mapper.writeValueAsString(null));
 
 	}
 
-	public FlipAnalysisRequest buildFlipAnalysisRequest() {
-		FlipAnalysisRequest r = new FlipAnalysisRequest();
-		r.setAfterRepairValue(new BigDecimal(400000));
+	public PropertyCompSearchResult buildPropertyCompSearchResult(int finishedSqFt, List<PropertyValuationResult> valuations) {
+		PropertyCompSearchResult r = new PropertyCompSearchResult();
+		r.setCurrencyUnit(CurrencyUnit.USD);
+		r.setSubjectProperty(buildProperty());
+		r.getSubjectProperty().setFinishedSqFt(finishedSqFt);
+		r.setPropertyValuations(buildPropertyCompValuationResults(valuations));
+		return r;
+	}
 
+	public Collection<PropertyCompValuationResult> buildPropertyCompValuationResults(List<PropertyValuationResult> valuations) {
+		List<PropertyCompValuationResult> results = new ArrayList<>();
+		for (PropertyValuationResult valuation : valuations) {
+			results.add(buildPropertyCompValuation(valuation));
+		}
+		return results;
+	}
+
+	public PropertyCompValuationResult buildPropertyCompValuation(PropertyValuationResult result) {
+		PropertyCompValuationResult r = new PropertyCompValuationResult();
+		r.setValuation(result);
+		return r;
+	}
+
+	public PropertyValuationResult buildPropertyValuationResult(Money estimate, Money highEstimate, Money lowEstimate, int sqFt) {
+		PropertyValuationResult r = new PropertyValuationResult();
+		r.setCurrentEstimate(estimate);
+		r.setHighValue(highEstimate);
+		r.setLowValue(lowEstimate);
+		r.setProperty(buildProperty());
+		r.getProperty().setFinishedSqFt(sqFt);
 		return r;
 	}
 
@@ -79,7 +109,7 @@ public class DataCreator {
 		r.setLastName("LastName");
 		r.setPassword("password");
 		r.setMatchingPassword("password");
-		r.setSubscription(SubscriptionType.FREE);
+		r.setMembershipType(MembershipType.FREE);
 		r.setBirthDate(new LocalDate("1980-03-23"));
 		return r;
 	}
@@ -117,17 +147,21 @@ public class DataCreator {
 		}
 	}
 
-	public PropertyFinances buildPropertyFinances() {
-		PropertyFinances cashFlow = new PropertyFinances(buildExpences(), buildIncome(), buildPurchaseDetails(), CurrencyUnit.USD);
+	public RentalPropertyFinances buildPropertyFinances() {
+		RentalPropertyFinances cashFlow = new RentalPropertyFinances(buildExpences(), buildIncome(), buildPurchaseDetails(BigDecimal.valueOf(350000)));
 
 		return cashFlow;
 	}
 
 	public PurchaseDetails buildPurchaseDetails() {
+		return buildPurchaseDetails(BigDecimal.valueOf(0));
+	}
+
+	public PurchaseDetails buildPurchaseDetails(BigDecimal purchasePrice) {
 		PurchaseDetails p = new PurchaseDetails();
-		p.setAfterRepairValue(new BigDecimal(420000));
 		p.setFinancingDetails(buildFinancingDetails());
-		p.setPurchasePrice(new BigDecimal(350000));
+		p.setPurchasePrice(purchasePrice);
+
 		return p;
 	}
 
@@ -142,16 +176,16 @@ public class DataCreator {
 		return f;
 	}
 
-	public Income buildIncome() {
-		Income i = new Income();
+	public RentalIncome buildIncome() {
+		RentalIncome i = new RentalIncome();
 		i.setDeposit(new BigDecimal(2500));
 		i.setGrossRent(new BigDecimal(2000));
 		i.setRentUnit(Frequency.MONTHY);
 		return i;
 	}
 
-	public Expences buildExpences() {
-		Expences e = new Expences();
+	public RentalExpences buildExpences() {
+		RentalExpences e = new RentalExpences();
 		e.setOperatingExpences(Arrays.asList(new ReoccuringExpense("Closing costs", new BigDecimal(500), Frequency.ANNUALLY)));
 		return e;
 	}
@@ -213,6 +247,12 @@ public class DataCreator {
 		a.setToken(UUID.randomUUID().toString());
 		a.setUserId(userId);
 		return a;
+	}
+
+	public GeneralSettings buildAccountSettings() {
+		GeneralSettings s = new GeneralSettings();
+		s.setCurrency(CurrencyUnit.USD);
+		return s;
 	}
 
 }
