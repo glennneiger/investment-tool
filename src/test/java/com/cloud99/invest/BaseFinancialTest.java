@@ -38,29 +38,6 @@ public abstract class BaseFinancialTest extends BaseMockitoTest {
 		return f;
 	}
 
-	public RentalPropertyFinances buildRentalPropertyFinances(double purchasePrice) {
-
-		// 20% Down, 4.5% Interest rate
-		FinancingDetails details = buildFinancingDetails(purchasePrice, 0.20D * purchasePrice, 4.5F);
-
-
-		// annual operating expenses: $3000 - monthly, $20K - annually
-		RentalExpences expences = buildExpences(0F, 1666.67);
-
-		// annual income: $45K - annually
-		RentalIncome income = buildMonthlyIncome(0, 3750, 0);
-
-		// After repair value (ARV) - 315000
-		PurchaseDetails purchaseDetails = buildPurchaseDetails(purchasePrice, 315000D);
-		// rehab: $10k
-		purchaseDetails.setRehabCosts(Arrays.asList(new ItemizedCost("Rehab costs", new BigDecimal(10000D))));
-		purchaseDetails.setFinancingDetails(details);
-
-		RentalPropertyFinances cash = new RentalPropertyFinances(expences, income, purchaseDetails);
-
-		return cash;
-	}
-
 	public static final CurrencyUnit CURRENCY = CurrencyUnit.USD;
 
 	public Money buildMoney(double amt) {
@@ -79,15 +56,6 @@ public abstract class BaseFinancialTest extends BaseMockitoTest {
 		return d;
 	}
 
-	public RentalExpences buildExpences(float vacancyRate, double operatingExpence) {
-
-		RentalExpences e = new RentalExpences();
-		e.setOperatingExpences(buildReoccuringCost(operatingExpence));
-		e.setVacancyRate(vacancyRate);
-
-		return e;
-	}
-
 	public Collection<ItemizedCost> buildItemizedCost(double cost) {
 		return Arrays.asList(new ItemizedCost("Cost", cost));
 	}
@@ -103,6 +71,7 @@ public abstract class BaseFinancialTest extends BaseMockitoTest {
 	public PurchaseDetails buildPurchaseDetails(double purchasePrice, double arv) {
 
 		PurchaseDetails d = new PurchaseDetails();
+		d.setAfterRepairValue(new BigDecimal(arv));
 		d.setPurchasePrice(new BigDecimal(purchasePrice));
 
 		return d;

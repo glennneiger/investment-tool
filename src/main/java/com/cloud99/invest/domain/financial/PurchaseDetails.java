@@ -17,7 +17,9 @@ import java.util.Collection;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Document
 public class PurchaseDetails extends BaseDomainObject {
 	private static final long serialVersionUID = -5837071805268532820L;
@@ -25,6 +27,10 @@ public class PurchaseDetails extends BaseDomainObject {
 	@Getter
 	@Setter
 	private BigDecimal purchasePrice = new BigDecimal(0, new MathContext(2, RoundingMode.HALF_EVEN));
+
+	@Getter
+	@Setter
+	private BigDecimal afterRepairValue = new BigDecimal(0, new MathContext(2, RoundingMode.HALF_EVEN));
 
 	@Getter
 	@Setter
@@ -50,25 +56,18 @@ public class PurchaseDetails extends BaseDomainObject {
 
 		Money total = Money.of(currency, 0);
 		if (isFinanced) {
+			// financing expenses
 			total = total.plus(getTotalClosingCosts(currency));
 			total = total.plus(financingDetails.getTotalUpfrontMoney(currency));
 		} else {
 			// cash purchase
-			total = getTotalRehabCosts(currency).plus(purchasePrice);
+			total = total.plus(purchasePrice);
 		}
+		// add in rehab costs
+		total = total.plus(getTotalRehabCosts(currency));
+		total = total.plus(getTotalClosingCosts(currency));
+
 		return total;
-	}
-
-	@Transient
-	public Money getTotalRehabCosts(CurrencyUnit currency) {
-
-		return summerizeItemCosts(currency, rehabCosts);
-	}
-
-	@Transient
-	public Money getTotalClosingCosts(CurrencyUnit currency) {
-
-		return summerizeItemCosts(currency, closingCosts);
 	}
 
 	/**
@@ -86,6 +85,20 @@ public class PurchaseDetails extends BaseDomainObject {
 				.plus(getTotalRehabCosts(currency))
 				.plus(getFinancingDetails().getDownPayment(), RoundingMode.HALF_EVEN);
 		return total;
+	}
+
+	@Transient
+	public Money getTotalRehabCosts(CurrencyUnit currency) {
+
+		return summerizeItemCosts(currency, rehabCosts);
+	}
+
+	@Transient
+	public Money getTotalClosingCosts(CurrencyUnit currency) {
+
+		Money costs = summerizeItemCosts(currency, closingCosts);
+		log.trace("Total closing costs: " + costs);
+		return costs;
 	}
 
 	@Transient

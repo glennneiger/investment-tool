@@ -11,7 +11,8 @@ import lombok.Getter;
 public enum FlipCalculationType implements CalculationType {
 
 	MAXIMUM_ALLOWABLE_OFFER_AMOUNT_70_PERCENT(MaxAllowableOffer70Percent.class, MembershipType.PAID),
-	MAXIMUM_ALLOWABLE_OFFER_AMOUNT_COST_BASED(MaxAllowableOfferCostBased.class, MembershipType.PAID);
+	MAXIMUM_ALLOWABLE_OFFER_AMOUNT_COST_BASED(MaxAllowableOfferCostBased.class, MembershipType.PAID), 
+	TOTAL_PROJECT_COSTS(TotalProjectCosts.class, MembershipType.FREE);
 
 	@Getter
 	private Class<? extends FlipCalculation<?>> calcClass;

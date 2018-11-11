@@ -2,6 +2,7 @@ package com.cloud99.invest.calculations.rental;
 
 import com.cloud99.invest.BaseFinancialTest;
 import com.cloud99.invest.calculations.CalculationType;
+import com.cloud99.invest.domain.financial.rental.RentalExpences;
 import com.cloud99.invest.domain.financial.rental.RentalPropertyFinances;
 
 import org.joda.money.CurrencyUnit;
@@ -17,10 +18,8 @@ public abstract class BaseRentalCalculationsTest extends BaseFinancialTest {
 
 		Map<RentalCalculationType, RentalCalculation<?>> map = buildMap();
 
-		RentalPropertyFinances propertyFinances = buildRentalPropertyFinances(getLoanAmount());
-		if (getLoanAmount() > 0) {
-			propertyFinances.getPurchaseDetails().setFinanced(true);
-		}
+		RentalPropertyFinances propertyFinances = buildRentalPropertyFinances();
+
 		RentalCalculation<?> calculation = map.get(getCalculationType());
 		assertResult(calculation.calculate(propertyFinances, map, CurrencyUnit.USD));
 	}
@@ -37,9 +36,18 @@ public abstract class BaseRentalCalculationsTest extends BaseFinancialTest {
 		return map;
 	}
 
-	public abstract CalculationType getCalculationType();
+	public abstract RentalPropertyFinances buildRentalPropertyFinances();
 
-	public abstract double getLoanAmount();
+	public RentalExpences buildExpences(float vacancyRate, double operatingExpence) {
+
+		RentalExpences e = new RentalExpences();
+		e.setOperatingExpences(buildReoccuringCost(operatingExpence));
+		e.setVacancyRate(vacancyRate);
+
+		return e;
+	}
+
+	public abstract CalculationType getCalculationType();
 
 	public abstract <T> void assertResult(T result);
 

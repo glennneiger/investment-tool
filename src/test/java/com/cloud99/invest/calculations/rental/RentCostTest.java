@@ -2,10 +2,17 @@ package com.cloud99.invest.calculations.rental;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.cloud99.invest.domain.financial.FinancingDetails;
+import com.cloud99.invest.domain.financial.ItemizedCost;
 import com.cloud99.invest.domain.financial.PurchaseDetails;
+import com.cloud99.invest.domain.financial.rental.RentalExpences;
 import com.cloud99.invest.domain.financial.rental.RentalIncome;
+import com.cloud99.invest.domain.financial.rental.RentalPropertyFinances;
 
 import org.junit.jupiter.api.BeforeEach;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
 
 public class RentCostTest extends BaseRentalCalculationsTest {
 
@@ -15,25 +22,30 @@ public class RentCostTest extends BaseRentalCalculationsTest {
 	}
 
 	@Override
-	public PurchaseDetails buildPurchaseDetails(double purchasePrice, double arv) {
-		PurchaseDetails d = super.buildPurchaseDetails(purchasePrice, arv);
-		d.setRehabCosts(buildItemizedCost(25000));
-		return d;
-	}
-
-	@Override
-	public RentalIncome buildMonthlyIncome(double deposit, double rent, double otherIncome) {
-		return super.buildMonthlyIncome(deposit, 1000, otherIncome);
-	}
-
-	@Override
 	public RentalCalculationType getCalculationType() {
 		return RentalCalculationType.RENT_COST;
 	}
 
 	@Override
-	public double getLoanAmount() {
-		return 50000;
+	public RentalPropertyFinances buildRentalPropertyFinances() {
+		Double salesPrice = 50000D;
+
+		FinancingDetails details = buildFinancingDetails(salesPrice, 0, 4.5F);
+
+		RentalExpences expences = buildExpences(0F, 0F);
+
+		RentalIncome income = buildMonthlyIncome(0, 1000, 0);
+
+		// After repair value (ARV) - 315000
+		PurchaseDetails purchaseDetails = buildPurchaseDetails(salesPrice, 0D);
+
+		// rehab: $25k
+		purchaseDetails.setRehabCosts(Arrays.asList(new ItemizedCost("Rehab costs", new BigDecimal(25000D))));
+		purchaseDetails.setFinancingDetails(details);
+
+		RentalPropertyFinances cash = new RentalPropertyFinances(expences, income, purchaseDetails);
+
+		return cash;
 	}
 
 	@Override
@@ -41,8 +53,7 @@ public class RentCostTest extends BaseRentalCalculationsTest {
 		// 50k purchase
 		// 25K rehab
 		// 1000 rent
-		// 60k down payment
-		assertEquals(1.67D, result);
+		assertEquals(1.33D, result);
 
 	}
 

@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Monthly Rent / Total Price of Property (purchase price + rehab costs)
+ * 
+ * https://www.biggerpockets.com/renewsblog/2016/01/13/top-8-real-estate-calculations/
  */
 @Slf4j
 public class RentCost implements RentalCalculation<Double> {

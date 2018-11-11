@@ -24,8 +24,8 @@ public class DebtServiceRatio implements RentalCalculation<BigDecimal> {
 
 		Money annualDebtService = (Money) allCalculations.get(RentalCalculationType.ANNUAL_DEBT_SERVICE).calculate(propertyFinances, allCalculations, currency);
 
-		Money ratio = noi.dividedBy(annualDebtService.getAmount(), RoundingMode.HALF_EVEN).multipliedBy(100);
-		log.debug("Debt service ratio:\t" + ratio);
+		Money ratio = noi.dividedBy(annualDebtService.getAmount(), RoundingMode.HALF_EVEN);
+		log.debug("Debt service ratio: " + ratio);
 
 		return ratio.getAmount().setScale(2, RoundingMode.HALF_EVEN);
 	}

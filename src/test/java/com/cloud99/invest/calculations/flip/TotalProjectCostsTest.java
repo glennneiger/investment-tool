@@ -1,6 +1,6 @@
 package com.cloud99.invest.calculations.flip;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import com.cloud99.invest.domain.financial.PurchaseDetails;
 import com.cloud99.invest.domain.financial.flip.FlipPropertyFinances;
@@ -9,23 +9,35 @@ import org.joda.money.Money;
 
 import java.math.BigDecimal;
 
-public class MaximumAllowableOfferCostBasedTest extends BaseFlipCalculationsTest {
+/**
+ * Project Costs = Purchase Price + Purchase Costs + Holding Costs + Rehab Costs
+ * (with Contingency) + Sale Costs
+ */
+public class TotalProjectCostsTest extends BaseFlipCalculationsTest {
 
 	@Override
 	public FlipCalculationType getCalculationType() {
-		return FlipCalculationType.MAXIMUM_ALLOWABLE_OFFER_AMOUNT_COST_BASED;
+		return FlipCalculationType.TOTAL_PROJECT_COSTS;
 	}
 
 	@Override
 	public <T> void assertResult(T result) {
-		assertEquals(56900.00D, ((Money) result).getAmount().doubleValue());
 
+		// purchase price = 135000
+		// rehab costs = 25000
+		// closing costs = 13100
+		// holding costs = 10000
+		// sales closing costs = 5000
+		// total = 188100
+		assertEquals(Money.of(CURRENCY, 188100), result);
 	}
 
 	@Override
 	public FlipPropertyFinances getFlipPropertyFinances() {
 
 		PurchaseDetails purchase = dataCreator.buildPurchaseDetails();
+		purchase.setPurchasePrice(BigDecimal.valueOf(135000));
+		purchase.setFinanced(true);
 		purchase.setRehabCosts(dataCreator.buildCosts(25000));
 		purchase.setClosingCosts(dataCreator.buildCosts(13100));
 

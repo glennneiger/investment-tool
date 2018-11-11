@@ -9,6 +9,9 @@ import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Annual debt service is the monthly payment amount multiplied by 12
+ */
 @Slf4j
 public class AnnualDebtService implements RentalCalculation<Money> {
 
@@ -19,6 +22,7 @@ public class AnnualDebtService implements RentalCalculation<Money> {
 
 		Money annualAmt = monthlyPayment.multipliedBy(12);
 		log.debug("Annual debt service amount: " + annualAmt);
+
 		return annualAmt;
 	}
 

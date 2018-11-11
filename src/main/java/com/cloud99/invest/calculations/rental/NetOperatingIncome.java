@@ -21,7 +21,7 @@ public class NetOperatingIncome implements RentalCalculation<Money> {
 	public Money calculate(RentalPropertyFinances propertyFinances, Map<RentalCalculationType, RentalCalculation<?>> allCalculations, CurrencyUnit currency) {
 		
 		Money annualIncome = propertyFinances.getIncome().getTotalAnnualOperatingIncome(currency);
-		log.debug("Income:\t" + annualIncome);
+		log.debug("Income: " + annualIncome);
 
 		Money annualExpences = propertyFinances.getExpences().getTotalAnnualOperatingExpences(currency);
 		
@@ -29,15 +29,15 @@ public class NetOperatingIncome implements RentalCalculation<Money> {
 			float vacancyRate = propertyFinances.getExpences().getVacancyRate();
 			BigDecimal vacancyAmount = annualIncome.getAmount().multiply(new BigDecimal(vacancyRate));
 			vacancyAmount = vacancyAmount.setScale(2, BigDecimal.ROUND_HALF_EVEN);
-			log.debug("Vacancy amount:\t" + vacancyAmount);
+			log.debug("Vacancy amount: " + vacancyAmount);
 			annualExpences.plus(vacancyAmount);
 		}
 
-		log.debug("Expences:\t" + annualExpences);
+		log.debug("Expences: " + annualExpences);
 
 		BigDecimal noi = annualIncome.getAmount().subtract(annualExpences.getAmount()).setScale(0, RoundingMode.HALF_UP);
 
-		log.debug("NOI:\t" + noi);
+		log.debug("NOI: " + noi);
 		return Money.of(currency, noi);
 	}
 

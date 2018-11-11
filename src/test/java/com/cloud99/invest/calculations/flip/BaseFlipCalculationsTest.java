@@ -7,6 +7,7 @@ import com.cloud99.invest.domain.financial.flip.FlipPropertyFinances;
 import org.joda.money.CurrencyUnit;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,11 +22,13 @@ public abstract class BaseFlipCalculationsTest extends BaseFinancialTest {
 		purchase.setRehabCosts(dataCreator.buildCosts(25000));
 		purchase.setClosingCosts(dataCreator.buildCosts(13100));
 
-		FlipPropertyFinances propertyFinances = buildFlipPropertyFinances(135000d, 25000, dataCreator.buildCosts(10000), 30, purchase, dataCreator.buildCosts(5000));
+		FlipPropertyFinances propertyFinances = getFlipPropertyFinances();
 
 		FlipCalculation<?> calculation = map.get(getCalculationType());
 		assertResult(calculation.calculate(propertyFinances, map, CurrencyUnit.USD));
 	}
+
+	public abstract FlipPropertyFinances getFlipPropertyFinances();
 
 	private Map<FlipCalculationType, FlipCalculation<?>> buildMap() throws Exception {
 		Map<FlipCalculationType, FlipCalculation<?>> map = new HashMap<>();

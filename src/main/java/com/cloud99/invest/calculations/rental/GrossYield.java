@@ -26,7 +26,7 @@ public class GrossYield implements RentalCalculation<Double> {
 		Money rent = propertyFinances.getIncome().getAnnualRentalIncome(currency);
 		log.debug("Annual Gross Rent: " + rent);
 		
-		BigDecimal yield = rent.getAmount().divide(purchase).multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_EVEN);
+		BigDecimal yield = rent.getAmount().divide(purchase, 2, RoundingMode.HALF_EVEN).multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_EVEN);
 		log.debug("Gross Yield: " + yield);
 
 		return yield.doubleValue();
