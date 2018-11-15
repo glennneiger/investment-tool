@@ -38,7 +38,7 @@ public class PaymentService {
 	}
 
 	// put in controller: request.getParameter("stripeToken")
-	public void create(Payment payment, String paymentToken) {
+	public void create(String userName, String paymentToken) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("amount", 999);
 		params.put("currency", "usd");

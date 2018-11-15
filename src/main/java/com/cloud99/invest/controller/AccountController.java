@@ -24,6 +24,7 @@ public class AccountController implements Controller {
 	@Autowired
 	private AccountService acctService;
 
+	// TODO - NG - fix this account update method
 	@PostMapping(path = "/{accountId}", consumes = JSON_MEDIA_TYPE, produces = JSON_MEDIA_TYPE)
 	@ResponseBody
 	public Account updateAccount() {// @RequestBody Account account) {

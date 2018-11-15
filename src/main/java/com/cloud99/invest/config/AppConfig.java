@@ -36,6 +36,9 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -49,9 +52,15 @@ import java.util.TimeZone;
 @PropertySource("classpath:application.properties")
 @EnableWebMvc
 @Order(1)
-public class AppConfig extends WebMvcAutoConfiguration {
+public class AppConfig extends WebMvcAutoConfiguration implements WebMvcConfigurer {
 
 	public static final SimpleDateFormat UTC_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS’Z");
+
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/public/**").addResourceLocations("/public/");
+		WebMvcConfigurer.super.addResourceHandlers(registry);
+	}
 
 	@Bean
 	public Jackson2ObjectMapperBuilder jacksonBuilder() {

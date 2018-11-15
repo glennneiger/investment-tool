@@ -12,7 +12,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -23,18 +22,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
 import java.util.Arrays;
 
 @EnableGlobalAuthentication
@@ -73,15 +66,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.anonymous()
 		.and()
 		.authorizeRequests()
-		.antMatchers(PUBLIC_URLS).permitAll()
-				// .antMatchers("/v1/admin/**").access("hasRole('ROLE_ADMIN')")
+				.antMatchers("/v1/**").authenticated()
+				.antMatchers("/v1/admin/**").access("hasRole('ROLE_ADMIN')")
+				.antMatchers(PUBLIC_URLS).permitAll()
         .and()
 		.authenticationProvider(tokenAuthenticationProvider())
 		.addFilterBefore(restAuthenticationFilter(), AnonymousAuthenticationFilter.class)
 				.exceptionHandling().defaultAuthenticationEntryPointFor(forbiddenEntryPoint(), PROTECTED_URLS)
 				.and()
-		.authorizeRequests().anyRequest().authenticated()
-		.and().formLogin().disable()
+				// .authorizeRequests().anyRequest().authenticated()
+				.formLogin().disable()
 		.httpBasic()
 		.authenticationEntryPoint(authenticationEntryPoint)
 		.disable()

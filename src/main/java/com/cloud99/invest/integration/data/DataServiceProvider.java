@@ -7,7 +7,7 @@ import com.cloud99.invest.dto.responses.PropertySearchResult;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface ServiceProvider {
+public interface DataServiceProvider {
 
 	public PropertySearchResult propertySearch(PropertySearchRequest request);
 

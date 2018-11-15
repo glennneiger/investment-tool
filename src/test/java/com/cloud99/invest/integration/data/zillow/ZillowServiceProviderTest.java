@@ -8,7 +8,7 @@ import com.cloud99.invest.dto.requests.PropertySearchRequest;
 import com.cloud99.invest.dto.responses.PropertyCompSearchResult;
 import com.cloud99.invest.dto.responses.PropertyCompValuationResult;
 import com.cloud99.invest.dto.responses.PropertySearchResult;
-import com.cloud99.invest.integration.data.ProviderInfo;
+import com.cloud99.invest.integration.data.DataProviderInfo;
 import com.cloud99.invest.integration.data.zillow.serviceProviders.ZillowServiceProvider;
 import com.cloud99.invest.util.FileUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -75,7 +75,7 @@ public class ZillowServiceProviderTest extends BaseMockitoTest {
 		assertNotNull(result);
 		assertNotNull(result.getProperty());
 		assertNotNull(result.getProviderId());
-		assertEquals(ProviderInfo.ZILLOW, result.getProviderInfo());
+		assertEquals(DataProviderInfo.ZILLOW, result.getProviderInfo());
 	}
 
 	private PropertySearchRequest buildSearchRequest() {

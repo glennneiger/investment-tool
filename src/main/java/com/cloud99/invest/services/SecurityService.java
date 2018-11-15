@@ -1,9 +1,9 @@
 package com.cloud99.invest.services;
 
 import com.cloud99.invest.domain.User;
-import com.cloud99.invest.domain.VerificationToken;
 import com.cloud99.invest.domain.account.Account;
 import com.cloud99.invest.domain.redis.AuthToken;
+import com.cloud99.invest.domain.VerificationToken;
 import com.cloud99.invest.dto.requests.AccountCreationRequest;
 import com.cloud99.invest.exceptions.EntityNotFoundException;
 import com.cloud99.invest.exceptions.ServiceException;

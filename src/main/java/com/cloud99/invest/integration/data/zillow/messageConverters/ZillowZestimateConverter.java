@@ -2,7 +2,7 @@ package com.cloud99.invest.integration.data.zillow.messageConverters;
 
 import com.cloud99.invest.dto.responses.PropertyValuationResult;
 import com.cloud99.invest.integration.data.MessageConverter;
-import com.cloud99.invest.integration.data.ProviderInfo;
+import com.cloud99.invest.integration.data.DataProviderInfo;
 import com.cloud99.invest.integration.data.zillow.domain.search.ZillowEstimate;
 import com.cloud99.invest.util.Util;
 
@@ -23,7 +23,7 @@ public class ZillowZestimateConverter<T extends PropertyValuationResult> impleme
 
 		T result = (T) new PropertyValuationResult();
 
-		result.setProviderInfo(ProviderInfo.ZILLOW);
+		result.setProviderInfo(DataProviderInfo.ZILLOW);
 
 		if (zest == null) {
 			throw new RuntimeException("No results returned from zillow property search");

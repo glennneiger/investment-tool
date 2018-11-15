@@ -2,7 +2,7 @@ package com.cloud99.invest.integration.data.zillow.converterManagers;
 
 import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.dto.responses.PropertySearchResult;
-import com.cloud99.invest.integration.data.ProviderInfo;
+import com.cloud99.invest.integration.data.DataProviderInfo;
 import com.cloud99.invest.integration.data.zillow.domain.ZillowApiResult;
 import com.cloud99.invest.integration.data.zillow.domain.search.ZillowSearchResult;
 import com.cloud99.invest.integration.data.zillow.domain.search.ZillowSearchResults;
@@ -33,7 +33,7 @@ public class ZillowSearchResultsMessageConverterManager implements MessageConver
 
 		PropertySearchResult returnVal = new PropertySearchResult();
 		returnVal.setProviderId(zillowResult.getZpid());
-		returnVal.setProviderInfo(ProviderInfo.ZILLOW);
+		returnVal.setProviderInfo(DataProviderInfo.ZILLOW);
 
 		Property property = propertyConverter.convert(zillowResult);
 		returnVal.setProperty(property);

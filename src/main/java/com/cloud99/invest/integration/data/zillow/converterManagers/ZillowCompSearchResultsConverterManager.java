@@ -3,7 +3,7 @@ package com.cloud99.invest.integration.data.zillow.converterManagers;
 import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.dto.responses.PropertyCompSearchResult;
 import com.cloud99.invest.dto.responses.PropertyCompValuationResult;
-import com.cloud99.invest.integration.data.ProviderInfo;
+import com.cloud99.invest.integration.data.DataProviderInfo;
 import com.cloud99.invest.integration.data.zillow.domain.comps.ZillowComp;
 import com.cloud99.invest.integration.data.zillow.domain.comps.ZillowComparablesResult;
 import com.cloud99.invest.integration.data.zillow.messageConverters.ZillowCompConverter;
@@ -40,7 +40,7 @@ public class ZillowCompSearchResultsConverterManager implements MessageConverter
 			// convert the valuation
 			PropertyCompValuationResult propertyCompResult = (PropertyCompValuationResult) compConverter.convert(comp);
 			propertyCompResult.setProviderId(comp.getZpid());
-			propertyCompResult.setProviderInfo(ProviderInfo.ZILLOW);
+			propertyCompResult.setProviderInfo(DataProviderInfo.ZILLOW);
 
 			// convert the property
 			Property property = propertyConverter.convert(comp);

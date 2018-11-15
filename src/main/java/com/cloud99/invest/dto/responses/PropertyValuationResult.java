@@ -2,7 +2,7 @@ package com.cloud99.invest.dto.responses;
 
 import com.cloud99.invest.domain.financial.PropertyValuation;
 import com.cloud99.invest.domain.property.Property;
-import com.cloud99.invest.integration.data.ProviderInfo;
+import com.cloud99.invest.integration.data.DataProviderInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
@@ -21,7 +21,7 @@ public class PropertyValuationResult extends PropertyValuation {
 
 	@Setter
 	@Getter
-	private ProviderInfo providerInfo;
+	private DataProviderInfo providerInfo;
 
 	@Setter
 	@Getter

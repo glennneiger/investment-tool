@@ -1,7 +1,7 @@
 package com.cloud99.invest.dto.responses;
 
 import com.cloud99.invest.domain.property.Property;
-import com.cloud99.invest.integration.data.ProviderInfo;
+import com.cloud99.invest.integration.data.DataProviderInfo;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -19,7 +19,7 @@ public class PropertySearchResult {
 
 	@Setter
 	@Getter
-	private ProviderInfo providerInfo;
+	private DataProviderInfo providerInfo;
 
 	@Setter
 	@Getter

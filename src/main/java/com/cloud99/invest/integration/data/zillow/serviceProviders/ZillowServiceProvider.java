@@ -4,7 +4,7 @@ import com.cloud99.invest.dto.requests.PropertySearchRequest;
 import com.cloud99.invest.dto.responses.PropertyCompSearchResult;
 import com.cloud99.invest.dto.responses.PropertySearchResult;
 import com.cloud99.invest.integration.data.DataProviderException;
-import com.cloud99.invest.integration.data.ServiceProvider;
+import com.cloud99.invest.integration.data.DataServiceProvider;
 import com.cloud99.invest.integration.data.zillow.ZillowApiDetails;
 import com.cloud99.invest.integration.data.zillow.converterManagers.MessageConverterManager;
 import com.cloud99.invest.integration.data.zillow.deserializers.AmountJsonDeserializer;
@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @PropertySource("classpath:application.properties")
 @Slf4j
-public class ZillowServiceProvider implements ServiceProvider {
+public class ZillowServiceProvider implements DataServiceProvider {
 
 
 	@Value("${zillow.id}")

@@ -1,7 +1,7 @@
 package com.cloud99.invest.dto.responses;
 
 import com.cloud99.invest.domain.property.Property;
-import com.cloud99.invest.integration.data.ProviderInfo;
+import com.cloud99.invest.integration.data.DataProviderInfo;
 
 import org.joda.money.Money;
 
@@ -36,7 +36,7 @@ public class PropertyCompValuationResult implements Serializable {
 		return valuation.getProviderId();
 	}
 
-	public ProviderInfo getProviderInfo() {
+	public DataProviderInfo getProviderInfo() {
 		return valuation.getProviderInfo();
 	}
 
@@ -76,7 +76,7 @@ public class PropertyCompValuationResult implements Serializable {
 		valuation.setProviderId(providerId);
 	}
 
-	public void setProviderInfo(ProviderInfo providerInfo) {
+	public void setProviderInfo(DataProviderInfo providerInfo) {
 		valuation.setProviderInfo(providerInfo);
 	}
 

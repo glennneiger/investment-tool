@@ -1,7 +1,5 @@
 package com.cloud99.invest.controller;
 
-import com.cloud99.invest.integration.payments.payPal.domain.PayPalPlan;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -19,7 +17,6 @@ public class AdminController implements Controller {
 	@ResponseStatus(code = HttpStatus.CREATED)
 	public void createBillingPlan(Authentication auth) {
 
-		PayPalPlan plan = new PayPalPlan();
-		plan.setDescription("Free membership");
+		// TODO - NG - do we need this or not?
 	}
 }

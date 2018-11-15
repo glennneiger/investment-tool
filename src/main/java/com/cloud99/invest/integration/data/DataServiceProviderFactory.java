@@ -8,14 +8,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class ServiceProviderFactory {
+public class DataServiceProviderFactory {
 
 	@Autowired
 	private ApplicationContext applicationContext;
 	
-	public ServiceProvider getServiceProvider(ProviderInfo providerInfo) {
+	public DataServiceProvider getServiceProvider(DataProviderInfo providerInfo) {
 
-		ServiceProvider provider = applicationContext.getBean(providerInfo.getProviderType());
+		DataServiceProvider provider = applicationContext.getBean(providerInfo.getProviderType());
 
 		if (provider == null) {
 			log.warn("No service provider implementation found: " + providerInfo);

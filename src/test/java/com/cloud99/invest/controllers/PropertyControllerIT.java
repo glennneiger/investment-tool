@@ -14,7 +14,7 @@ import com.cloud99.invest.domain.property.PropertyType;
 import com.cloud99.invest.domain.redis.AuthToken;
 import com.cloud99.invest.dto.requests.PropertySearchRequest;
 import com.cloud99.invest.dto.responses.PropertySearchResult;
-import com.cloud99.invest.integration.data.ProviderInfo;
+import com.cloud99.invest.integration.data.DataProviderInfo;
 import com.cloud99.invest.repo.redis.AuthTokenRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -58,7 +58,7 @@ public class PropertyControllerIT extends BaseIntegrationTest {
 		String json = result.getResponse().getContentAsString();
 		PropertySearchResult response = objectMapper.readValue(json, PropertySearchResult.class);
 		assertNotNull(response.getProperty());
-		assertEquals(ProviderInfo.ZILLOW, response.getProviderInfo());
+		assertEquals(DataProviderInfo.ZILLOW, response.getProviderInfo());
 		assertNotBlank(response.getProperty().getAddress().getAddress1());
 
 		assertNotBlank(response.getProperty().getAddress().getCity());

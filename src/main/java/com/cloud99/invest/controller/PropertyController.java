@@ -5,9 +5,9 @@ import com.cloud99.invest.dto.requests.PropertySearchRequest;
 import com.cloud99.invest.dto.responses.CompAnalysisResult;
 import com.cloud99.invest.dto.responses.PropertyCompSearchResult;
 import com.cloud99.invest.dto.responses.PropertySearchResult;
-import com.cloud99.invest.integration.data.ProviderInfo;
-import com.cloud99.invest.integration.data.ServiceProvider;
-import com.cloud99.invest.integration.data.ServiceProviderFactory;
+import com.cloud99.invest.integration.data.DataProviderInfo;
+import com.cloud99.invest.integration.data.DataServiceProvider;
+import com.cloud99.invest.integration.data.DataServiceProviderFactory;
 import com.cloud99.invest.security.PaidSubscription;
 import com.cloud99.invest.services.AccountService;
 import com.cloud99.invest.services.CompAnalyzerService;
@@ -44,9 +44,9 @@ public class PropertyController implements Controller {
 	private PropertyService propertyService;
 
 	@Autowired
-	private ServiceProviderFactory providerFactory;
+	private DataServiceProviderFactory providerFactory;
 
-	private ServiceProvider serviceProvider;
+	private DataServiceProvider serviceProvider;
 
 	@Autowired
 	private AccountService accountService;
@@ -56,7 +56,7 @@ public class PropertyController implements Controller {
 
 	@PostConstruct
 	public void init() {
-		serviceProvider = providerFactory.getServiceProvider(ProviderInfo.ZILLOW);
+		serviceProvider = providerFactory.getServiceProvider(DataProviderInfo.ZILLOW);
 	}
 
 	@PostMapping(path = "/{accountId}/properties/search", consumes = JSON_MEDIA_TYPE, produces = JSON_MEDIA_TYPE)

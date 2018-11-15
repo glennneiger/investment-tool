@@ -6,13 +6,11 @@ import com.cloud99.invest.config.EmailConfig;
 import com.cloud99.invest.config.GlobalMethodSecurityConfig;
 import com.cloud99.invest.config.MessageConfig;
 import com.cloud99.invest.config.TestAppConfig;
-import com.cloud99.invest.config.TestMongoConfig;
 import com.cloud99.invest.config.WebSecurityConfig;
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.account.Account;
 import com.cloud99.invest.repo.AccountRepo;
 import com.cloud99.invest.repo.UserRepo;
-import com.cloud99.invest.repo.redis.AuthTokenRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -23,9 +21,7 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.annotation.Order;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -67,7 +63,7 @@ public abstract class BaseIntegrationTest {
 	protected AccountRepo acctRepo;
 
 	@Autowired
-	protected AuthTokenRepo authTokenRepo;
+	protected com.cloud99.invest.repo.redis.AuthTokenRepo authTokenRepo;
 
 	protected User user;
 	protected Account account;
