@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/v1/admin")
 public class AdminController implements Controller {
 
-	@PreAuthorize("hasPermission('ADMIN', '')")
 	@PostMapping(path = "/billing/plans", consumes = JSON_MEDIA_TYPE, produces = JSON_MEDIA_TYPE)
 	@ResponseStatus(code = HttpStatus.CREATED)
 	public void createBillingPlan(Authentication auth) {

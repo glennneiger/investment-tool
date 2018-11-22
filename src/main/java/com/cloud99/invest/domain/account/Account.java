@@ -49,7 +49,7 @@ public class Account implements MongoDocument {
 
 	@Setter
 	@Getter
-	private GeneralSettings generalSettings = new GeneralSettings();
+	private AccountSettings generalSettings = new AccountSettings();
 
 	@Transient
 	public static String getDefaultTimezone() {

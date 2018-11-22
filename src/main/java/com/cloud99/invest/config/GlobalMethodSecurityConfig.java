@@ -1,6 +1,6 @@
 package com.cloud99.invest.config;
 
-import com.cloud99.invest.security.RoleTypePermissionEvaluator;
+import com.cloud99.invest.security.UserRoleAndSubscriptionPermissionEvaluator;
 import com.cloud99.invest.services.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class GlobalMethodSecurityConfig extends GlobalMethodSecurityConfiguratio
 	@Override
 	protected MethodSecurityExpressionHandler createExpressionHandler() {
 		DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
-		expressionHandler.setPermissionEvaluator(new RoleTypePermissionEvaluator(userService));
+		expressionHandler.setPermissionEvaluator(new UserRoleAndSubscriptionPermissionEvaluator(userService));
 		return expressionHandler;
 	}
 }

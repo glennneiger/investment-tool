@@ -1,7 +1,5 @@
 package com.cloud99.invest.controller;
 
-import com.cloud99.invest.dto.requests.PaymentRequest;
-
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +15,7 @@ public class CallbackController implements Controller {
 
 
 	@PostMapping(path = "/address")
-	public String address(@ModelAttribute PaymentRequest obj) {
+	public String address(@ModelAttribute Object obj) {
 		return "Endpoint invoked!";
 	}
 }

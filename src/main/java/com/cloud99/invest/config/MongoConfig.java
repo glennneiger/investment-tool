@@ -32,10 +32,9 @@ import java.util.List;
 
 @EnableMongoRepositories(basePackages = { "com.cloud99.invest.repo", "com.cloud99.invest.domain" })
 @Configuration
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:application-${spring.active.profiles}.properties")
 @Order(15)
 @EnableTransactionManagement
-@Profile("production")
 public class MongoConfig extends AbstractMongoConfiguration {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MongoConfig.class);
 

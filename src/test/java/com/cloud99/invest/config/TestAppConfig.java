@@ -19,7 +19,7 @@ import org.springframework.data.mongodb.core.convert.MongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-@Profile({ "test", "data-test" })
+@Profile({ "test", "test-data" })
 @AutoConfigureWebMvc
 @EnableWebMvc
 //@ComponentScan(basePackages = { "com.cloud99.invest.services", "com.cloud99.invest.util", "com.cloud99.invest.controller" })
@@ -41,7 +41,7 @@ public class TestAppConfig {
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer properties() {
 		PropertySourcesPlaceholderConfigurer pspc = new PropertySourcesPlaceholderConfigurer();
-		Resource[] resources = new ClassPathResource[] { new ClassPathResource("application.properties") };
+		Resource[] resources = new ClassPathResource[] { new ClassPathResource("application-${spring.active.profiles}.properties") };
 		pspc.setLocations(resources);
 		pspc.setIgnoreUnresolvablePlaceholders(false);
 		return pspc;

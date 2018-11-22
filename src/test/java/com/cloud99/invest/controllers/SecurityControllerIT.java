@@ -45,7 +45,7 @@ public class SecurityControllerIT extends BaseIntegrationTest {
 			
 			Assertions.assertAll("Auth token is missing required attribute values", 
 			() -> assertNotNull(authToken),
-			() -> assertNotNull(authToken.getExpireDateTime()),
+					() -> assertNotNull(authToken.getExpireTime()),
 			() -> assertNotNull(authToken.getToken()),
 			() -> assertEquals(user.getId(), authToken.getUserId()));
 

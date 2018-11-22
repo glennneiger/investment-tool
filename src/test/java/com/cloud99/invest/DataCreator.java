@@ -6,9 +6,11 @@ import com.cloud99.invest.domain.Frequency;
 import com.cloud99.invest.domain.Name;
 import com.cloud99.invest.domain.Person.Gender;
 import com.cloud99.invest.domain.Status;
+import com.cloud99.invest.domain.Subscription;
+import com.cloud99.invest.domain.Subscription.SubscriptionType;
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.account.Account;
-import com.cloud99.invest.domain.account.GeneralSettings;
+import com.cloud99.invest.domain.account.AccountSettings;
 import com.cloud99.invest.domain.account.MembershipType;
 import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.domain.financial.FinancingDetails;
@@ -61,8 +63,24 @@ public class DataCreator {
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		DataCreator dataCreator = new DataCreator();
 
-		System.out.println(mapper.writeValueAsString(null));
+		System.out.println(mapper.writeValueAsString(dataCreator.buildSubscriptions()));
 
+	}
+
+	public List<Subscription> buildSubscriptions() {
+
+		Subscription sub1 = new Subscription();
+		sub1.setBillingProviderId("plan_Dz6f2apauFMCL6");
+		sub1.setDescription("Monthly Subsription");
+		sub1.setSubscriptionType(SubscriptionType.MONTHLY);
+		sub1.setPrice(8.99);
+
+		Subscription sub2 = new Subscription();
+		sub2.setBillingProviderId("plan_Dz6fZwldkojoRJ");
+		sub2.setDescription("Annual Subscription - 2 Months Free!");
+		sub2.setPrice(89.90);
+		sub2.setSubscriptionType(SubscriptionType.ANUALLY);
+		return Arrays.asList(sub1, sub2);
 	}
 
 	public PropertyCompSearchResult buildPropertyCompSearchResult(int finishedSqFt, List<PropertyValuationResult> valuations) {
@@ -109,7 +127,6 @@ public class DataCreator {
 		r.setLastName("LastName");
 		r.setPassword("password");
 		r.setMatchingPassword("password");
-		r.setMembershipType(MembershipType.FREE);
 		r.setBirthDate(new LocalDate("1980-03-23"));
 		return r;
 	}
@@ -237,20 +254,20 @@ public class DataCreator {
 		a.setCreateDate(DateTime.now());
 		a.setOwnerId(ownerId);
 		a.setStatus(Status.ACTIVE);
+
 		return a;
 	}
 
 	public AuthToken buildAuthToken(String userId) {
 		AuthToken a = new AuthToken();
-		a.setCreateTime(DateTime.now().toDate());
 		a.setTimeToLiveSeconds(5000);
 		a.setToken(UUID.randomUUID().toString());
 		a.setUserId(userId);
 		return a;
 	}
 
-	public GeneralSettings buildAccountSettings() {
-		GeneralSettings s = new GeneralSettings();
+	public AccountSettings buildAccountSettings() {
+		AccountSettings s = new AccountSettings();
 		s.setCurrency(CurrencyUnit.USD);
 		return s;
 	}

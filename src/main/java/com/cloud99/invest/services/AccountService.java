@@ -3,8 +3,7 @@ package com.cloud99.invest.services;
 import com.cloud99.invest.domain.Status;
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.account.Account;
-import com.cloud99.invest.domain.account.GeneralSettings;
-import com.cloud99.invest.domain.account.MembershipType;
+import com.cloud99.invest.domain.account.AccountSettings;
 import com.cloud99.invest.dto.requests.AccountCreationRequest;
 import com.cloud99.invest.events.AccountCreatedEvent;
 import com.cloud99.invest.exceptions.AccountAlreadyExistsException;
@@ -16,9 +15,12 @@ import org.joda.money.CurrencyUnit;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+
+import javax.validation.constraints.NotNull;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -27,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:application-${spring.active.profiles}.properties")
 public class AccountService {
 
 	public Locale DEFAULT_LOCALE = Locale.getDefault();
@@ -41,6 +43,7 @@ public class AccountService {
 	@Autowired
 	private SecurityService securityService;
 
+	@NotNull
 	@Value("${free.user.num.of.properties}")
 	private Integer freeUserNumOfProperties;
 
@@ -49,7 +52,7 @@ public class AccountService {
 		return acctRepo.save(account);
 	}
 
-	public GeneralSettings getAccountsGeneralSettingForCurrentUser() {
+	public AccountSettings getAccountsGeneralSettingForCurrentUser() {
 
 		User user = securityService.getCurrentSessionUser();
 		Account acct = getOwnersAccountAndValidate(user.getId());
@@ -72,17 +75,8 @@ public class AccountService {
 		account = acctRepo.save(account);
 		
 		Integer numOfProperties = freeUserNumOfProperties;
-		GeneralSettings acctOptions = new GeneralSettings();
-		if (MembershipType.PAID.equals(request.getMembershipType())) {
-			numOfProperties = -1;
-			acctOptions.setAllowedToStoreDocuments(true);
-			acctOptions.setNumberOfPropertiesUserCanStore(-1);
-		} else {
-			// FREE user settings
-			acctOptions.setAllowedToStoreDocuments(false);
-			acctOptions.setNumberOfPropertiesUserCanStore(numOfProperties);
-		}
-
+		AccountSettings acctOptions = new AccountSettings();
+		acctOptions.setNumberOfPropertiesUserCanStore(numOfProperties);
 		if (request.getCurrency() == null) {
 			request.setCurrency(CurrencyUnit.USD);
 		}
@@ -124,6 +118,7 @@ public class AccountService {
 		return acctRepo.deleteByName(name);
 	}
 
+	@Cacheable()
 	public Account getAccountAndValidate(String accountId) {
 
 		Optional<Account> optional = acctRepo.findById(accountId);
@@ -162,13 +157,13 @@ public class AccountService {
 		acctRepo.save(acct);
 	}
 
-	public GeneralSettings getAccountSettings(String accountId) {
+	public AccountSettings getAccountSettings(String accountId) {
 
 		Account account = getAccountAndValidate(accountId);
 		return account.getGeneralSettings();
 	}
 
-	public GeneralSettings getUsersAccountSettings(String id) {
+	public AccountSettings getUsersAccountSettings(String id) {
 
 		Account acct = getOwnersAccountAndValidate(id);
 		return acct.getGeneralSettings();

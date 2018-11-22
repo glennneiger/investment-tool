@@ -1,7 +1,8 @@
 package com.cloud99.invest.services;
 
 import com.cloud99.invest.domain.User;
-import com.cloud99.invest.domain.account.GeneralSettings;
+import com.cloud99.invest.domain.account.Account;
+import com.cloud99.invest.domain.account.AccountSettings;
 import com.cloud99.invest.domain.property.Property;
 import com.cloud99.invest.exceptions.EntityNotFoundException;
 import com.cloud99.invest.exceptions.ServiceException;
@@ -10,6 +11,7 @@ import com.cloud99.invest.repo.PropertyRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -58,7 +60,7 @@ public class PropertyService {
 	}
 
 	private boolean canUserAddProperty(User user) {
-		GeneralSettings acctSettings = accountService.getAccountsGeneralSettingForCurrentUser();
+		AccountSettings acctSettings = accountService.getAccountsGeneralSettingForCurrentUser();
 		if (acctSettings.getNumberOfPropertiesUserCanStore() >= user.getPropertyRefs().size()) {
 			return false;
 		}
@@ -66,8 +68,8 @@ public class PropertyService {
 
 	}
 
-	public Iterable<Property> getAllUsersPropertyDetails(String userEmail) {
-		LOGGER.trace("getProperty() : " + userEmail);
+	public Iterable<Property> getAllUsersPropertyDetails(String userEmail, String accountId) {
+		LOGGER.trace("getProperty() : " + userEmail + " for account: " + accountId);
 
 		User user = userService.findUserByEmailAndValidate(userEmail);
 		Iterable<Property> props = propertyRepo.findAllById(convertIteratorToIterable(user.getPropertyRefs().iterator()));

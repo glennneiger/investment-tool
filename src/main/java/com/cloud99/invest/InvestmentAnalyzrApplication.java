@@ -11,7 +11,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @EnableAutoConfiguration
 @SpringBootApplication
-@PropertySource("classpath:application.properties")
+@PropertySource("application-${spring.active.profiles}.properties")
 @ComponentScan(basePackages = "com.cloud99.invest")
 public class InvestmentAnalyzrApplication extends SpringBootServletInitializer {
 

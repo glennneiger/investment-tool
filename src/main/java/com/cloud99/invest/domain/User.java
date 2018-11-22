@@ -1,5 +1,6 @@
 package com.cloud99.invest.domain;
 
+import com.cloud99.invest.domain.account.MembershipType;
 import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.repo.extensions.CascadeSave;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -64,7 +65,7 @@ public class User extends Person implements Authentication, UserDetails {
 	@Getter
 	@Setter
 	@JsonIgnore
-	private DateTime lastLoginDate;
+	private DateTime lastActivityDate;
 
 	@CascadeSave
 	@Getter
@@ -81,11 +82,15 @@ public class User extends Person implements Authentication, UserDetails {
 
 	@JsonIgnore
 	@Transient
-	private List<SimpleGrantedAuthority> authorities;
+	private List<UserRole> authorities;
+
+	@Getter
+	@Setter
+	private MembershipType membershipType = MembershipType.FREE;
 
 	@Transient
 	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
+	public Collection<UserRole> getAuthorities() {
 		if (authorities == null) {
 			authorities = buildAuthorities(this.userRoles);
 		}
@@ -93,10 +98,10 @@ public class User extends Person implements Authentication, UserDetails {
 	}
 
 	@Transient
-	private List<SimpleGrantedAuthority> buildAuthorities(Collection<UserRole> applicationRoles) {
+	private List<UserRole> buildAuthorities(Collection<UserRole> applicationRoles) {
 		authorities = new ArrayList<>(applicationRoles.size());
 		for (UserRole role : applicationRoles) {
-			authorities.add(new SimpleGrantedAuthority(role.getAuthority()));
+			authorities.add(role);
 		}
 		return authorities;
 	}

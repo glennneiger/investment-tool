@@ -1,7 +1,7 @@
 package com.cloud99.invest.services;
 
 import com.cloud99.invest.domain.User;
-import com.cloud99.invest.domain.account.GeneralSettings;
+import com.cloud99.invest.domain.account.AccountSettings;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service("emailService")
 @Primary
-@PropertySource("classpath:application.properties")
+@PropertySource("application-${spring.active.profiles}.properties")
 public class SendGridEmailService implements EmailService {
 
 	private static final String CHARSET_UTF8 = "UTF-8";
@@ -53,7 +53,7 @@ public class SendGridEmailService implements EmailService {
 	@Override
 	public void sentUserRegistrationConfirmationEmail(User user, String appUrl) {
 
-		GeneralSettings settings = accountService.getUsersAccountSettings(user.getId());
+		AccountSettings settings = accountService.getUsersAccountSettings(user.getId());
 		// TODO - NG - add configuration property to specify base URL and then tack on
 		// the appUrl
 		SimpleMailMessage email = new SimpleMailMessage();

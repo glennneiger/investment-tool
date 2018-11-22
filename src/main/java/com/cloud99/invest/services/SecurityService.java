@@ -1,11 +1,12 @@
 package com.cloud99.invest.services;
 
 import com.cloud99.invest.domain.User;
+import com.cloud99.invest.domain.VerificationToken;
 import com.cloud99.invest.domain.account.Account;
 import com.cloud99.invest.domain.redis.AuthToken;
-import com.cloud99.invest.domain.VerificationToken;
 import com.cloud99.invest.dto.requests.AccountCreationRequest;
 import com.cloud99.invest.exceptions.EntityNotFoundException;
+import com.cloud99.invest.exceptions.SecurityException;
 import com.cloud99.invest.exceptions.ServiceException;
 import com.cloud99.invest.repo.VerificationTokenRepo;
 import com.cloud99.invest.repo.redis.AuthTokenRepo;
@@ -15,7 +16,8 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,22 +26,28 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
+
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Service
+@Service(value = "securityService")
 public class SecurityService implements UserDetailsService {
 
+	@NotNull
 	@Value("${auth.token.time.to.live.in.seconds}")
-	public int authTokenTimeToLiveInSeconds;
+	public Integer authTokenTimeToLiveInSeconds;
 
+	@NotNull
 	@Value("${registration.request.token.exipire.in.hours}")
-	public int registrationRequestTokenExpireInHours;
+	public Integer registrationRequestTokenExpireInHours;
 
+	@NotNull
 	@Value("${verification.token.time.to.live.in.seconds}")
-	public int verificationTokenTimeToLiveInSeconds;
+	public Integer verificationTokenTimeToLiveInSeconds;
 
 	@Autowired
 	private UserService userService;
@@ -48,12 +56,33 @@ public class SecurityService implements UserDetailsService {
 	private AuthTokenRepo authTokenRepo;
 
 	@Autowired
+	private RedisTemplate<Object, Object> redisTemplate;
+
+	@Autowired
 	private AccountService acctService;
 
 	@Autowired
 	private VerificationTokenRepo tokenRepo;
 
-	// NG - this feature is slated for a future release
+	public boolean isAccountOwner() {
+		String accountId = "Test";
+		Account existingAcct = acctService.getAccountAndValidate(accountId);
+		User user = getCurrentSessionUser();
+		if (!existingAcct.getOwnerId().equals(user.getId())) {
+			return false;
+		}
+		return true;
+	}
+
+	// NG - this feature is slated for a future release (not active now)
+	/**
+	 * This method should be invoked from an HTTP client/new user to confirm their
+	 * email address and activate their account.
+	 * 
+	 * @param token
+	 *            to be verified
+	 * @return the active user object
+	 */
 	public User confirmUserRegistration(String token) {
 		VerificationToken tokenObj = tokenRepo.findByToken(token);
 
@@ -104,21 +133,26 @@ public class SecurityService implements UserDetailsService {
 	 *            of the user to log out
 	 * @return the user who was logged out
 	 */
-	@CacheEvict(key = "#result.email", condition = "#result == null")
+	@CacheEvict(key = "#result.id", condition = "#result == null")
 	public User logoutUser(String token) {
 
+		// delete auth token from cache
 		Optional<AuthToken> authTokenOptional = authTokenRepo.findById(token);
 
 		if (authTokenOptional.isPresent()) {
 			authTokenRepo.delete(authTokenOptional.get());
 		}
 
+
 		Optional<User> userOpt = userService.findUserById(authTokenOptional.get().getUserId());
 		if (userOpt.isPresent()) {
 			User user = userOpt.get();
 			user.setAuthenticated(false);
+			// remove user from cache
+			userService.clearUserCache(user.getId());
 			return user;
 		}
+		// no user found, nothing to return
 		return null;
 	}
 
@@ -139,10 +173,16 @@ public class SecurityService implements UserDetailsService {
 
 		AuthToken token = findAuthTokenByIdAndValidate(tokenId);
 		User user = userService.findUserByIdAndValidate(token.getUserId());
-		user.setLastLoginDate(DateTime.now());
+		user.setLastActivityDate(DateTime.now());
+		userService.updateUser(user);
 
-		token.setTimeToLiveSeconds(authTokenTimeToLiveInSeconds);
+		token.setExpireTime(DateTime.now().plusSeconds(authTokenTimeToLiveInSeconds));
 		authTokenRepo.save(token);
+
+		boolean didUpdateExipre = redisTemplate.expireAt("AuthToken:" + tokenId, token.getExpireTime());
+		if (!didUpdateExipre) {
+			log.error("Unable to update TTL for auth token: " + tokenId + ", there is something really fucked up happened and we are not able to update any TTL for the auth tokens");
+		}
 	}
 
 	public AuthToken createAuthToken(String userId) {
@@ -159,9 +199,10 @@ public class SecurityService implements UserDetailsService {
 
 		AuthToken token = findAuthTokenByIdAndValidate(authToken);
 
-		if (token.getExpireDateTime().isBeforeNow()) {
+		if (token.isExpired()) {
 			authTokenRepo.delete(token);
-			throw new AccessDeniedException("auth.token.expired");
+			log.warn("Auth token expired, access denied for token: " + authToken);
+			throw new CredentialsExpiredException("auth.token.expired");
 		}
 
 		User user = userService.findUserByIdAndValidate(token.getUserId());

@@ -2,7 +2,9 @@ package com.cloud99.invest.services;
 
 import com.cloud99.invest.calculations.flip.FlipCalculationFactory;
 import com.cloud99.invest.calculations.flip.FlipCalculationType;
-import com.cloud99.invest.domain.account.GeneralSettings;
+import com.cloud99.invest.domain.User;
+import com.cloud99.invest.domain.account.Account;
+import com.cloud99.invest.domain.account.AccountSettings;
 import com.cloud99.invest.domain.financial.flip.FlipPropertyFinances;
 import com.cloud99.invest.util.Util;
 
@@ -32,6 +34,9 @@ public class FlipAnalyzrService {
 	private AccountService accountService;
 
 	@Autowired
+	private SecurityService securityService;
+
+	@Autowired
 	private FlipCalculationFactory calcFactory;
 
 	public Map<FlipCalculationType, Object> analyzeFlip(String accountId, FlipPropertyFinances flipFinances) {
@@ -39,11 +44,13 @@ public class FlipAnalyzrService {
 		log.debug("CalculateFile with assumptions: " + flipFinances);
 
 
-		GeneralSettings acctSettings = accountService.getAccountSettings(accountId);
+		AccountSettings acctSettings = accountService.getAccountSettings(accountId);
+		User user = securityService.getCurrentSessionUser();
+		Account acct = accountService.getAccountAndValidate(accountId);
 
 		Map<FlipCalculationType, Object> flipResults = new HashMap<>();
 		calcFactory.getAllCalculations().forEach((calcType, calcInstance) -> {
-			if (acctSettings.getMembershipType().equals(calcType.getMembershipAccess())) {
+			if (user.getMembershipType().equals(calcType.getMembershipAccess())) {
 				flipResults.put(calcType, calcInstance.calculate(flipFinances, calcFactory.getAllCalculations(), acctSettings.getCurrency()));
 			}
 		});

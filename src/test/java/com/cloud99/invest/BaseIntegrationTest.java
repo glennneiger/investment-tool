@@ -40,7 +40,7 @@ import java.text.SimpleDateFormat;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { WebSecurityConfig.class, GlobalMethodSecurityConfig.class, MessageConfig.class, EmailConfig.class, TestAppConfig.class })
 @WebAppConfiguration
-@TestPropertySource("classpath:application.properties")
+@TestPropertySource("classpath:application-test.properties")
 @TestInstance(Lifecycle.PER_CLASS)
 @Order(1)
 public abstract class BaseIntegrationTest {

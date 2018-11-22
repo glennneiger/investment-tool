@@ -35,23 +35,25 @@ public class AuthToken implements Serializable {
 	@Setter
 	private Integer timeToLiveSeconds;
 
-	// Note: we have to use a standard java Date instead of Joda because extensions
-	// of this class can't convert Joda DateTimes to native store types without more
-	// custom work on our part
 	@Getter
-	@Setter
-	private Date createTime;
+	private final Date createTime = DateTime.now().toDate();
+
+	@Getter
+	private Date expireTime;
 
 	public AuthToken(String userId, Integer timeToLiveSeconds) {
 		this.userId = userId;
 		this.timeToLiveSeconds = timeToLiveSeconds;
 		this.token = UUID.randomUUID().toString();
-		this.createTime = DateTime.now().toDate();
+		this.expireTime = DateTime.now().plusSeconds(timeToLiveSeconds).toDate();
+	}
+
+	public void setExpireTime(DateTime expire) {
+		this.expireTime = expire.toDate();
 	}
 
 	@Transient
-	public DateTime getExpireDateTime() {
-		DateTime dateTime = new DateTime(createTime.getTime());
-		return dateTime.plusSeconds(getTimeToLiveSeconds());
+	public boolean isExpired() {
+		return new DateTime(getExpireTime()).isBeforeNow();
 	}
 }

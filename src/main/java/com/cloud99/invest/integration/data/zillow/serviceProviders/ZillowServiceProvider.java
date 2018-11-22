@@ -36,7 +36,7 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:application-${spring.active.profiles}.properties")
 @Slf4j
 public class ZillowServiceProvider implements DataServiceProvider {
 

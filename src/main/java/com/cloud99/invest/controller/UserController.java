@@ -1,5 +1,6 @@
 package com.cloud99.invest.controller;
 
+import com.cloud99.invest.security.AdminUser;
 import com.cloud99.invest.services.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,8 @@ public class UserController implements Controller {
 	@Autowired
 	private UserService userService;
 
-	@DeleteMapping()
+	@AdminUser
+	@DeleteMapping(path = "/{userId}")
 	public void deleteUser(@RequestParam String userId) {
 		userService.deleteUser(userId);
 	}

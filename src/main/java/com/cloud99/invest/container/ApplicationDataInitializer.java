@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextStartedEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class ApplicationInitializer implements ApplicationListener<ContextStartedEvent> {
+public class ApplicationDataInitializer implements ApplicationListener<ContextRefreshedEvent> {
 
 	public static enum RefDataTypes {
 		HOLDING_COSTS_JSON("/static-data/holdingCostsRefData.json", GenericRepo.HOLDING_COSTS_COLLECTION_NAME),
@@ -52,14 +52,15 @@ public class ApplicationInitializer implements ApplicationListener<ContextStarte
 	private GenericRepo genericRepo;
 
 	@Override
-	public void onApplicationEvent(ContextStartedEvent event) {
+	public void onApplicationEvent(ContextRefreshedEvent event) {
 
 		// load the static reference financial data
 		for (RefDataTypes type : RefDataTypes.values()) {
 
 			if (!collectionExists(type.getDbCollectionName())) {
-				log.info("Loading data for ref data collection: " + type.getDbCollectionName());
 				loadRefData(type.getJsonFileName(), type.getDbCollectionName());
+			} else {
+				log.info("Not loading static data collection as it already exists in Mongo: {}", type.getDbCollectionName());
 			}
 		}
 
@@ -75,6 +76,7 @@ public class ApplicationInitializer implements ApplicationListener<ContextStarte
 			String holdingCostsJson = fileUtil.getFileContents(jsonFileName);
 			List<ItemizedCost> myObjects = objMapper.readValue(holdingCostsJson, new TypeReference<List<ItemizedCost>>() {});
 			genericRepo.saveList(myObjects, collectionName);
+			log.info("Loaded: {} {} into Mongo", myObjects.size(), collectionName);
 		} catch (Exception e) {
 			log.error("Error loading collection: " + collectionName + " from json file: " + jsonFileName + " msg:" + e.getMessage(), e);
 		}

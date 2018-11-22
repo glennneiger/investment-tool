@@ -29,10 +29,9 @@ import redis.clients.jedis.JedisPoolConfig;
 @EnableCaching
 @Configuration
 @ComponentScan(basePackages = { "com.cloud99.invest" })
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:application-${spring.active.profiles}.properties")
 @EnableRedisRepositories(basePackages = "com.cloud99.invest.repo.redis", enableKeyspaceEvents = EnableKeyspaceEvents.ON_STARTUP)
 @Order(20)
-@Profile("production")
 public class RedisConfig extends CachingConfigurerSupport {
 
 	// TODO - NG - need to create password for redis and inject

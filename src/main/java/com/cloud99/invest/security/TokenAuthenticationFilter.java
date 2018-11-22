@@ -20,8 +20,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TokenAuthenticationFilter.class);
 
 	private SecurityService securityService;
 
@@ -32,7 +34,7 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
 
 	@Override
 	public Authentication attemptAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
-		LOGGER.trace("Attempting to authenticate request");
+		log.trace("Attempting to authenticate request");
 		final String authToken = request.getHeader("authorization");
 		UserDetails ud = null;
 		try {
@@ -47,9 +49,9 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
 
 	@Override
 	protected void successfulAuthentication(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain, final Authentication authResult) throws IOException, ServletException {
-		super.successfulAuthentication(request, response, chain, authResult);
 		securityService.updateUserForSuccessfulAuthentication((String) authResult.getCredentials());
-
+		super.successfulAuthentication(request, response, chain, authResult);
+		// TODO - NG - I don't think this is needed and was causing the double authentication
 		chain.doFilter(request, response);
 	}
 

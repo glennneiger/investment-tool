@@ -18,10 +18,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * This class is used to store general account settings including any app usage
- * limits or restrictions
+ * This class is used to store general account level settings including any app
+ * usage limits or restrictions based on membership type
  */
-public class GeneralSettings implements Serializable {
+public class AccountSettings implements Serializable {
 	private static final long serialVersionUID = -2336061599993466226L;
 
 	@Setter
@@ -33,22 +33,19 @@ public class GeneralSettings implements Serializable {
 	@Setter
 	private Integer numberOfPropertiesUserCanStore;
 
-	@Getter
-	@Setter
-	private MembershipType membershipType;
-
 	// The default value is 3 for FREE account, up to 6 for PAID accounts
 	@Getter
 	@Setter
-	@Max(value = 6, message = "number.of.comps.exceded")
+	@Max(value = 6, message = "number.of.comps.exceeded")
 	private Integer numOfCompsToLookup = 3;
 
+	// accounts default currency for all investment analysis (not
+	// payment/subscriptions currency)
 	@JsonSerialize(using = CurrencyUnitSerializer.class)
 	@JsonDeserialize(using = CurrencyUnitDeserializer.class)
 	@Setter
 	@Getter
 	private CurrencyUnit currency = CurrencyUnit.USD;
-
 
 	@Getter
 	@Setter

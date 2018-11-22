@@ -9,8 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * This repo is used to access and store a varity of different objects in
- * collections. The object can be the same but storied in different collections.
+ * This repo is not tied to a specific collection/domain object type. It
+ * utilizes a {@link MongoTemplate} directly and therefore can be utilized for
+ * any collection.
  */
 @Repository
 public class GenericRepo {

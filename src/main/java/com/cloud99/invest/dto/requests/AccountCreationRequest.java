@@ -21,11 +21,6 @@ public class AccountCreationRequest {
 
 	@Getter
 	@Setter
-	@NotNull(message = "subscription.type.required")
-	private MembershipType membershipType = MembershipType.FREE;
-
-	@Getter
-	@Setter
 	@NotNull(message = "account.name.required")
 	private String accountName;
 

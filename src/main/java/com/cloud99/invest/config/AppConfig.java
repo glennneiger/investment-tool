@@ -19,6 +19,7 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 import org.bson.types.ObjectId;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.jackson.JsonComponentModule;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +29,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
@@ -38,7 +40,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -49,7 +50,7 @@ import java.util.TimeZone;
 @Configuration
 @ComponentScan(basePackages = { "com.cloud99.invest" },
 	excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com.cloud99.invest.config.*"))
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:application-${spring.active.profiles}.properties")
 @EnableWebMvc
 @Order(1)
 public class AppConfig extends WebMvcAutoConfiguration implements WebMvcConfigurer {
@@ -107,9 +108,13 @@ public class AppConfig extends WebMvcAutoConfiguration implements WebMvcConfigur
 	}
 
 	@Bean
-	public static PropertySourcesPlaceholderConfigurer properties() {
+	public PropertySourcesPlaceholderConfigurer properties() {
 		PropertySourcesPlaceholderConfigurer pspc = new PropertySourcesPlaceholderConfigurer();
-		Resource[] resources = new ClassPathResource[] { new ClassPathResource("application.properties") };
+
+		// String profile = env.getActiveProfiles()[0];
+		// TODO - NG NEED TO FIX THE ENVRIONMENT PROFILE
+		String profile = "local";
+		Resource[] resources = new ClassPathResource[] { new ClassPathResource("application-" + profile + ".properties") };
 		pspc.setLocations(resources);
 		pspc.setIgnoreUnresolvablePlaceholders(false);
 		return pspc;

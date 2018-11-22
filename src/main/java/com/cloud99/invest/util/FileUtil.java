@@ -13,11 +13,11 @@ public class FileUtil {
 
 	public String getFileContents(String filePath) throws Exception {
 
-		URL resource = FileUtil.class.getClassLoader().getResource(filePath);
+		URL resource = FileUtil.class.getResource(filePath);
 		if (resource == null) {
 			throw new FileNotFoundException("File not found: " + filePath);
 		}
-		try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(filePath)) {
+		try (InputStream inputStream = resource.openStream()) {
 			return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
 		}
 	}

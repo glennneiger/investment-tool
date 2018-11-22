@@ -12,11 +12,13 @@ import com.cloud99.invest.security.PaidSubscription;
 import com.cloud99.invest.services.AccountService;
 import com.cloud99.invest.services.CompAnalyzerService;
 import com.cloud99.invest.services.PropertyService;
+import com.cloud99.invest.services.SecurityService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StreamUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RestController
+// TODO FIXME - NG this should be changed to have the user own the resource: /v1/users/{userId}/accounts/{accountId}/
 @RequestMapping(path = "/v1/accounts")
 public class PropertyController implements Controller {
 
@@ -53,6 +56,9 @@ public class PropertyController implements Controller {
 
 	@Autowired
 	private CompAnalyzerService compAnalyzerService;
+
+	@Autowired
+	private SecurityService securityService;
 
 	@PostConstruct
 	public void init() {
@@ -76,11 +82,12 @@ public class PropertyController implements Controller {
 		return compAnalyzerService.compAnalysisResult(accountId, result);
 	}
 
+	@PreAuthorize("@securityService.isAccountOwner(#accountId)")
 	@GetMapping(path = "/{accountId}/users/properties", consumes = JSON_MEDIA_TYPE, produces = JSON_MEDIA_TYPE)
 	@ResponseBody
-	public Iterable<Property> getPropertiesByUser(@RequestParam String userEmail, @PathVariable String accountId) throws Exception {
+	public Iterable<Property> getPropertiesByUser(@RequestParam String userEmail, @PathVariable(name = "accountId") String accountId) throws Exception {
 
-		return propertyService.getAllUsersPropertyDetails(userEmail);
+		return propertyService.getAllUsersPropertyDetails(userEmail, accountId);
 	}
 	
 	@PostMapping(path = "/{accountId}/users/properties", consumes = JSON_MEDIA_TYPE, produces = JSON_MEDIA_TYPE)

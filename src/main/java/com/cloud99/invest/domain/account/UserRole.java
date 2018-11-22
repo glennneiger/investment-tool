@@ -6,6 +6,8 @@ public enum UserRole implements GrantedAuthority {
 
 	CUSTOMER, ADMIN;
 
+	public static final String USER_ROLE_REF_NAME = "UserRole";
+
 	@Override
 	public String getAuthority() {
 		return this.name();

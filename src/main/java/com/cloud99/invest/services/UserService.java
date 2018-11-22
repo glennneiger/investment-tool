@@ -3,7 +3,6 @@ package com.cloud99.invest.services;
 import com.cloud99.invest.domain.Name;
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.account.Account;
-import com.cloud99.invest.domain.account.MembershipType;
 import com.cloud99.invest.domain.account.UserRole;
 import com.cloud99.invest.dto.requests.AccountCreationRequest;
 import com.cloud99.invest.exceptions.AccountAlreadyExistsException;
@@ -16,10 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @CacheConfig(cacheNames = { "users" })
@@ -42,12 +43,6 @@ public class UserService {
 		// does this user already have an account?
 		newUser = createUser(newUser, UserRole.CUSTOMER);
 
-		if (MembershipType.PAID.equals(accountRequest.getMembershipType())) {
-			// TODO - NG - need to see if credit cards processing was successful and then
-			// add the PAID subscriptionType
-			// processPayment();
-		}
-		
 		Account acct = null;
 		try {
 			acct = acctService.createAccount(accountRequest, newUser);
@@ -65,6 +60,7 @@ public class UserService {
 		return acct;
 	}
 
+	@Cacheable(key = "#result.id")
 	public User createUser(User user, UserRole userRole) {
 		if (emailExist(user.getEmail())) {
 			throw new ServiceException("user.email.exists", null, user.getEmail());
@@ -72,41 +68,41 @@ public class UserService {
 
 		String pwHash = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 		user.setPassword(pwHash);
-		user.setEnabled(false);
+		user.setEnabled(true);
 
 		user.setCreateDate(DateTime.now());
 
 		// make sure there are no roles incorrectly added
 		user.setUserRoles(null);
-		user.addUserRole(userRole);
+		user.setUserRoles(Arrays.asList(userRole));
 
 		return userRepo.save(user);
 	}
 
-	public User activateUser(String userId) {
+	public User activateUser(String id) {
 
-		User user = findUserByIdAndValidate(userId);
+		User user = findUserByIdAndValidate(id);
 		user.setEnabled(true);
 		return userRepo.save(user);
 	}
 
-	// @CacheEvict(key = "#result.email")
-	public User deleteUser(String userId) {
-		Optional<User> userOpt = findUserById(userId);
+	@CacheEvict(key = "#result.id")
+	public User deleteUser(String id) {
+		Optional<User> userOpt = findUserById(id);
 		if (userOpt.isPresent()) {
-			userRepo.deleteById(userId);
+			userRepo.deleteById(id);
 			return userOpt.get();
 		}
 		return null;
 
 	}
 
-	// @Cacheable(key = "#result.email", unless = "#result == null")
+	@Cacheable(key = "#result.id", unless = "#result == null")
 	public User updateUser(User user) {
 		return userRepo.save(user);
 	}
 
-	// @Cacheable(key = "'userId.' + #result.id", unless = "#result == null")
+	@Cacheable(key = "'id.' + #result.id", unless = "#result == null")
 	public User findUserByIdAndValidate(String id) {
 
 		Optional<User> optional = findUserById(id);
@@ -117,12 +113,12 @@ public class UserService {
 
 	}
 
-	// TODO Cache this method
+	@Cacheable(key = "#id", condition = "#result == null")
 	public Optional<User> findUserById(String id) {
 		return userRepo.findById(id);
 	}
 
-	@Cacheable(key = "'userId.' + #email", unless = "#result == null")
+	@Cacheable(key = "'#result.id", unless = "#result == null")
 	public User findUserByEmailAndValidate(String email) {
 		User user = findUserByEmail(email);
 		if (user == null) {
@@ -131,7 +127,13 @@ public class UserService {
 		return user;
 	}
 
-
+	@CacheEvict(key = "#result.id", condition = "#result == null")
+	public User clearUserCache(String id) {
+		// just need to return the user so the cache gets evicted for this user
+		Optional<User> userOpt = userRepo.findById(id);
+		return userOpt.get();
+	}
+	
 	public User addPropertyRefToUser(User user, String id) {
 
 		user.getPropertyRefs().add(id);
