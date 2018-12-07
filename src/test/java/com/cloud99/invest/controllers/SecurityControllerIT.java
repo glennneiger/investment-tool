@@ -65,7 +65,7 @@ public class SecurityControllerIT extends BaseIntegrationTest {
 		User user = null;
 		try {
 			user = super.dataCreator.buildUser();
-			userService.createUser(user, UserRole.CUSTOMER);
+			userService.createFreeUser(user, UserRole.CUSTOMER);
 			user.setEnabled(true);
 			userRepo.save(user);
 
@@ -100,7 +100,7 @@ public class SecurityControllerIT extends BaseIntegrationTest {
 
 		try {
 			user.setEnabled(false);
-			userService.createUser(user, UserRole.CUSTOMER);
+			userService.createFreeUser(user, UserRole.CUSTOMER);
 
 			securityController.login(user.getEmail(), "password");
 

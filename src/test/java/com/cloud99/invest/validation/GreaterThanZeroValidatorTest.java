@@ -3,14 +3,14 @@ package com.cloud99.invest.validation;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.cloud99.invest.BaseMockitoTest;
+import com.cloud99.invest.MockitoTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-public class GreaterThanZeroValidatorTest extends BaseMockitoTest {
+public class GreaterThanZeroValidatorTest extends MockitoTest {
 
 	private GreaterThanZeroValidator validator;
 

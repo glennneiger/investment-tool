@@ -12,19 +12,29 @@ import com.mongodb.ServerAddress;
 
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.CustomConversions;
+import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
+import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
+import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import javax.annotation.PostConstruct;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,8 +60,27 @@ public class MongoConfig extends AbstractMongoConfiguration {
 	@Value("${mongo.user.password}")
 	private String password;
 
+	@Autowired
+	private MongoDbFactory mongoDbFactory;
+
 	private List<Converter<?, ?>> converters = new ArrayList<>();
 
+	@Bean
+	public MongoTemplate mongoTemplate() throws Exception {
+
+		MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory, getDefaultMongoConverter());
+		return mongoTemplate;
+
+	}
+
+	@Bean
+	@Primary
+	public MappingMongoConverter getDefaultMongoConverter() throws Exception {
+
+		MappingMongoConverter converter = new MappingMongoConverter(new DefaultDbRefResolver(mongoDbFactory), new MongoMappingContext());
+		converter.setMapKeyDotReplacement("_");
+		return converter;
+	}
     @Override
     public MongoClient mongoClient() {
 
@@ -66,9 +95,19 @@ public class MongoConfig extends AbstractMongoConfiguration {
     @Override
 	public CustomConversions customConversions() {
 		converters.add(new ZonedDateTimeConverter());
+		converters.add(new MongoDateTimeFromStringConverter());
+
 		return new MongoCustomConversions(converters);
 	}
 
+	private static final class MongoDateTimeFromStringConverter implements Converter<String, DateTime> {
+		public MongoDateTimeFromStringConverter() {	}
+
+		@Override
+		public DateTime convert(String source) {
+			return source == null ? null : DateTime.parse(source);
+		}
+	}
 	@Override
     protected String getDatabaseName() {
 		return "investment";

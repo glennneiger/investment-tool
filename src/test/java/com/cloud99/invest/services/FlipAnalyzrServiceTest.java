@@ -1,7 +1,6 @@
 package com.cloud99.invest.services;
 
-import com.cloud99.invest.BaseMockitoTest;
-import com.cloud99.invest.calculations.flip.FlipCalculation;
+import com.cloud99.invest.MockitoTest;
 import com.cloud99.invest.domain.financial.PurchaseDetails;
 import com.cloud99.invest.domain.financial.flip.FlipPropertyFinances;
 
@@ -10,12 +9,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 
-public class FlipAnalyzrServiceTest extends BaseMockitoTest {
+public class FlipAnalyzrServiceTest extends MockitoTest {
 
 	private FlipAnalyzrService analyzerService = new FlipAnalyzrService();
-	private AccountService accountServiceMock = Mockito.mock(AccountService.class);
+	private AccountService accountServiceMock = mock(AccountService.class);
 
 	@BeforeEach
 	public void setup() {

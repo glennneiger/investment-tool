@@ -1,44 +1,77 @@
 package com.cloud99.invest.services;
 
-import com.cloud99.invest.domain.Subscription;
+import com.cloud99.invest.domain.User;
+import com.cloud99.invest.domain.billing.Subscription;
+import com.cloud99.invest.dto.requests.CreateSubscriptionRequest;
+import com.cloud99.invest.exceptions.ExistingPaidSubscriptionException;
+import com.cloud99.invest.exceptions.ServiceException;
+import com.cloud99.invest.integration.subscriptions.SubscriptionBillerFactory;
 import com.cloud99.invest.integration.subscriptions.SubscriptionBillerInfo;
 import com.cloud99.invest.integration.subscriptions.SubscriptionBillingProvider;
-import com.cloud99.invest.repo.SubscriptionsRepo;
-import com.stripe.exception.StripeException;
-import com.stripe.model.Charge;
+import com.cloud99.invest.repo.subscriptions.SubscriptionRepo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This service deals with all PAID billing membership/subscription creation as
+ * well as updating a users account with the features that relate to their
+ * chosen membership/subscription type.
+ */
 @Slf4j
 @Service
 public class SubscriptionService {
 
-	
 	@Autowired
-	private RestTemplate restTemplate;
-	
-	@Autowired
-	private SubscriptionBillingProvider billingProvider;
+	private SubscriptionRepo subscriptionRepo;
 
 	@Autowired
-	private SubscriptionsRepo subscriptionRepo;
+	private SubscriptionBillerFactory subscriptionBillerFactory;
 
-	public List<Subscription> getAllActiveSubscriptions() {
-		return subscriptionRepo.findAll();
+	@Autowired
+	private SecurityService securityService;
+
+	public List<Subscription> getActiveSubscriptions() {
+		return subscriptionRepo.findByActiveSubscriptions();
 	}
 
-	// put in controller: request.getParameter("stripeToken")
-	public void createSubscription(String userName, String paymentToken, SubscriptionBillerInfo billerInfo) {
+	/**
+	 * @return the single FREE subscription
+	 */
+	public Subscription getFreeSubscription() {
+		return subscriptionRepo.findFreeSubscription();
+	}
 
-		// make sure the user doesn't already have a subscription
+
+	public void createSubscription(CreateSubscriptionRequest request) {
+		log.trace("Starting to create subscription: " + request);
+
+		User user = securityService.getCurrentSessionUser();
+
+		checkExistingSubscription(user);
+
+		// lookup the requested subscription plan
+		Optional<Subscription> optional = subscriptionRepo.findById(request.getSubscriptionId());
+		if (!optional.isPresent()) {
+			throw new ServiceException("subscription.id.not.found");
+		}
+		
+		if (!optional.get().isActive()) {
+			throw new ServiceException("subscription.expired");
+		}
+		
+		SubscriptionBillingProvider provider = subscriptionBillerFactory.getSubscriptionProvider(optional.get().getSubscriptionBiller());
+		log.info("Starting to create subscription for provider: " + provider);
+
+		provider.createSubscription(user, optional.get(), request.getProviderPaymentToken());
+
+		// TODO - NG - find out how to associate paid account options based on
+		// subscription type
 
 		// Update the account setting for paid user values
 		// if (MembershipType.PAID.equals(request.getMembershipType())) {
@@ -51,20 +84,19 @@ public class SubscriptionService {
 		// acctOptions.setNumberOfPropertiesUserCanStore(numOfProperties);
 		// }
 
-		// does customer already have a billing provider account?
-		Map<String, Object> params = new HashMap<>();
-		params.put("amount", 999);
-		params.put("currency", "usd");
-		params.put("description", "Example charge");
-		params.put("source", paymentToken);
-		try {
-			Charge charge = Charge.create(params);
-		} catch (StripeException e) {
-			log.error(String.format(
-					"Error occurred while trying to process payment: %s, code: %s, requestId: %s, statusCode: %d" 
-					, e.getMessage(), e.getCode(), e.getRequestId(), e.getStatusCode()));
-			e.printStackTrace();
-		}
+		// need a way to associate a set of features to an individual subscriptions
+	}
 
+	private void checkExistingSubscription(User user) {
+		// does the user already have a paid subscription?
+		Optional<Subscription> existingSubOpt = subscriptionRepo.findById(user.getSubscriptionMembership().getSubscriptionId());
+		if (user.getSubscriptionMembership().isActive() && existingSubOpt.isPresent()) {
+			// is this a free subscription?
+			if (!SubscriptionBillerInfo.CLOUD99.equals(existingSubOpt.get().getSubscriptionBiller())) {
+				// nope, don't let the user override their existing subscription, they need to
+				// update it
+				throw new ExistingPaidSubscriptionException();
+			}
+		}
 	}
 }

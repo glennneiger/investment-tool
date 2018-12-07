@@ -2,7 +2,7 @@ package com.cloud99.invest.services;
 
 import static org.junit.Assert.assertEquals;
 
-import com.cloud99.invest.BaseMockitoTest;
+import com.cloud99.invest.MockitoTest;
 import com.cloud99.invest.dto.responses.CompAnalysisResult;
 import com.cloud99.invest.dto.responses.PropertyCompSearchResult;
 import com.cloud99.invest.dto.responses.PropertyValuationResult;
@@ -16,7 +16,7 @@ import org.mockito.Mockito;
 
 import java.util.Arrays;
 
-public class CompAnalyzerServiceTest extends BaseMockitoTest {
+public class CompAnalyzerServiceTest extends MockitoTest {
 
 	@InjectMocks
 	private CompAnalyzerService compService;

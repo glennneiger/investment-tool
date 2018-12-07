@@ -11,6 +11,9 @@ public enum MembershipType {
 
 	FREE, PAID;
 
+	// used by security evaluation for permissions, refactor friendly
+	public static final String MEMBERSHIP_TYPE_REF_NAME = "MembershipType";
+
 	public static MembershipType findByValue(String membershipName) {
 		for (MembershipType type : values()) {
 			if (type.name().equals(membershipName)) {

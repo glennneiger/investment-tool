@@ -1,11 +1,12 @@
 package com.cloud99.invest.container;
 
-import com.cloud99.invest.domain.Subscription;
+import com.cloud99.invest.domain.billing.Subscription;
 import com.cloud99.invest.repo.GenericRepo;
 import com.cloud99.invest.util.FileUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
@@ -59,10 +60,11 @@ public class PaymentDataInitializer implements ApplicationListener<ContextRefres
 	private void loadRefData(String jsonFileName, String collectionName) {
 
 		try {
+			DateTime now = DateTime.now();
 			String holdingCostsJson = fileUtil.getFileContents(jsonFileName);
 			List<Subscription> myObjects = objMapper.readValue(holdingCostsJson, new TypeReference<List<Subscription>>() {
 			});
-
+			myObjects.forEach(o -> o.setActiveDate(now));
 			genericRepo.saveList(myObjects, collectionName);
 			log.info("Loaded: {} subscriptions into collection: {}", myObjects.size(), SUBSCRIPTION_COLLECTION_NAME);
 		} catch (Exception e) {

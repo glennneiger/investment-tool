@@ -3,7 +3,7 @@ package com.cloud99.invest.integration.data.zillow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.cloud99.invest.BaseMockitoTest;
+import com.cloud99.invest.MockitoTest;
 import com.cloud99.invest.dto.responses.PropertyValuationResult;
 import com.cloud99.invest.integration.data.zillow.domain.ZillowAddress;
 import com.cloud99.invest.integration.data.zillow.domain.search.Amount;
@@ -26,7 +26,7 @@ import org.mockito.InjectMocks;
 
 import java.math.BigDecimal;
 
-public class ZillowValuationConverterTest extends BaseMockitoTest {
+public class ZillowValuationConverterTest extends MockitoTest {
 
 	
 	private ZillowEstimate zestimate;

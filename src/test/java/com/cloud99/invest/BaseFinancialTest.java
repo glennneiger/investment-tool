@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 
-public abstract class BaseFinancialTest extends BaseMockitoTest {
+public abstract class BaseFinancialTest extends MockitoTest {
 
 	public FlipPropertyFinances buildFlipPropertyFinances(
 			double arv, 

@@ -25,10 +25,18 @@
 		<java.version>1.8</java.version>
 		<skipTestsIT>true</skipTestsIT>
 		<skipTests>false</skipTests>
+		<spring.retry.version>1.2.2.RELEASE</spring.retry.version>
 	</properties>
 
 	<dependencies>
 		
+		<!-- https://mvnrepository.com/artifact/org.springframework.retry/spring-retry -->
+		<dependency>
+		    <groupId>org.springframework.retry</groupId>
+		    <artifactId>spring-retry</artifactId>
+		    <version>${spring.retry.version}</version>
+		</dependency>
+				
 		<!-- https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports -->
 		<dependency>
 		    <groupId>net.sf.jasperreports</groupId>

@@ -1,0 +1,29 @@
+[
+  {
+    "providerSubscriptionPlanId": "plan_Dz6f2apauFMCL6",
+    "price": 8.99,
+    "description": "Monthly Subsription",
+    "subscriptionType": "MONTHLY",
+    "activeDate": "2018-11-23T14:36:47.408Z",
+    "expireDate": "2200-11-23T14:36:47.425Z",
+    "subscriptionBiller": "STRIPE"
+  },
+  {
+    "providerSubscriptionPlanId": "plan_Dz6fZwldkojoRJ",
+    "price": 89.9,
+    "description": "Annual Subscription - 2 Months Free!",
+    "subscriptionType": "ANUALLY",
+    "activeDate": "2018-11-23T14:36:47.425Z",
+    "expireDate": "2200-11-23T14:36:47.425Z",
+    "subscriptionBiller": "STRIPE"
+  },
+  {
+    "providerSubscriptionPlanId": "-1",
+    "price": 0.00,
+    "description": "Monthly Free Subsription",
+    "subscriptionType": "MONTHLY",
+    "activeDate": "2018-11-23T14:36:47.408Z",
+    "expireDate": "2200-11-23T14:36:47.425Z",
+    "subscriptionBiller": "CLOUD99"
+  }
+]

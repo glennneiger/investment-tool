@@ -2,6 +2,7 @@ package com.cloud99.invest.domain;
 
 import com.cloud99.invest.domain.account.MembershipType;
 import com.cloud99.invest.domain.account.UserRole;
+import com.cloud99.invest.domain.billing.SubscriptionMembership;
 import com.cloud99.invest.repo.extensions.CascadeSave;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -14,8 +15,6 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.validation.constraints.Email;
@@ -73,8 +72,8 @@ public class User extends Person implements Authentication, UserDetails {
 	@JsonIgnore
 	private List<UserRole> userRoles;
 
-	// mongo objectId references to all properties user has access to\
-	@DBRef
+	// mongo objectId references to all properties user has access to
+	// @DBRef
 	@CascadeSave
 	@Getter
 	@Setter
@@ -84,9 +83,14 @@ public class User extends Person implements Authentication, UserDetails {
 	@Transient
 	private List<UserRole> authorities;
 
+	@NotNull
 	@Getter
 	@Setter
 	private MembershipType membershipType = MembershipType.FREE;
+
+	@Getter
+	@Setter
+	private SubscriptionMembership subscriptionMembership;
 
 	@Transient
 	@Override
@@ -109,7 +113,7 @@ public class User extends Person implements Authentication, UserDetails {
 	@Transient
 	public void addUserRole(UserRole role) {
 		if (this.userRoles == null) {
-			this.userRoles = new ArrayList<>(Arrays.asList());
+			this.userRoles = new ArrayList<>();
 		}
 		if (!userRoles.contains(role)) {
 			userRoles.add(role);

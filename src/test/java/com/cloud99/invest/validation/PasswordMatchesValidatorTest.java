@@ -3,12 +3,12 @@ package com.cloud99.invest.validation;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.cloud99.invest.BaseMockitoTest;
+import com.cloud99.invest.MockitoTest;
 import com.cloud99.invest.dto.requests.AccountCreationRequest;
 
 import org.junit.jupiter.api.Test;
 
-public class PasswordMatchesValidatorTest extends BaseMockitoTest {
+public class PasswordMatchesValidatorTest extends MockitoTest {
 
 	@Test
 	public void testValidate_matches() {

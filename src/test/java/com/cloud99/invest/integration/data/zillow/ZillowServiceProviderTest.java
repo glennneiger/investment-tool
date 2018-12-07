@@ -3,7 +3,7 @@ package com.cloud99.invest.integration.data.zillow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.cloud99.invest.BaseMockitoTest;
+import com.cloud99.invest.MockitoTest;
 import com.cloud99.invest.dto.requests.PropertySearchRequest;
 import com.cloud99.invest.dto.responses.PropertyCompSearchResult;
 import com.cloud99.invest.dto.responses.PropertyCompValuationResult;
@@ -21,7 +21,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.web.client.RestTemplate;
 
-public class ZillowServiceProviderTest extends BaseMockitoTest {
+public class ZillowServiceProviderTest extends MockitoTest {
 
 	@InjectMocks
 	private ZillowServiceProvider provider = new ZillowServiceProvider();

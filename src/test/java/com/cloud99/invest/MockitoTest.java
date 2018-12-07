@@ -13,7 +13,7 @@ import org.mockito.MockitoAnnotations;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(JUnitPlatform.class)
-public abstract class BaseMockitoTest {
+public abstract class MockitoTest implements ReusableTestMocks {
 
 	protected static final String ACCT_ID = "1";
 

@@ -8,7 +8,7 @@ import com.cloud99.invest.dto.responses.PropertySearchResult;
 import com.cloud99.invest.integration.data.DataProviderInfo;
 import com.cloud99.invest.integration.data.DataServiceProvider;
 import com.cloud99.invest.integration.data.DataServiceProviderFactory;
-import com.cloud99.invest.security.PaidSubscription;
+import com.cloud99.invest.security.PaidMembershipAccess;
 import com.cloud99.invest.services.AccountService;
 import com.cloud99.invest.services.CompAnalyzerService;
 import com.cloud99.invest.services.PropertyService;
@@ -73,7 +73,7 @@ public class PropertyController implements Controller {
 
 	}
 
-	@PaidSubscription
+	@PaidMembershipAccess
 	@GetMapping(path = "/{accountId}/properties/comps", produces = JSON_MEDIA_TYPE)
 	@ResponseBody
 	public CompAnalysisResult propertyCompLookup(@RequestParam String providerPropertyId, @PathVariable String accountId) throws Exception {

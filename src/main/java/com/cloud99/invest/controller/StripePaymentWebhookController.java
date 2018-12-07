@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
-@RequestMapping(path = "/public")
-public class CallbackController implements Controller {
+@RequestMapping(path = "/public/stripe")
+public class StripePaymentWebhookController implements Controller {
 
 
 	@PostMapping(path = "/address")

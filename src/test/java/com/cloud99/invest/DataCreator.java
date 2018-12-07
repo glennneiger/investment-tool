@@ -6,13 +6,13 @@ import com.cloud99.invest.domain.Frequency;
 import com.cloud99.invest.domain.Name;
 import com.cloud99.invest.domain.Person.Gender;
 import com.cloud99.invest.domain.Status;
-import com.cloud99.invest.domain.Subscription;
-import com.cloud99.invest.domain.Subscription.SubscriptionType;
 import com.cloud99.invest.domain.User;
 import com.cloud99.invest.domain.account.Account;
 import com.cloud99.invest.domain.account.AccountSettings;
 import com.cloud99.invest.domain.account.MembershipType;
 import com.cloud99.invest.domain.account.UserRole;
+import com.cloud99.invest.domain.billing.Subscription;
+import com.cloud99.invest.domain.billing.Subscription.Interval;
 import com.cloud99.invest.domain.financial.FinancingDetails;
 import com.cloud99.invest.domain.financial.FinancingDetails.LoanType;
 import com.cloud99.invest.domain.financial.ItemizedCost;
@@ -70,16 +70,17 @@ public class DataCreator {
 	public List<Subscription> buildSubscriptions() {
 
 		Subscription sub1 = new Subscription();
-		sub1.setBillingProviderId("plan_Dz6f2apauFMCL6");
+		sub1.setProviderSubscriptionPlanId("plan_Dz6f2apauFMCL6");
 		sub1.setDescription("Monthly Subsription");
-		sub1.setSubscriptionType(SubscriptionType.MONTHLY);
+		sub1.setBillingInterval(Interval.MONTHLY);
 		sub1.setPrice(8.99);
 
 		Subscription sub2 = new Subscription();
-		sub2.setBillingProviderId("plan_Dz6fZwldkojoRJ");
+		sub2.setProviderSubscriptionPlanId("plan_Dz6fZwldkojoRJ");
 		sub2.setDescription("Annual Subscription - 2 Months Free!");
 		sub2.setPrice(89.90);
-		sub2.setSubscriptionType(SubscriptionType.ANUALLY);
+		sub2.setBillingInterval(Interval.ANUALLY);
+
 		return Arrays.asList(sub1, sub2);
 	}
 
@@ -209,7 +210,9 @@ public class DataCreator {
 
 	public User buildUser() {
 		User user = new User();
-		user.setUserRoles(Arrays.asList(UserRole.CUSTOMER));
+		List<UserRole> roles = new ArrayList<>();
+		roles.add(UserRole.CUSTOMER);
+		user.setUserRoles(roles);
 
 		// TODO - NG - setup test email so it's not mine
 		user.setEmail("nickgilas@gmail.com");
