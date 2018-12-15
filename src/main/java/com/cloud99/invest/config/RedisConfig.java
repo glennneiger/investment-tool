@@ -1,5 +1,6 @@
 package com.cloud99.invest.config;
 
+import com.cloud99.invest.ExcludeFromTest;
 import com.cloud99.invest.util.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -24,23 +25,30 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import javax.validation.constraints.NotNull;
+
 import redis.clients.jedis.JedisPoolConfig;
 
+@Profile({ "!test" })
 @EnableCaching
 @Configuration
 @ComponentScan(basePackages = { "com.cloud99.invest" })
-@PropertySource("classpath:application-${spring.active.profiles}.properties")
+@PropertySource("classpath:application-${spring.profiles.active}.properties")
 @EnableRedisRepositories(basePackages = "com.cloud99.invest.repo.redis", enableKeyspaceEvents = EnableKeyspaceEvents.ON_STARTUP)
 @Order(20)
+@ExcludeFromTest
 public class RedisConfig extends CachingConfigurerSupport {
 
 	// TODO - NG - need to create password for redis and inject
+	@NotNull
 	@Value("${spring.redis.host}")
 	private String hostName;
 
+	@NotNull
 	@Value("${spring.redis.port}")
 	private Integer port;
 
+	@NotNull
 	@Value("${spring.redis.database}")
 	private Integer database;
 

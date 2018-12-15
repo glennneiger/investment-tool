@@ -16,7 +16,7 @@ public class TestMongoConfig {
 	private static final String MONGO_DB_URL = "localhost";
 	private static final String MONGO_DB_NAME = "embeded_db";
 
-	public static EmbeddedMongoFactoryBean mongo;
+	// public static EmbeddedMongoFactoryBean mongo;
 	public static MongoClient mongoClient;
 
 	@MockBean

@@ -13,7 +13,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import java.util.Properties;
 
 @Configuration
-@PropertySource("classpath:application-${spring.active.profiles}.properties")
+@PropertySource("classpath:application-${spring.profiles.active}.properties")
 @Order(3)
 public class EmailConfig {
 

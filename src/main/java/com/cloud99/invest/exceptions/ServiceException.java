@@ -24,10 +24,6 @@ public class ServiceException extends RuntimeException {
 
 	@Getter
 	@Setter
-	private String txId;
-
-	@Getter
-	@Setter
 	private String[] messageValues;
 
 	public ServiceException(String errorMessageCode) {
@@ -38,7 +34,6 @@ public class ServiceException extends RuntimeException {
 		super(errorMessageCode);
 		this.errorMessageCode = errorMessageCode;
 		this.devDetails = devDetails;
-		txId = UUID.randomUUID().toString();
 		createTime = ZonedDateTime.now();
 		this.messageValues = messageValues;
 	}

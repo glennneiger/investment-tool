@@ -6,7 +6,6 @@ import com.cloud99.invest.config.GlobalMethodSecurityConfig;
 import com.cloud99.invest.config.MessageConfig;
 import com.cloud99.invest.config.MongoConfig;
 import com.cloud99.invest.config.TestAppConfig;
-import com.cloud99.invest.config.TestMongoConfig;
 import com.cloud99.invest.config.WebSecurityConfig;
 import com.cloud99.invest.domain.User;
 
@@ -34,7 +33,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 				@Filter(type = FilterType.ASSIGNABLE_TYPE,
 	                    value = {
 	                            MongoConfig.class,
-	                            TestMongoConfig.class
+						// TestMongoConfig.class
 	            })
 	    })
 public class SendGridEmailServiceIT {

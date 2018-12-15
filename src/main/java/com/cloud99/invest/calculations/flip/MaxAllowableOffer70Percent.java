@@ -12,6 +12,10 @@ import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * MAO = (ARV * 70%) – Rehab Costs
+ * https://www.reikit.com/house-flipping-guide/fix-and-flip-deal-analysis#70-percent-rule
+ */
 @Slf4j
 public class MaxAllowableOffer70Percent implements FlipCalculation<Money> {
 

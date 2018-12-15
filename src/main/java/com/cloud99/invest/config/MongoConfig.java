@@ -3,6 +3,7 @@ package com.cloud99.invest.config;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
+import com.cloud99.invest.ExcludeFromTest;
 import com.cloud99.invest.converters.mongo.ZonedDateTimeConverter;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
@@ -34,17 +36,17 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.annotation.PostConstruct;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Profile({ "!test" })
 @EnableMongoRepositories(basePackages = { "com.cloud99.invest.repo", "com.cloud99.invest.domain" })
 @Configuration
-@PropertySource("classpath:application-${spring.active.profiles}.properties")
+@PropertySource("classpath:application-${spring.profiles.active}.properties")
 @Order(15)
 @EnableTransactionManagement
+@ExcludeFromTest
 public class MongoConfig extends AbstractMongoConfiguration {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MongoConfig.class);
 

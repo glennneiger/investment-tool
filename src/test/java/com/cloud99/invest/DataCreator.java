@@ -38,6 +38,7 @@ import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -216,7 +217,7 @@ public class DataCreator {
 
 		// TODO - NG - setup test email so it's not mine
 		user.setEmail("nickgilas@gmail.com");
-		user.setPassword("password");
+		user.setPassword(BCrypt.hashpw("password", BCrypt.gensalt()));
 		user.setPersonName(buildName("TestFirstName", "TestLastName"));
 		user.setBirthDate(org.joda.time.LocalDate.now().withYear(1980).withMonthOfYear(3).withDayOfMonth(23));
 		user.setGender(Gender.MALE);

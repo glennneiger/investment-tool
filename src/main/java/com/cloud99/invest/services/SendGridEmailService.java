@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service("emailService")
 @Primary
-@PropertySource("application-${spring.active.profiles}.properties")
+@PropertySource("application-${spring.profiles.active}.properties")
 public class SendGridEmailService implements EmailService {
 
 	private static final String CHARSET_UTF8 = "UTF-8";

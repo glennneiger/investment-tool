@@ -33,12 +33,6 @@ import java.util.Optional;
 @Configuration
 public class PropertyControllerIT extends BaseIntegrationTest {
 
-	@Autowired
-	private ObjectMapper objectMapper;
-
-	@Mock
-	private AuthTokenRepo authTokenRepo;
-
 	@Test
 	public void testPropertySearch() throws Exception {
 
@@ -112,29 +106,4 @@ public class PropertyControllerIT extends BaseIntegrationTest {
 		assertFalse(StringUtils.isEmpty(val));
 	}
 	
-	private String loginUser() throws Exception {
-	
-		MvcResult result = invokeLoginEndpoint(user.getEmail(), HttpStatus.OK);
-				
-		String authTokenJson = result.getResponse().getContentAsString();
-		AuthToken authToken = objectMapper.readValue(authTokenJson, AuthToken.class);
-	
-		Mockito.when(authTokenRepo.findById(authToken.getToken())).thenReturn(Optional.of(authToken));
-		return authToken.getToken();
-	}
-	
-	private MvcResult invokeLoginEndpoint(String email, HttpStatus expectedStatus) {
-		MvcResult result = null;
-		try {
-			result = mvc.perform(post("/public/login")
-					.contentType(MediaType.APPLICATION_JSON_VALUE)
-					.param("userEmail", email)
-					.param("password", "password"))
-					.andExpect(status().is(expectedStatus.value()))
-					.andReturn();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		return result;
-	}
 }

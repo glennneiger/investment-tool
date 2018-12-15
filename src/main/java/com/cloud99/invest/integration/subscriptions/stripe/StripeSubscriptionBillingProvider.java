@@ -23,7 +23,7 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@PropertySource("classpath:application-${spring.active.profiles}.properties")
+@PropertySource("classpath:application-${spring.profiles.active}.properties")
 @ConfigurationProperties(prefix = "stripe")
 @Service
 public class StripeSubscriptionBillingProvider implements SubscriptionBillingProvider {
@@ -44,10 +44,13 @@ public class StripeSubscriptionBillingProvider implements SubscriptionBillingPro
 	public void createSubscription(User user, Subscription subscription, String paymentToken) {
 		Stripe.apiKey = privateKey;
 		
-		logCreateSubscription(user, subscription);
+		logCreateSubscriptionRequest(user, subscription);
 
 		// lookup subscription details
 
+		// TODO - NG - need to find a way to store the providerCustomerId in our data
+
+		// Customer customer = findCustomer(customerId)
 		// check for existing customer account (create if necessary and add payment source too)
 
 		// create new customer account
@@ -56,27 +59,29 @@ public class StripeSubscriptionBillingProvider implements SubscriptionBillingPro
 
 	}
 
-	private void findCustomer(String customerId) {
-		Map<String, Object> cust = new HashMap<>();
+	private Customer findCustomer(String customerId) {
 
 		try {
 			Customer customer = Customer.retrieve(customerId);
+			return customer;
 		} catch (StripeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Error occurred while retrieving customer: " + customerId + ", msg: " + e.getMessage(), e);
+			throw new PaymentProcessingException(PaymentProcessingExceptionCodes.CUSTOMER_LOOKUP_EXCEPTION);
 		}
 	}
 
 	private String createNewCustomer(User user, String paymentSourceId, String invoiceDescr) throws StripeException {
 		log.trace("Starting to create new customer: " + user.getEmail());
 
-		Map<String, Object> item = new HashMap<>();
-		item.put("usage", "reusable");
 		Map<String, Object> customerParams = new HashMap<>();
 		customerParams.put("object", "customer");
 		customerParams.put("email", user.getEmail());
 		customerParams.put("source", paymentSourceId);
 		customerParams.put("description", invoiceDescr);
+
+		Map<String, Object> metadata = new HashMap<>();
+		metadata.put("userId", user.getId());
+		customerParams.put("metadata", metadata);
 
 		Customer customer = Customer.create(customerParams);
 		return null;
@@ -103,12 +108,12 @@ public class StripeSubscriptionBillingProvider implements SubscriptionBillingPro
 		}
 	}
 
-	private void sendSubscriptionRequest(Subscription subscription, String stripCustomerId, String paymentToken) {
+	private void sendSubscriptionRequest(User user, Subscription subscription, String stripCustomerId, String paymentToken) {
 
 		Map<String, Object> item = new HashMap<>();
 		item.put("amount", subscription.getPrice());
 		item.put("currency", "usd");
-		item.put("description", buildSubscriptionDescr(subscription.getBillingInterval().name()));
+		item.put("description", buildSubscriptionDescr(subscription.getBillingInterval().name(), user.getPersonName().getFormattedName()));
 		item.put("source", paymentToken);
 		item.put("plan", subscription.getProviderSubscriptionPlanId());
 		
@@ -128,7 +133,7 @@ public class StripeSubscriptionBillingProvider implements SubscriptionBillingPro
 		}
 	}
 
-	private void logCreateSubscription(User user, Subscription subscription) {
+	private void logCreateSubscriptionRequest(User user, Subscription subscription) {
 		log.trace("Starting to create new user subscription for user: {}, subscriptionId: {}, providerPlanId: {}", user.getId(), subscription.getId(), subscription.getProviderSubscriptionPlanId());
 	}
 
@@ -137,8 +142,8 @@ public class StripeSubscriptionBillingProvider implements SubscriptionBillingPro
 	 * internationalized then this description should be extracted from a
 	 * message.properties file and use string substitution for values
 	 */
-	private String buildSubscriptionDescr(String billingInterval) {
-		return String.format("%s Investment Analyzr Application Subscription", billingInterval);
+	private String buildSubscriptionDescr(String billingInterval, String customerName) {
+		return String.format("%s Investment Analyzr Application Subscription for %s", billingInterval, customerName);
 	}
 
 }

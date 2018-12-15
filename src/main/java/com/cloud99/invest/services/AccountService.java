@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-@PropertySource("classpath:application-${spring.active.profiles}.properties")
+@PropertySource("classpath:application-${spring.profiles.active}.properties")
 public class AccountService {
 
 	public Locale DEFAULT_LOCALE = Locale.getDefault();

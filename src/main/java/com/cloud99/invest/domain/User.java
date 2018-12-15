@@ -120,24 +120,28 @@ public class User extends Person implements Authentication, UserDetails {
 		}
 	}
 
+	@Transient
 	@Override
 	@JsonIgnore
 	public String getName() {
 		return getEmail();
 	}
 
+	@Transient
 	@Override
 	@JsonIgnore
 	public Object getCredentials() {
 		return getAuthorities();
 	}
 
+	@Transient
 	@Override
 	@JsonIgnore
 	public Object getDetails() {
 		return this;
 	}
 
+	@Transient
 	@Override
 	@JsonIgnore
 	public Object getPrincipal() {

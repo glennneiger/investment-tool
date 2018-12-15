@@ -56,19 +56,19 @@ public class SubscriptionService {
 		checkExistingSubscription(user);
 
 		// lookup the requested subscription plan
-		Optional<Subscription> optional = subscriptionRepo.findById(request.getSubscriptionId());
-		if (!optional.isPresent()) {
+		Optional<Subscription> subscriptionOptional = subscriptionRepo.findById(request.getSubscriptionId());
+		if (!subscriptionOptional.isPresent()) {
 			throw new ServiceException("subscription.id.not.found");
 		}
 		
-		if (!optional.get().isActive()) {
+		if (!subscriptionOptional.get().isActive()) {
 			throw new ServiceException("subscription.expired");
 		}
 		
-		SubscriptionBillingProvider provider = subscriptionBillerFactory.getSubscriptionProvider(optional.get().getSubscriptionBiller());
+		SubscriptionBillingProvider provider = subscriptionBillerFactory.getSubscriptionProvider(subscriptionOptional.get().getSubscriptionBiller());
 		log.info("Starting to create subscription for provider: " + provider);
 
-		provider.createSubscription(user, optional.get(), request.getProviderPaymentToken());
+		provider.createSubscription(user, subscriptionOptional.get(), request.getProviderPaymentToken());
 
 		// TODO - NG - find out how to associate paid account options based on
 		// subscription type

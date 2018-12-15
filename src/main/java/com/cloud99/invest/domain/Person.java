@@ -17,7 +17,6 @@ import lombok.Setter;
 /**
  * Domain object representation of a person
  */
-@SuppressWarnings("serial")
 @NoArgsConstructor
 public abstract class Person implements Serializable {
 

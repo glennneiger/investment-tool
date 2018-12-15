@@ -8,6 +8,7 @@ import com.cloud99.invest.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,7 +36,7 @@ public class AccountController implements Controller {
 	@PostMapping(path = "/", consumes = JSON_MEDIA_TYPE, produces = JSON_MEDIA_TYPE)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.ACCEPTED)
-	public Account createAccount(@RequestBody AccountCreationRequest request, Authentication auth) {
+	public Account createAccount(@RequestBody @Validated AccountCreationRequest request, Authentication auth) {
 
 		return acctService.createAccount(request, (User) auth.getPrincipal());
 	}

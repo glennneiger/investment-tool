@@ -33,7 +33,7 @@ public class SubscriptionMembership implements Serializable {
 	private DateTime createDate;
 
 	// this will be true only if the customer's payment has been accepted and
-	// processed successfully
+	// processed successfully (excluding FREE memberships)
 	private boolean active;
 
 }

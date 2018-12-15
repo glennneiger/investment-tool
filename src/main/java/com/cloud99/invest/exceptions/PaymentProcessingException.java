@@ -11,7 +11,7 @@ import lombok.Getter;
 public class PaymentProcessingException extends ServiceException {
 
 	public enum PaymentProcessingExceptionCodes {
-		PAYMENT_SOURCE_ERROR_CODE("payment.source.error");
+		PAYMENT_SOURCE_ERROR_CODE("payment.source.exception"), CUSTOMER_LOOKUP_EXCEPTION("customer.lookup.exception");
 
 		@Getter
 		private String code;

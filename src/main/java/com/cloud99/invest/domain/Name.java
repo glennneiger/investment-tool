@@ -2,6 +2,7 @@ package com.cloud99.invest.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.springframework.data.annotation.Transient;
 
 import javax.validation.constraints.NotNull;
 
@@ -11,7 +12,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
+@ToString
 @EqualsAndHashCode
 @NoArgsConstructor
 public class Name implements Serializable {
@@ -37,9 +40,9 @@ public class Name implements Serializable {
 		this.lastName = lastName;
 	}
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.DEFAULT_STYLE);
+	@Transient
+	public String getFormattedName() {
+		return firstName + " " + lastName;
 	}
 
 }
